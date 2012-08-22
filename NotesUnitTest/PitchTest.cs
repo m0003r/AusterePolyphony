@@ -65,135 +65,27 @@ namespace NotesUnitTest
 
 
         /// <summary>
-        ///A test for Degree
+        ///A test for isTritoneHigh
         ///</summary>
         [TestMethod()]
-        public void DegreeTest()
+        public void isTritoneHighTest()
         {
-            int PitchValue = 0; // TODO: Initialize to an appropriate value
-            Modus PitchModus = null; // TODO: Initialize to an appropriate value
-            Pitch target = new Pitch(PitchValue, PitchModus); // TODO: Initialize to an appropriate value
-            uint actual;
-            actual = target.Degree;
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            int PitchValue = 5;
+            Modus PitchModus = Modus.Dorian();
+            Pitch target = new Pitch(PitchValue, PitchModus);
+            Assert.IsTrue(target.isTritoneHigh);
         }
 
         /// <summary>
-        ///A test for FromBase
+        ///A test for isTritoneLow
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("Notes.dll")]
-        public void FromBaseTest()
+        public void isTritoneLowTest()
         {
-            PrivateObject param0 = null; // TODO: Initialize to an appropriate value
-            Pitch_Accessor target = new Pitch_Accessor(param0); // TODO: Initialize to an appropriate value
-            Interval actual;
-            actual = target.FromBase;
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for InDiatonic
-        ///</summary>
-        [TestMethod()]
-        public void InDiatonicTest()
-        {
-            int PitchValue = 0; // TODO: Initialize to an appropriate value
-            Modus PitchModus = null; // TODO: Initialize to an appropriate value
-            Pitch target = new Pitch(PitchValue, PitchModus); // TODO: Initialize to an appropriate value
-            int actual;
-            actual = target.InDiatonic;
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for ModusOctave
-        ///</summary>
-        [TestMethod()]
-        public void ModusOctaveTest()
-        {
-            int PitchValue = 0; // TODO: Initialize to an appropriate value
-            Modus PitchModus = null; // TODO: Initialize to an appropriate value
-            Pitch target = new Pitch(PitchValue, PitchModus); // TODO: Initialize to an appropriate value
-            int actual;
-            actual = target.ModusOctave;
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for PitchModus
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("Notes.dll")]
-        public void PitchModusTest()
-        {
-            PrivateObject param0 = null; // TODO: Initialize to an appropriate value
-            Pitch_Accessor target = new Pitch_Accessor(param0); // TODO: Initialize to an appropriate value
-            Modus expected = null; // TODO: Initialize to an appropriate value
-            Modus actual;
-            target.PitchModus = expected;
-            actual = target.PitchModus;
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for PitchValue
-        ///</summary>
-        [TestMethod()]
-        public void PitchValueTest()
-        {
-            int PitchValue = 0; // TODO: Initialize to an appropriate value
-            Modus PitchModus = null; // TODO: Initialize to an appropriate value
-            Pitch target = new Pitch(PitchValue, PitchModus); // TODO: Initialize to an appropriate value
-            int expected = 0; // TODO: Initialize to an appropriate value
-            int actual;
-            target.PitchValue = expected;
-            actual = target.PitchValue;
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for RealAlteration
-        ///</summary>
-        [TestMethod()]
-        public void RealAlterationTest()
-        {
-            int PitchValue = 0; // TODO: Initialize to an appropriate value
-            Modus PitchModus = null; // TODO: Initialize to an appropriate value
-            Pitch target = new Pitch(PitchValue, PitchModus); // TODO: Initialize to an appropriate value
-            int actual;
-            actual = target.RealAlteration;
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for RealOctave
-        ///</summary>
-        [TestMethod()]
-        public void RealOctaveTest()
-        {
-            int PitchValue = 0; // TODO: Initialize to an appropriate value
-            Modus PitchModus = null; // TODO: Initialize to an appropriate value
-            Pitch target = new Pitch(PitchValue, PitchModus); // TODO: Initialize to an appropriate value
-            int actual;
-            actual = target.RealOctave;
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for StringForm
-        ///</summary>
-        [TestMethod()]
-        public void StringFormTest()
-        {
-            int PitchValue = 0; // TODO: Initialize to an appropriate value
-            Modus PitchModus = null; // TODO: Initialize to an appropriate value
-            Pitch target = new Pitch(PitchValue, PitchModus); // TODO: Initialize to an appropriate value
-            string actual;
-            actual = target.StringForm;
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            int PitchValue = 2; 
+            Modus PitchModus = Modus.Dorian();
+            Pitch target = new Pitch(PitchValue, PitchModus);
+            Assert.IsTrue(target.isTritoneLow);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Melody
 {
-    class Time
+    public class Time
     {
         private bool perfectus;
 
@@ -19,7 +19,7 @@ namespace Melody
         {
             get
             {
-                return Beats * 2;
+                return Beats * 4;
             }
         }
 
@@ -51,6 +51,20 @@ namespace Melody
             }
         }
 
+        public bool allowEight
+        {
+            get {
+                return (Beat % 4) > 2;
+            }
+        }
+
+        public bool strongTime
+        {
+            get {
+                return (Beat % 8) == 0;
+            }
+        }
+
         private Time(bool perfectus)
         {
             this.perfectus = perfectus;
@@ -59,6 +73,34 @@ namespace Melody
         public static Time Create(bool perfectus)
         {
             return new Time(perfectus);
+        }
+
+        public static Time operator + (Time me, int beats)
+        {
+            Time n = new Time(me.perfectus);
+            n.Position = me.Position + beats;
+            return n;
+        }
+
+        public static Time operator -(Time me, int beats)
+        {
+            return me + (-beats);
+        }
+
+        public static Time operator +(Time me, Time aux)
+        {
+            if (aux.perfectus != me.perfectus)
+                throw new Exception("Can't perform addition on differend-perfected times");
+
+            return me + aux.Position;
+        }
+
+        public static Time operator -(Time me, Time aux)
+        {
+            if (aux.perfectus != me.perfectus)
+                throw new Exception("Can't perform addition on differend-perfected times");
+
+            return me - aux.Position;
         }
     }
 }

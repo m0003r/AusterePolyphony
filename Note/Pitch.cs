@@ -119,9 +119,34 @@ namespace Notes
             return r;
         }
 
+        public static Pitch operator +(Pitch a, IntervalType b)
+        {
+            return a + (int)b;
+        }
+
+        public static Pitch operator -(Pitch a, IntervalType b)
+        {
+            return a - (int)b;
+        }
+
+        public static Pitch operator +(Pitch a, int b)
+        {
+            return new Pitch(a.PitchValue + b, a.PitchModus);
+        }
+
+        public static Pitch operator -(Pitch a, int b)
+        {
+            return new Pitch(a.PitchValue - b, a.PitchModus);
+        }
+
         public override String ToString()
         {
             return StringForm + _osh;
+        }
+
+        public bool equalTo (Pitch b)
+        {
+            return ((PitchModus == b.PitchModus) && (PitchValue == b.PitchValue));
         }
 
         private Interval FromBase
@@ -141,6 +166,24 @@ namespace Notes
             return "";
         }
 
-        //TODO: isTritone
+        public bool isTritoneHigh
+        {
+            get
+            {
+                return ((int)Degree - PitchModus.NotesDelta + 3) % 7 == 0;
+            }
+        }
+
+        public bool isTritoneLow
+        {
+            get
+            {
+                return ((int)Degree - PitchModus.NotesDelta - 1) % 7 == 0;
+            }
+        }
+
+        public bool isTritone { get { return (isTritoneHigh || isTritoneLow); } }
+    
     }
 }
+;

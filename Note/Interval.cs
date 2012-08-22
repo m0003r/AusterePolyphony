@@ -36,7 +36,7 @@ namespace Notes
             }
         }
 
-        public Interval(IntervalType Type, IntervalAlt Alteration, bool Upwards = true)
+        public Interval(IntervalType Type, IntervalAlt Alteration = IntervalAlt.Natural, bool Upwards = true)
         {
             if (!checkAlterable(Type, Alteration))
                 throw new ArgumentException();
@@ -105,6 +105,37 @@ namespace Notes
         public override String ToString()
         {
             return Alteration.ToString() + " " + Type.ToString() + (Upwards ? "" : ", down");
+        }
+
+        public bool isLeap
+        {
+            get
+            {
+                return Type.isLeap();
+            }
+        }
+
+        public bool isCont
+        {
+            get
+            {
+                return Type.isCont();
+            }
+        }
+
+        public bool Consonance
+        {
+            get
+            {
+                uint d = (uint)Type % 7;
+                if (d > 3)
+                    d = 7 - d;
+                if ((d == 0) || (d == 2))
+                    return true;
+                if (d == 3)
+                    return Alteration == IntervalAlt.Natural;
+                return false;
+            }
         }
     }
 }

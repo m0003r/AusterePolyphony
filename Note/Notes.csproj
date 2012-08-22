@@ -44,7 +44,6 @@
     <Compile Include="Interval.cs" />
     <Compile Include="IntervalType.cs" />
     <Compile Include="Modus.cs" />
-    <Compile Include="NoteState.cs" />
     <Compile Include="Pitch.cs" />
     <Compile Include="PitchFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

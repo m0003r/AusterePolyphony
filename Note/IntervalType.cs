@@ -47,6 +47,16 @@ namespace Notes
             int altV = (int)(semitones * 2);
             return (IntervalAlt)altV;
         }
+
+        public static bool isLeap(this IntervalType me)
+        {
+            return ((int)me > 1);
+        }
+
+        public static bool isCont(this IntervalType me)
+        {
+            return !me.isLeap();
+        }
     }
 }
 
