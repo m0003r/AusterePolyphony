@@ -5,21 +5,48 @@ using System.Text;
 
 namespace Notes
 {
+    //ПЕРВАЯ СТУПЕНЬ В ЛЮБОМ СЛУЧАЕ В БОЛЬШОЙ ОКТАВЕ
     public class Modus
     {
         private IntervalAlt[] alt;
-        public int noteStart { get; private set; }
-        public int keysDelta { get; private set; }
+        public int NoteStart { get; private set; }
+        private int KeysDelta;
 
-        public int notesDelta
+        //Количество знаков в ладу
+        public int Keys
         {
             get
             {
-                int nd = ((keysDelta % 2) == 0) ? -keysDelta : (7 - keysDelta);
-                nd = (nd / 2);
-                if (nd > 3)
-                    nd -= 7;
-                return nd;
+                int k = (NoteStart * 7 + KeysDelta) % 12;
+                if (k > 6)
+                    return k - 12;
+                if (k <= -6)
+                    return k + 12;
+                return k;
+            }
+        }
+
+        //Насколько первая ступень лада отличается от первой ступени параллельного мажора
+        public int NotesDelta
+        {
+            get
+            {
+                int r = (KeysDelta * -4) % 7;
+                if (r < 0)
+                    r += 7;
+                return r;
+            }
+        }
+
+        //диатоническая нота, с которой начинается лад
+        public int DiatonicStart
+        {
+            get
+            {
+                int ds = ((Keys - KeysDelta) * 4) % 7;
+                if (ds < 0)
+                    ds += 7;
+                return ds;
             }
         }
 
@@ -36,8 +63,8 @@ namespace Notes
                 throw new ArgumentException();
 
             this.alt = alt.Select<int, IntervalAlt>(x => (IntervalAlt)(x)).ToArray<IntervalAlt>();
-            noteStart = n;
-            this.keysDelta = keysDelta;
+            NoteStart = n;
+            this.KeysDelta = keysDelta;
         }
 
         public static Modus Ionian(int start = 0)

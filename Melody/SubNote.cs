@@ -7,11 +7,11 @@ namespace Melody
 {
     public class SubNote
     {
-        MelodyNote baseNote;
+        Note baseNote;
 
         public int Position { get; private set; }
 
-        public SubNote(MelodyNote baseNote, int Position)
+        public SubNote(Note baseNote, int Position)
         {
             this.baseNote = baseNote;
             this.Position = Position;
