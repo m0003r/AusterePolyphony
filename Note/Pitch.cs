@@ -149,6 +149,16 @@ namespace Notes
             return ((Modus == b.Modus) && (Value == b.Value));
         }
 
+        public static bool operator <(Pitch a, Pitch b)
+        {
+            return !((a - b).Upwards);
+        }
+
+        public static bool operator >(Pitch a, Pitch b)
+        {
+            return (a - b).Degrees > 0;
+        }
+
         private Interval FromBase
         {
             get
