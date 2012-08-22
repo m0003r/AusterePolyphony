@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Notes;
+using Melody;
 
 namespace NotesTest
 {
@@ -11,12 +12,22 @@ namespace NotesTest
     {
         static void Main(string[] args)
         {
+            MelodyGenerator mg = new MelodyGenerator(Clef.Treble, Modus.Dorian(2), Time.Create());
+
+            mg.Generate(20);
+
+            foreach (Note n in mg.Notes)
+            {
+                Console.Write(n.ToString() + " ");
+            }
+
+            Console.ReadKey();
+
             /*Pitch n, f;
             Interval d;
             List<Modus> modi= new List<Modus>();
 
-            modi.Add(Modus.Ionian(-1));
-            modi.Add(Modus.Dorian(-2));
+            modi.Add(Modus.Dorian(2));
             modi.Add(Modus.Phrygian(-3));
             modi.Add(Modus.Lydian(-4));
             modi.Add(Modus.Mixolydian(-5));
@@ -24,8 +35,8 @@ namespace NotesTest
 
             foreach (Modus m in modi)
             {
-                f = new Pitch(0, m);
-                for (int i = -3; i < 8; i++)
+                f = new Pitch(14, m);
+                for (int i = 14; i < 29; i++)
                 {
                     n = new Pitch(i, m);
                     Console.Write("<" + f.ToString() + " " + n.ToString() + "> = ");
@@ -33,7 +44,9 @@ namespace NotesTest
                     Console.WriteLine(d.ToString());
                 }
                 Console.WriteLine();
-            }*/
+            }
+
+            Console.ReadKey();
 
             PitchFactory pf;
 
@@ -44,7 +57,7 @@ namespace NotesTest
                 Console.Write(p.ToString() + " ");
             }
 
-            Console.ReadKey();
+            Console.ReadKey();*/
         }
     }
 }

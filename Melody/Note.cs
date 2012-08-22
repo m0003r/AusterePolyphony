@@ -20,28 +20,37 @@ namespace Melody
         public List<Pitch> Diapason;
         public Dictionary<Note, double> NextNotes;
 
+        private bool filtered;
+
         public Note(Pitch Pitch, Time TimeStart, int Duration, Note Previous = null)
         {
             this.Pitch = Pitch;
             this.TimeStart = TimeStart;
             this.Duration = Duration;
             if (Previous != null)
+            {
                 this.State = CalcState(Pitch, Previous.Pitch);
+                this.Diapason = Previous.Diapason;
+            }
             else
                 this.State = new Interval(IntervalType.Prima);
+
+            this.filtered = false;
 
             GenSubNotes();   
         }
 
+        /*
         public Note(Pitch Pitch, Time TimeStart, int Duration, Interval State)
         {
             this.Pitch = Pitch;
             this.TimeStart = TimeStart;
             this.Duration = Duration;
             this.State = State;
-
+            this.filtered = false;
             GenSubNotes();            
         }
+        */
 
         protected void GenSubNotes()
         {
@@ -136,6 +145,7 @@ namespace Melody
 
             switch (diff.Type)
             {
+                case IntervalType.Secunda: return true;
                 case IntervalType.Tertia: return true;
                 case IntervalType.Quarta: return (diff.Alteration == IntervalAlt.Natural);
                 case IntervalType.Quinta: return (diff.Alteration == IntervalAlt.Natural);
@@ -148,19 +158,18 @@ namespace Melody
             return false;
         }
 
-        public void FilterVariants()
+        public Dictionary<Note,double> FilterVariants()
         {
+            if (filtered)
+                return NextNotes;
+
             AddVariants();
 
-            Note n;
-            double v;
-            foreach (KeyValuePair<Note, double> kv in NextNotes)
-            {
-                n = kv.Key;
-                v = kv.Value;
+            foreach (Note n in NextNotes.Keys.ToList())
+                NextNotes[n] = CheckNext(n) ? 1 : 0;
 
-                NextNotes[n] = CheckNext(n) ? 0 : 1;
-            }
+            filtered = true;
+            return NextNotes;
         }
 
         private bool CheckNext(Note n)
@@ -206,6 +215,23 @@ namespace Melody
                     return (Math.Abs(leap.Degrees) <= 4); // в ту же сторону — не больше чем на квинту
                 else
                     return ((Math.Abs(leap.Degrees) <= 4) && (Math.Abs(s.Degrees) <= 4) && ((leap + s).Consonance));
+            }
+        }
+
+        public override string ToString()
+        {
+            string ps = Pitch.ToString();
+            switch (Duration)
+            {
+                case 1: return ps + "8";
+                case 2: return ps + "4";
+                case 4: return ps + "2";
+                case 6: return ps + "2.";
+                case 8: return ps + "1";
+                case 10: return ps + "2. ~ " + ps + "2";
+                case 12: return ps + "1.";
+                case 16: return ps + "\\breve";
+                default: return ps + "16";
             }
         }
     }

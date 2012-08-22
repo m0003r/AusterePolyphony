@@ -70,7 +70,7 @@ namespace Melody
             this.perfectus = perfectus;
         }
 
-        public static Time Create(bool perfectus)
+        public static Time Create(bool perfectus = false)
         {
             return new Time(perfectus);
         }

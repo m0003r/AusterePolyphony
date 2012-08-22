@@ -7,8 +7,8 @@ namespace Notes
 {
     public class Pitch
     {
-        public int PitchValue { set; get; }
-        public Modus PitchModus { protected set; get; }
+        public int Value { set; get; }
+        public Modus Modus { protected set; get; }
 
         private String _osh;
 
@@ -25,7 +25,7 @@ namespace Notes
         {
             get
             {
-                int d = PitchValue % 7;
+                int d = Value % 7;
                 if (d < 0)
                     d += 7;
                 return (uint)d;
@@ -36,7 +36,7 @@ namespace Notes
         {
             get
             {
-                return (int)Math.Floor(((double)PitchValue) / 7.0) - 1;
+                return (int)Math.Floor(((double)Value) / 7.0) - 1;
             }
         }
 
@@ -44,7 +44,7 @@ namespace Notes
         {
             get
             {
-                int r = ((int)Degree + PitchModus.DiatonicStart) % 7;
+                int r = ((int)Degree + Modus.DiatonicStart) % 7;
                 return (r < 0) ? r + 7 : r;
             }
         }
@@ -55,16 +55,16 @@ namespace Notes
             {
                 //MinKeysForAlteration
                 int minK = 6;
-                int inMajorDegree = (int)Degree + PitchModus.NotesDelta; 
+                int inMajorDegree = (int)Degree + Modus.NotesDelta; 
                 minK = (minK - 2 * inMajorDegree) % 7;
                 if (minK <= 0)
                     minK += 7;
 
-                if (PitchModus.Keys < 0)
+                if (Modus.Keys < 0)
                     minK = 8 - minK;
 
-                if (minK <= Math.Abs(PitchModus.Keys))
-                    return Math.Sign(PitchModus.Keys);
+                if (minK <= Math.Abs(Modus.Keys))
+                    return Math.Sign(Modus.Keys);
                 else
                     return 0;
             }
@@ -82,7 +82,7 @@ namespace Notes
         {
             get
             {
-                double tor = (Degree + PitchModus.DiatonicStart) / 7.0;
+                double tor = (Degree + Modus.DiatonicStart) / 7.0;
                 return (int)Math.Floor(tor) + ModusOctave;
             }
         }
@@ -90,15 +90,15 @@ namespace Notes
 
         public Pitch(int PitchValue, Modus PitchModus)
         {
-            this.PitchValue = PitchValue;
-            this.PitchModus = PitchModus;
+            this.Value = PitchValue;
+            this.Modus = PitchModus;
 
             _osh = OctaveShift(RealOctave);
         }
 
         public static Interval operator -(Pitch a, Pitch b)
         {
-            if (a.PitchModus != b.PitchModus)
+            if (a.Modus != b.Modus)
             {
                 throw new Exception("Different modi in substraction!");
             }
@@ -131,12 +131,12 @@ namespace Notes
 
         public static Pitch operator +(Pitch a, int b)
         {
-            return new Pitch(a.PitchValue + b, a.PitchModus);
+            return new Pitch(a.Value + b, a.Modus);
         }
 
         public static Pitch operator -(Pitch a, int b)
         {
-            return new Pitch(a.PitchValue - b, a.PitchModus);
+            return new Pitch(a.Value - b, a.Modus);
         }
 
         public override String ToString()
@@ -146,14 +146,14 @@ namespace Notes
 
         public bool equalTo (Pitch b)
         {
-            return ((PitchModus == b.PitchModus) && (PitchValue == b.PitchValue));
+            return ((Modus == b.Modus) && (Value == b.Value));
         }
 
         private Interval FromBase
         {
             get
             {
-                return PitchModus.baseToDegree(Degree);
+                return Modus.baseToDegree(Degree);
             }
         }
 
@@ -170,7 +170,7 @@ namespace Notes
         {
             get
             {
-                return ((int)Degree - PitchModus.NotesDelta + 3) % 7 == 0;
+                return ((int)Degree - Modus.NotesDelta + 3) % 7 == 0;
             }
         }
 
@@ -178,7 +178,7 @@ namespace Notes
         {
             get
             {
-                return ((int)Degree - PitchModus.NotesDelta - 1) % 7 == 0;
+                return ((int)Degree - Modus.NotesDelta - 1) % 7 == 0;
             }
         }
 

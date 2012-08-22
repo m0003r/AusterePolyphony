@@ -47,6 +47,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Melody\Melody.csproj">
+      <Project>{18BEB320-8613-4D40-B0F3-AFFCFBA90C3E}</Project>
+      <Name>Melody</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Note\Notes.csproj">
       <Project>{C63080DF-94BA-46A1-90B7-A4CFF3E5BB7B}</Project>
       <Name>Notes</Name>

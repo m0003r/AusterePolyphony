@@ -128,12 +128,12 @@ namespace Notes
             get
             {
                 uint d = (uint)Type % 7;
+                if (d == 4)
+                    return Alteration == IntervalAlt.Natural;
                 if (d > 3)
                     d = 7 - d;
                 if ((d == 0) || (d == 2))
                     return true;
-                if (d == 3)
-                    return Alteration == IntervalAlt.Natural;
                 return false;
             }
         }
