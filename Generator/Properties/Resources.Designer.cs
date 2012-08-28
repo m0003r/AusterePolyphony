@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Generator.Properties
-{
-
-
+namespace Generator.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -22,49 +22,78 @@ namespace Generator.Properties
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources
-    {
-
+    internal class Resources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources()
-        {
+        internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if ((resourceMan == null))
-                {
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Generator.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to \version &quot;2.15.41&quot;
+        ///
+        ///\language &quot;deutsch&quot;
+        ///
+        ///\header {{
+        ///   tagline = &quot;&quot;
+        ///   composer = &quot;Seed: {0}&quot;
+        ///}}
+        ///
+        ///\score {{
+        ///  \new Voice \with {{
+        ///    \remove &quot;Note_heads_engraver&quot;
+        ///    \consists &quot;Completion_heads_engraver&quot;
+        ///    \remove &quot;Rest_engraver&quot;
+        ///    \consists &quot;Completion_rest_engraver&quot;
+        ///  }}
+        ///  {{
+        ///    \set Staff.midiInstrument = #&quot;synth voice&quot;
+        ///    \key {1} {2}
+        ///    \clef {3}
+        ///    \time {4}
+        ///
+        ///    {5}
+        ///  }}
+        ///  \midi {{
+        ///    \context {{
+        ///      \Score
+        ///      tempoWholesPerMinute = #(ly:make-moment 72 2)
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ScoreTemplate {
+            get {
+                return ResourceManager.GetString("ScoreTemplate", resourceCulture);
             }
         }
     }

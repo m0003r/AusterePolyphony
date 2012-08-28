@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Notes;
+using Melody.Rules;
 
 namespace Melody
 {
@@ -16,42 +17,76 @@ namespace Melody
         public Modus Modus { get; private set; }
         public Time Time { get; private set; }
 
-        private NotesList notes;
+        internal List<MelodyRule> Rules;
+
+        internal NotesList notes;
         private List<Pitch> Diapason;
         private Random rand;
 
+        internal uint LengthInBeats;
+
         public NotesList Notes { get { return new NotesList(notes); } }
 
-        private Pitch Higher;
-        private Pitch Lower;
+        internal Pitch Higher;
+        internal Pitch Lower;
 
-        public MelodyGenerator(Clef Clef, Modus Modus, Time Time)
+        public int seed;
+
+        public MelodyGenerator(Clef Clef, Modus Modus, Time Time, int seed = 0)
         {
-            PitchFactory pf;
-
             this.Clef = Clef;
             this.Modus = Modus;
             this.Time = Time;
 
             Time.Position = 0;
+            SetupDiapason(Clef, Modus);
+            SetupRand(seed);
+        }
 
-            pf = new PitchFactory(Modus, Clef);
+        private void SetupDiapason(Clef Clef, Modus Modus)
+        {
+            PitchFactory pf = new PitchFactory(Modus, Clef);
             Diapason = pf.Pitches;
-
             Lower = Diapason.Last();
             Higher = Diapason.First();
+        }
 
-            rand = new Random();
+        private void SetupRules()
+        {
+            Rules = new List<MelodyRule>();
 
+            Rules.Add(new CadenzaRule(this));
+            Rules.Add(new TrillRule(this));
+            Rules.Add(new SyncopaRule(this));
+            Rules.Add(new TritoneRule(this));
+            Rules.Add(new PeakRule(this));
+            Rules.Add(new ManyQuartersRule(this));
+            Rules.Add(new DottedHalveRestrictionRule(this));
+        }
+
+        private void SetupRand(int seed)
+        {
+            if (seed == 0)
+                this.seed = (int)DateTime.Now.Ticks;
+            else
+                this.seed = seed;
+
+            rand = new Random(this.seed);
         }
 
         public void Generate(uint Length)
         {
-            uint BeatCount = Length * (uint)Time.Beats * 2;
+            LengthInBeats = Length * (uint)Time.Beats * 4;
+            int steps = 0;
+
+            SetupRules(); // правила могут зависеть от длины
 
             FirstNote();
-            while (Time.Position < BeatCount)
+            while ((Time.Position < LengthInBeats) && (steps < 50000))
+            {
                 Step();
+                steps++;
+            }
         }
 
         private void FirstNote()
@@ -87,7 +122,9 @@ namespace Melody
 
             allowedNext = ApplyMelodyFilters(allowedNext);
 
-            if (allowedNext.Sum(kv => kv.Value) > 0.01)
+            double max = allowedNext.Max(kv => (kv.Value > 0.01) ? kv.Value : 0);
+
+            if (max > 0.3) //должно быть что-то приличное!
             {
                 chooseFrom(allowedNext);
             }
@@ -97,144 +134,15 @@ namespace Melody
 
         private NotesFreq ApplyMelodyFilters(NotesFreq freqs)
         {
-            freqs = CheckForTrill(freqs);
-            freqs = CheckForSyncope(freqs);
-            freqs = CheckForManyQuarters(freqs);
-            freqs = CheckForTop(freqs);
+            foreach (Note note in freqs.Keys.ToList())
+                if (freqs[note] > 0.01)
+                    foreach (MelodyRule r in Rules)
+                        if (r.IsApplicable())
+                            freqs[note] *=  r.Apply(note);
 
             return freqs;
         }
 
-        private NotesFreq CheckForTop(NotesFreq freqs)
-        {
-            if (notes.Count < 4)
-                return freqs;
-
-            NotesFreq resFreq = freqs;
-
-            //запрещаем вниз, если мы на текущей верхней мелодической вершине            
-            bool denyDown = (notes.Last().Pitch == Higher);
-            // или если нижняя — звук тритона, а мы на другом
-            denyDown |= ((notes.Last().Pitch.isTritone) && (Lower.isTritone));
-
-            //и аналогично вверх
-            bool denyUp = (notes.Last().Pitch == Lower);
-            denyUp |= ((notes.Last().Pitch.isTritone) && (Higher.isTritone));
-
-            if (denyDown || denyUp)
-            {
-                resFreq = freqs;
-                foreach (Note key in freqs.Keys.ToList())
-                {
-                    if (
-                        (denyDown && (key.Pitch < Lower))
-                        ||
-                        (denyUp && (key.Pitch > Higher))
-                        )
-                        resFreq[key] *= 0.01;
-                }
-
-                return resFreq;
-            }
-            else
-                return freqs;
-        }
-
-        private NotesFreq CheckForManyQuarters(NotesFreq freqs)
-        {
-            NotesFreq resFreq;
-
-            if (notes.Count < 6)
-                return freqs;
-
-            int quarterCount = 0;
-            int curr = notes.Count - 1;
-            double coeff = 1;
-
-            while (curr > 0)
-            {
-                if (notes[curr].Duration == 2)
-                    quarterCount++;
-                else
-                    break;
-
-                curr--;
-            }
-
-            if (quarterCount < 6)
-                return freqs;
-
-            switch (quarterCount)
-            {
-                case 6: coeff = 0.4; break;
-                case 7: coeff = 0.1; break;
-                default: coeff = 0; break;
-            }
-
-            resFreq = freqs;
-
-            foreach (Note key in freqs.Keys.ToList())
-            {
-                if (key.Duration == 2)
-                    resFreq[key] *= coeff;
-            }
-
-            return resFreq;
-        }
-
-        private NotesFreq CheckForTrill(NotesFreq freqs)
-        {
-            if (notes.Count < 3)
-                return freqs;
-
-            NotesList last3 = notes.GetRange(notes.Count - 3, 3);
-            NotesFreq resFreq = freqs;
-
-            if (last3[0].Pitch == last3[2].Pitch)
-            {
-                foreach (Note key in freqs.Keys.ToList())
-                {
-                    if (key.Pitch == last3[1].Pitch)
-                        resFreq[key] *= 0.01; // один раз на сотню можно и трель
-                }
-            }
-
-            return resFreq;
-        }
-
-        // не разрешаем четверть-четверть половина
-        private NotesFreq CheckForSyncope(NotesFreq freqs)
-        {
-            NotesFreq resFreq = freqs;
-            NotesList last3;
-            if (notes.Count == 2)
-            {
-                last3 = notes.GetRange(notes.Count - 2, 2);
-                last3.Insert(0, new Note(last3[1].Pitch, last3[1].TimeStart, 4));
-            }
-            else if (notes.Count > 2)
-                last3 = notes.GetRange(notes.Count - 3, 3);
-            else
-                return freqs;
-
-
-            if (
-                (last3[1].TimeStart.Beat == 0) &&
-                (last3[1].Duration == 2) &&
-                (last3[2].Duration == 2) &&
-                (last3[0].Duration != 2)
-                )
-            {
-                // запретить всё что больше половины
-                foreach (Note key in freqs.Keys.ToList())
-                {
-                    if (key.Duration > 2)
-                        resFreq[key] *= 0.01; // один раз на сотню можно
-                }
-            }
-
-            return freqs;
-        }
 
         private void chooseFrom(NotesFreq allowed)
         {
@@ -244,9 +152,9 @@ namespace Melody
 
             foreach (KeyValuePair<Note, double> kv in allowed)
             {
-                if (kv.Value <= 0.005)
-                    continue;
                 accumulator += kv.Value;
+                if (kv.Value < 0.02) //более строги будем здесь
+                    continue;
                 if (accumulator > r)
                 {
                     AddNote(kv.Key);
@@ -264,17 +172,29 @@ namespace Melody
         {
             if (notes.Count > 4)
             {
-                if ((n.Leap.Degrees > 0) && (notes.Last().Leap.Degrees <= 0))
-                    Lower = n.Pitch;
-                if ((n.Leap.Degrees < 0) && (notes.Last().Leap.Degrees >= 0))
-                    Higher = n.Pitch;
+                if ((n.Leap.Degrees > 0) && (notes.Last().Leap.Degrees < 0))
+                {
+                    notes.Last().isLower = true;
+                    Lower = notes.Last().Pitch;
+                }
+                if ((n.Leap.Degrees < 0) && (notes.Last().Leap.Degrees > 0))
+                {
+                    notes.Last().isHigher = true;
+                    Higher = notes.Last().Pitch;
+                }
             }
             else
             {
                 if (n.Pitch > Higher)
+                {
+                    n.isHigher = true;
                     Higher = n.Pitch;
+                }
                 if (n.Pitch < Lower)
+                {
+                    n.isLower = true;
                     Lower = n.Pitch;
+                }
             }
 
             notes.Add(n);
@@ -290,7 +210,10 @@ namespace Melody
             if (notes.Count > 0)
             {
                 if (ban)
+                {
                     notes.Last().NextNotes[n] = 0;
+                    n.isBanned = true;
+                }
             }
             else
                 FirstNote();

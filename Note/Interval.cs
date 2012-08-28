@@ -115,7 +115,7 @@ namespace Notes
             }
         }
 
-        public bool isCont
+        public bool isSmooth
         {
             get
             {

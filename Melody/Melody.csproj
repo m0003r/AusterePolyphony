@@ -40,8 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Rules\LeapMelodyRules.cs" />
     <Compile Include="MelodyGenerator.cs" />
+    <Compile Include="MelodyRule.cs" />
+    <Compile Include="Rules\LeapNoteRules.cs" />
+    <Compile Include="Rules\MelodyRules.cs" />
     <Compile Include="Note.cs" />
+    <Compile Include="NoteRule.cs" />
+    <Compile Include="Rules\NoteRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubNote.cs" />
     <Compile Include="Time.cs" />

@@ -15,7 +15,7 @@ namespace Melody
             } 
         }
 
-        private int Beats8
+        public int BarLength
         {
             get
             {
@@ -29,12 +29,12 @@ namespace Melody
         {
             get
             {
-                return Position / Beats8;
+                return Position / BarLength;
             }
             set
             {
                 Bar = value;
-                Position = value * Beats8 + Beat;
+                Position = value * BarLength + Beat;
             }
         }
 
@@ -42,26 +42,26 @@ namespace Melody
         {
             get
             {
-                return Position % Beats8;
+                return Position % BarLength;
             }
             set
             {
                 Beat = value;
-                Position = Bar * Beats8 + value;
+                Position = Bar * BarLength + value;
             }
         }
 
         public bool allowEight
         {
             get {
-                return (Beat % 4) > 2;
+                return (Beat % 4) >= 2;
             }
         }
 
         public bool strongTime
         {
             get {
-                return (Beat % 8) == 0;
+                return perfectus ? (Beat == 0) : ((Beat % 8) == 0);
             }
         }
 
