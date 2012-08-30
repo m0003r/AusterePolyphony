@@ -32,7 +32,7 @@ namespace Melody
                 (
                     (n.Duration != Time.Beats * 4) ||
                     (n.Pitch.Degree != 0) ||
-                    (Math.Abs(n.Leap.Degrees) >= 2) //и плавным ходом 
+                    (n.Leap.AbsDeg >= 2) //и плавным ходом 
                 )) //нельзя ничего в последнем такте кроме долгой тоники
                 return 0;
             return 1;
@@ -119,7 +119,11 @@ namespace Melody
 
         public override double Apply(Note n)
         {
-            return ((n.Pitch.isTritone) && (n.Duration > 4)) ? 0.5 : 1;
+            if (!n.Pitch.isTritone)
+                return 1;
+
+            double koeff = (1 - n.Duration / 16.0);
+            return n.TimeStart.strongTime ? koeff / 2 : koeff;
         }
     }
 

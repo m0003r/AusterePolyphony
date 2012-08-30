@@ -62,6 +62,7 @@ namespace Melody
             Rules.Add(new PeakRule(this));
             Rules.Add(new ManyQuartersRule(this));
             Rules.Add(new DottedHalveRestrictionRule(this));
+            Rules.Add(new AfterLeapRules(this));
         }
 
         private void SetupRand(int seed)
@@ -134,11 +135,15 @@ namespace Melody
 
         private NotesFreq ApplyMelodyFilters(NotesFreq freqs)
         {
-            foreach (Note note in freqs.Keys.ToList())
-                if (freqs[note] > 0.01)
-                    foreach (MelodyRule r in Rules)
-                        if (r.IsApplicable())
-                            freqs[note] *=  r.Apply(note);
+            IEnumerable<Note> toFilter =
+                from kv in freqs.ToList()
+                where kv.Value > 0.01
+                select kv.Key;
+
+            foreach (MelodyRule r in Rules)
+                if (r.IsApplicable())
+                    foreach (Note note in toFilter)
+                        freqs[note] *=  r.Apply(note);
 
             return freqs;
         }

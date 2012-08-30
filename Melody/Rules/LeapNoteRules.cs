@@ -16,7 +16,7 @@ namespace Melody.Rules
         {
             bool coDir = (NextNote.Leap.Upwards == Me.Leap.Upwards);
 
-            if (Math.Abs(NextNote.Leap.Degrees) == 1) //если дальше плавный ход
+            if (NextNote.Leap.AbsDeg == 1) //если дальше плавный ход
                 //плавный ход предпочитаем туда же
                 return (coDir) ? 1 : 0.8;
             else
@@ -37,7 +37,7 @@ namespace Melody.Rules
         private double CoDirRule(Note NextNote)
         {
             //не больше квинты — можно
-            return (Math.Abs(NextNote.Leap.Degrees) <= 4) ? 0.4 : 0;
+            return (NextNote.Leap.AbsDeg <= 4) ? 0.4 : 0;
         }        
     }
 
@@ -51,10 +51,10 @@ namespace Melody.Rules
         {
             bool coDir = (NextNote.Leap.Upwards == Me.Leap.Upwards);
 
-            if (Math.Abs(NextNote.Leap.Degrees) == 1) //если дальше плавный ход
+            if (NextNote.Leap.AbsDeg == 1) //если дальше плавный ход
             {
                 if (coDir) //в том же направлении после не-больше-чем-квинты можно
-                    return (Leap.Degrees <= 4) ? 0.6 : 0;
+                    return (Leap.AbsDeg <= 4) ? 0.6 : 0;
                 else
                     return 1; //а в другую сторону очень даже хорошо
             }
@@ -76,8 +76,8 @@ namespace Melody.Rules
             //оба не больше квинты и в сумме консонанс!
             //и то редко
             return (
-                    (Math.Abs(Leap.Degrees) <= 4) &&
-                    (Math.Abs(NextNote.Leap.Degrees) <= 4) &&
+                    (Leap.AbsDeg <= 4) &&
+                    (NextNote.Leap.AbsDeg <= 4) &&
                     ((NextNote.Leap + Leap).Consonance)
                 ) ? 0.3 : 0;
         }

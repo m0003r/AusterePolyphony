@@ -23,7 +23,6 @@ namespace Generator
     {
         public string fname = "";
         private MelodyGenerator mg;
-        ResourceManager resman;
 
         public MainForm()
         {
@@ -145,6 +144,13 @@ namespace Generator
                 Process.Start("out\\" + fname + ".pdf");
         }
 
+        private void gvCompleted(object sender, EventArgs e)
+        {
+            Process s = (Process)sender;
+            if (s.ExitCode == 0)
+                Process.Start("out\\" + fname + "_graph.pdf");
+        }
+
         private void saveGV_Click(object sender, EventArgs e)
         {
             if (fname == "")
@@ -158,11 +164,13 @@ namespace Generator
         private void graphViz_Click(object sender, EventArgs e)
         {
             saveGV_Click(sender, e);
-            string cmdline = "-Tsvg " + fname + ".gv -o" + fname + ".svg";
+            string cmdline = "-Tpdf " + fname + ".gv -o" + fname + "_graph.pdf";
             Process p = new Process();
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.FileName = "dot";
             p.StartInfo.Arguments = cmdline;
+            p.EnableRaisingEvents = true;
+            p.Exited += new EventHandler(gvCompleted);
             p.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory() + "\\out";
             p.Start();
         }

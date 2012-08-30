@@ -104,7 +104,7 @@
             this.perfectTime.Name = "perfectTime";
             this.perfectTime.Size = new System.Drawing.Size(42, 17);
             this.perfectTime.TabIndex = 4;
-            this.perfectTime.Text = "3/4";
+            this.perfectTime.Text = "3/2";
             this.perfectTime.UseVisualStyleBackColor = true;
             // 
             // imperfectTime
@@ -116,7 +116,7 @@
             this.imperfectTime.Size = new System.Drawing.Size(42, 17);
             this.imperfectTime.TabIndex = 5;
             this.imperfectTime.TabStop = true;
-            this.imperfectTime.Text = "4/4";
+            this.imperfectTime.Text = "4/2";
             this.imperfectTime.UseVisualStyleBackColor = true;
             // 
             // barsCount

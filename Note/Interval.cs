@@ -13,7 +13,8 @@ namespace Notes
 
         public int Semitones
         {
-            get {
+            get
+            {
                 int semitones = (int)Math.Truncate(Type.ToSemitones() + Alteration.ToSemitones());
                 return Upwards ? semitones : -semitones;
             }
@@ -27,6 +28,8 @@ namespace Notes
                 return Upwards ? deg : -deg;
             }
         }
+
+        public int AbsDeg { get { return (int)Type; } }
 
         public Interval Abs
         {

@@ -202,11 +202,15 @@ namespace Melody
 
             AddVariants();
 
+            IEnumerable<Note> toFilter =
+                from kv in NextNotes.ToList()
+                where kv.Value > 0.01
+                select kv.Key;
+
             foreach (NoteRule r in Rules)
                 if (r.IsApplicable(this))
-                    foreach (Note n in NextNotes.Keys.ToList())
-                        if (NextNotes[n] > 0.01)
-                            NextNotes[n] *= r.Apply(n);
+                    foreach (Note n in toFilter)
+                        NextNotes[n] *= r.Apply(n);
 
 
             filtered = true;

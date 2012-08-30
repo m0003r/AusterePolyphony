@@ -12,7 +12,7 @@ namespace Generator
     public static class GVOutput
     {
         private static string graph = "";
-        private static readonly string prelude = "digraph G {\r\naspect=\"1.0\"\r\n";
+        private static readonly string prelude = "digraph \"Seed {0}\" {{\r\naspect=\"1.0\"\r\n";
         private static readonly string postlude = "}";
         private static Dictionary<string, bool> drawed;
 
@@ -33,7 +33,16 @@ namespace Generator
 
         private static string ChanceToColor(double chance)
         {
-            string sc = (chance > 0) ? (chance * 0.4).ToString((CultureInfo.CreateSpecificCulture("en-GB"))) : "0.8";
+            if (chance < 0)
+                return " style=\"filled\" color=\"1,0,0.6\"";
+
+            double hue;
+            if (chance < 1)
+                hue = chance * 0.5;
+            else
+                hue = 0.6 - 0.1 / chance;
+
+            string sc = hue.ToString((CultureInfo.CreateSpecificCulture("en-GB")));
             return " style=\"filled\" color=\"" + sc + ",1,1\"";
         }
 
@@ -42,7 +51,7 @@ namespace Generator
             string res;
 
             res = "  " + MakeNoteName(n) + "[label=" + MakeNodeLabel(n);
-            res += ChanceToColor(val);
+            res += ChanceToColor(n.isBanned ? -1 : val);
             if (n.isLower)
                 res += " shape=\"invhouse\"";
             if (n.isHigher)
@@ -84,7 +93,7 @@ namespace Generator
 
         public static string GenerationGraph(this MelodyGenerator me)
         {
-            graph = prelude;
+            graph = string.Format(prelude, me.seed);
 
             drawed = new Dictionary<string, bool>();
 
