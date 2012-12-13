@@ -38,10 +38,10 @@
             this.clefList = new System.Windows.Forms.ListBox();
             this.gvOut = new System.Windows.Forms.TextBox();
             this.barCountLabel = new System.Windows.Forms.Label();
-            this.saveLily = new System.Windows.Forms.Button();
-            this.engrave = new System.Windows.Forms.Button();
-            this.graphViz = new System.Windows.Forms.Button();
-            this.saveGV = new System.Windows.Forms.Button();
+            this.saveLilyButton = new System.Windows.Forms.Button();
+            this.engraveButton = new System.Windows.Forms.Button();
+            this.drawGraphButton = new System.Windows.Forms.Button();
+            this.saveGraphButton = new System.Windows.Forms.Button();
             this.randSeedDD = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).BeginInit();
@@ -49,9 +49,9 @@
             // 
             // outputArea
             // 
-            this.outputArea.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.outputArea.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.outputArea.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.outputArea.ForeColor = System.Drawing.SystemColors.MenuHighlight;
             this.outputArea.Location = new System.Drawing.Point(12, 125);
@@ -170,9 +170,9 @@
             // 
             // gvOut
             // 
-            this.gvOut.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gvOut.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gvOut.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.gvOut.ForeColor = System.Drawing.SystemColors.MenuHighlight;
             this.gvOut.Location = new System.Drawing.Point(308, 125);
@@ -192,49 +192,49 @@
             this.barCountLabel.TabIndex = 10;
             this.barCountLabel.Text = "Количество тактов";
             // 
-            // saveLily
+            // saveLilyButton
             // 
-            this.saveLily.Enabled = false;
-            this.saveLily.Location = new System.Drawing.Point(12, 528);
-            this.saveLily.Name = "saveLily";
-            this.saveLily.Size = new System.Drawing.Size(105, 25);
-            this.saveLily.TabIndex = 11;
-            this.saveLily.Text = "Сохранить";
-            this.saveLily.UseVisualStyleBackColor = true;
-            this.saveLily.Click += new System.EventHandler(this.saveLily_Click);
+            this.saveLilyButton.Enabled = false;
+            this.saveLilyButton.Location = new System.Drawing.Point(12, 528);
+            this.saveLilyButton.Name = "saveLilyButton";
+            this.saveLilyButton.Size = new System.Drawing.Size(105, 25);
+            this.saveLilyButton.TabIndex = 11;
+            this.saveLilyButton.Text = "Сохранить";
+            this.saveLilyButton.UseVisualStyleBackColor = true;
+            this.saveLilyButton.Click += new System.EventHandler(this.saveLilyButton_Click);
             // 
-            // engrave
+            // engraveButton
             // 
-            this.engrave.Enabled = false;
-            this.engrave.Location = new System.Drawing.Point(195, 530);
-            this.engrave.Name = "engrave";
-            this.engrave.Size = new System.Drawing.Size(106, 25);
-            this.engrave.TabIndex = 12;
-            this.engrave.Text = "Рисовать";
-            this.engrave.UseVisualStyleBackColor = true;
-            this.engrave.Click += new System.EventHandler(this.engrave_Click);
+            this.engraveButton.Enabled = false;
+            this.engraveButton.Location = new System.Drawing.Point(195, 530);
+            this.engraveButton.Name = "engraveButton";
+            this.engraveButton.Size = new System.Drawing.Size(106, 25);
+            this.engraveButton.TabIndex = 12;
+            this.engraveButton.Text = "Рисовать";
+            this.engraveButton.UseVisualStyleBackColor = true;
+            this.engraveButton.Click += new System.EventHandler(this.engraveButton_Click);
             // 
-            // graphViz
+            // drawGraphButton
             // 
-            this.graphViz.Enabled = false;
-            this.graphViz.Location = new System.Drawing.Point(491, 532);
-            this.graphViz.Name = "graphViz";
-            this.graphViz.Size = new System.Drawing.Size(106, 23);
-            this.graphViz.TabIndex = 14;
-            this.graphViz.Text = "Рисовать";
-            this.graphViz.UseVisualStyleBackColor = true;
-            this.graphViz.Click += new System.EventHandler(this.graphViz_Click);
+            this.drawGraphButton.Enabled = false;
+            this.drawGraphButton.Location = new System.Drawing.Point(491, 532);
+            this.drawGraphButton.Name = "drawGraphButton";
+            this.drawGraphButton.Size = new System.Drawing.Size(106, 23);
+            this.drawGraphButton.TabIndex = 14;
+            this.drawGraphButton.Text = "Рисовать";
+            this.drawGraphButton.UseVisualStyleBackColor = true;
+            this.drawGraphButton.Click += new System.EventHandler(this.drawGraphButton_Click);
             // 
-            // saveGV
+            // saveGraphButton
             // 
-            this.saveGV.Enabled = false;
-            this.saveGV.Location = new System.Drawing.Point(308, 530);
-            this.saveGV.Name = "saveGV";
-            this.saveGV.Size = new System.Drawing.Size(105, 25);
-            this.saveGV.TabIndex = 13;
-            this.saveGV.Text = "Сохранить";
-            this.saveGV.UseVisualStyleBackColor = true;
-            this.saveGV.Click += new System.EventHandler(this.saveGV_Click);
+            this.saveGraphButton.Enabled = false;
+            this.saveGraphButton.Location = new System.Drawing.Point(308, 530);
+            this.saveGraphButton.Name = "saveGraphButton";
+            this.saveGraphButton.Size = new System.Drawing.Size(105, 25);
+            this.saveGraphButton.TabIndex = 13;
+            this.saveGraphButton.Text = "Сохранить";
+            this.saveGraphButton.UseVisualStyleBackColor = true;
+            this.saveGraphButton.Click += new System.EventHandler(this.saveGraphButton_Click);
             // 
             // randSeedDD
             // 
@@ -259,10 +259,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(605, 560);
             this.Controls.Add(this.randSeedDD);
-            this.Controls.Add(this.graphViz);
-            this.Controls.Add(this.saveGV);
-            this.Controls.Add(this.engrave);
-            this.Controls.Add(this.saveLily);
+            this.Controls.Add(this.drawGraphButton);
+            this.Controls.Add(this.saveGraphButton);
+            this.Controls.Add(this.engraveButton);
+            this.Controls.Add(this.saveLilyButton);
             this.Controls.Add(this.barCountLabel);
             this.Controls.Add(this.gvOut);
             this.Controls.Add(this.clefList);
@@ -295,10 +295,10 @@
         private System.Windows.Forms.ListBox clefList;
         private System.Windows.Forms.TextBox gvOut;
         private System.Windows.Forms.Label barCountLabel;
-        private System.Windows.Forms.Button saveLily;
-        private System.Windows.Forms.Button engrave;
-        private System.Windows.Forms.Button graphViz;
-        private System.Windows.Forms.Button saveGV;
+        private System.Windows.Forms.Button saveLilyButton;
+        private System.Windows.Forms.Button engraveButton;
+        private System.Windows.Forms.Button drawGraphButton;
+        private System.Windows.Forms.Button saveGraphButton;
         private System.Windows.Forms.NumericUpDown randSeedDD;
 
     }

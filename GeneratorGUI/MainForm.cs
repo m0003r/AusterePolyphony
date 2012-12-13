@@ -15,7 +15,7 @@ namespace GeneratorGUI
     public partial class MainForm : Form
     {
         public string fname = "";
-        private MelodyGenerator mg;
+        private MelodyGenerator Generator;
 
         public MainForm()
         {
@@ -24,79 +24,64 @@ namespace GeneratorGUI
 
         private void makeButton_Click(object sender, EventArgs e)
         {
-            fname = "";
-            Modus m;
-            Clef c = (Clef)(clefList.SelectedIndex - 1);
+            InitGenerator(clefList.SelectedIndex - 1, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value);
+            Generator.Generate((uint)barsCount.Value);
+            prepareOutput();
+        }
 
-            int noteStart = startNotes.SelectedIndex;
+        private void InitGenerator(int ClefIndex, int noteStart, bool perfect, int seed)
+        {
+            fname = "";
+            Modus Modus;
+            Clef Clef = (Clef)ClefIndex;
+
 
             switch (modiList.SelectedIndex)
             {
-                case 0: m = Modus.Ionian(noteStart); break;
-                case 1: m = Modus.Dorian(noteStart); break;
-                case 2: m = Modus.Phrygian(noteStart); break;
-                case 3: m = Modus.Lydian(noteStart); break;
-                case 4: m = Modus.Mixolydian(noteStart); break;
-                case 5: m = Modus.Aeolian(noteStart); break;
+                case 0: Modus = Modus.Ionian(noteStart); break;
+                case 1: Modus = Modus.Dorian(noteStart); break;
+                case 2: Modus = Modus.Phrygian(noteStart); break;
+                case 3: Modus = Modus.Lydian(noteStart); break;
+                case 4: Modus = Modus.Mixolydian(noteStart); break;
+                case 5: Modus = Modus.Aeolian(noteStart); break;
                 default: return;
             }
 
-            mg = new MelodyGenerator(c, m, Time.Create(perfectTime.Checked), (int)randSeedDD.Value);
-
-            mg.Generate((uint)barsCount.Value);
-
-            outputArea.Text = formatLily(m, c);
-
-
-            gvOut.Text = mg.GenerationGraph();
-
-            saveLily.Enabled = true;
-            engrave.Enabled = true;
-            saveGV.Enabled = true;
-            graphViz.Enabled = true;
-
+            Generator = new MelodyGenerator(Clef, Modus, Time.Create(perfect), seed);
         }
 
-        private string formatLily(Modus m, Clef c)
+        private void prepareOutput()
         {
-            Pitch p = new Pitch(0, m);
+            outputArea.Text = formatLily();
+            gvOut.Text = Generator.GenerationGraph();
 
-            string key = (p.StringForm + " ");
+            saveLilyButton.Enabled = true;
+            engraveButton.Enabled = true;
+            saveGraphButton.Enabled = true;
+            drawGraphButton.Enabled = true;
+        }
+
+        static string[] clefNamesList =  {"treble", "soprano", "mezzosoprano", "alto", "tenor", "baritone", "bass"};
+
+        private string formatLily()
+        {
+            Pitch p = new Pitch(0, Generator.Melody.Modus);
+
+            string key = p.StringForm;
             string modus, clef, time;
             string notes = "";
 
-            switch (modiList.SelectedIndex)
-            {
-                case 0: modus = "\\ionian"; break;
-                case 1: modus = "\\dorian"; break;
-                case 2: modus = "\\phrygian"; break;
-                case 3: modus = "\\lydian"; break;
-                case 4: modus = "\\mixolydian"; break;
-                case 5: modus = "\\aeolian"; break;
-                default: modus = "\\major"; break;
-            }
-
-            switch (clefList.SelectedIndex)
-            {
-                case 0: clef = "treble"; break;
-                case 1: clef = "soprano"; break;
-                case 2: clef = "mezzosoprano"; break;
-                case 3: clef = "alto"; break;
-                case 4: clef = "tenor"; break;
-                case 5: clef = "baritone"; break;
-                case 6: clef = "bass"; break;
-                default: clef = "treble"; break;
-            }
-
+            modus = "\\" + Generator.Melody.Modus.Name;
+            clef = clefNamesList[(int)Generator.Melody.Clef + 1];
             time = (perfectTime.Checked ? "3" : "4") + "/2";
 
-            foreach (Note n in mg.Melody.Notes)
+            foreach (Note n in Generator.Melody.Notes)
             {
                 notes += (n.ToString() + "^" + String.Format("\"{0:F}\"", n.Strength));
             }
 
             string format = Resources.ScoreTemplate;
-            return string.Format(format, mg.Seed, key, modus, clef, time, notes);
+            return string.Format(format, Generator.Seed, key, modus, clef, time, notes);
             
         }
 
@@ -107,8 +92,14 @@ namespace GeneratorGUI
             clefList.SelectedIndex = 0;
         }
 
-        private void saveLily_Click(object sender, EventArgs e)
+        private void saveLilyButton_Click(object sender, EventArgs e)
         {
+            SaveLily();
+        }
+
+        private void SaveLily()
+        {
+            checkOutDirectory();
             if (fname == "")
                 fname = "gen_" + DateTime.Now.Ticks.ToString();
             using (StreamWriter outfile = new StreamWriter("out\\" + fname + ".ly"))
@@ -117,9 +108,20 @@ namespace GeneratorGUI
             }
         }
 
-        private void engrave_Click(object sender, EventArgs e)
+        private void checkOutDirectory()
         {
-            saveLily_Click(sender, e);
+            if (!Directory.Exists("out"))
+                Directory.CreateDirectory("out");
+        }
+
+        private void engraveButton_Click(object sender, EventArgs e)
+        {
+            SaveLily();
+            Engrave();
+        }
+
+        private void Engrave()
+        {
             Process p = new Process();
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.FileName = "lilypond";
@@ -144,8 +146,14 @@ namespace GeneratorGUI
                 Process.Start("out\\" + fname + "_graph.pdf");
         }
 
-        private void saveGV_Click(object sender, EventArgs e)
+        private void saveGraphButton_Click(object sender, EventArgs e)
         {
+            SaveGraph();
+        }
+
+        private void SaveGraph()
+        {
+            checkOutDirectory();
             if (fname == "")
                 fname = "gen_" + DateTime.Now.Ticks.ToString();
             using (StreamWriter outfile = new StreamWriter("out\\" + fname + ".gv"))
@@ -154,9 +162,14 @@ namespace GeneratorGUI
             }
         }
 
-        private void graphViz_Click(object sender, EventArgs e)
+        private void drawGraphButton_Click(object sender, EventArgs e)
         {
-            saveGV_Click(sender, e);
+            SaveGraph();
+            DrawGraph();
+        }
+
+        private void DrawGraph()
+        {
             string cmdline = "-Tpdf " + fname + ".gv -o" + fname + "_graph.pdf";
             Process p = new Process();
             p.StartInfo.UseShellExecute = true;
