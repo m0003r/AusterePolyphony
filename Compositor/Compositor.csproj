@@ -40,18 +40,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\RulesAttribute.cs" />
+    <Compile Include="ChooseNextStrategy\NextStrategies.cs" />
+    <Compile Include="Rules\Base\RulesAttribute.cs" />
+    <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />
     <Compile Include="Levels\Melody.cs" />
     <Compile Include="Levels\NoteSequencer.cs" />
     <Compile Include="Levels\RuledLevel.cs" />
-    <Compile Include="Rule.cs" />
+    <Compile Include="Rules\Base\Rule.cs" />
     <Compile Include="Rules\LeapMelodyRules.cs" />
     <Compile Include="MelodyGenerator.cs" />
-    <Compile Include="MelodyRule.cs" />
+    <Compile Include="Rules\Base\MelodyRule.cs" />
     <Compile Include="Rules\LeapNoteRules.cs" />
     <Compile Include="Rules\MelodyRules.cs" />
     <Compile Include="Levels\Note.cs" />
-    <Compile Include="NoteRule.cs" />
+    <Compile Include="Rules\Base\NoteRule.cs" />
     <Compile Include="Rules\NoteRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

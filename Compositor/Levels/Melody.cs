@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Compositor.Helpers;
 using Compositor.Rules;
 using PitchBase;
 

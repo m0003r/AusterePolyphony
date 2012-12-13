@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Compositor.Helpers;
+using Compositor.Rules;
 
 namespace Compositor.Levels
 {
@@ -78,9 +78,9 @@ namespace Compositor.Levels
                             break;*/
 
                         freq = r.Apply(n);
-                        if (freq != 1)
+                        /*if (freq != 1)
                             Console.WriteLine("Rule {0} to note {1} (@ {2}) = {3:F}",
-                                r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);
+                                r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);*/
                         Freqs[n] *= freq;
                     }
             }

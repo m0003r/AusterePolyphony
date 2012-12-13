@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Compositor.Helpers;
 using Compositor.Rules;
 using PitchBase;
 

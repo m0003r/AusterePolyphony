@@ -104,7 +104,7 @@ namespace Compositor.Rules
      * другой звук тритона был мелодической вершиной
      */
 
-    class TritoneRule : MelodyRule
+    /*class TritoneRule : MelodyRule
     {
         public override bool _IsApplicable()
         {
@@ -119,7 +119,7 @@ namespace Compositor.Rules
             double koeff = (1 - n.Duration / 16.0);
             return n.TimeStart.strongTime ? koeff / 2 : koeff;
         }
-    }
+    }*/
 
     /*********************************************************************/
 
@@ -283,7 +283,7 @@ namespace Compositor.Rules
         public override double Apply(Note n)
         {
             if (n.Duration == deniedDuration)
-                return ((patternDuration % 8) == 0) ? 0 : 0.5;
+                return ((patternDuration % 8) == 0) ? 0.1 : 0.9;
 
             return 1;
         }
@@ -359,7 +359,13 @@ namespace Compositor.Rules
                 foreach (int diff in diffs)
                     diffAccumulator += Math.Pow((diff - average), 2);
 
-                return Math.Sqrt(diffAccumulator / (double)comparedLength);
+                double rawSpread = Math.Sqrt(diffAccumulator / (double)comparedLength);
+                double Spread = rawSpread;
+
+                if (average > 5) //это уже линеарная имитация...
+                    Spread *= 1.5;
+
+                return Spread;
             }
 
             public Dictionary<int, double> undesiredNotes()
@@ -391,7 +397,7 @@ namespace Compositor.Rules
 
             undesiredPitches = new Dictionary<int,double>();
 
-            if (Melody.Time.Position == 106)
+            if (Melody.Time.Position == 90)
                 tooLong = false;
 
             SequencePattern pattern;
@@ -405,7 +411,7 @@ namespace Compositor.Rules
                     else
                         foreach (KeyValuePair<int, double> kv in pattern.undesiredNotes())
                             if (undesiredPitches.ContainsKey(kv.Key))
-                                undesiredPitches[kv.Key] = Math.Max(undesiredPitches[kv.Key], kv.Value);
+                                undesiredPitches[kv.Key] = Math.Min(undesiredPitches[kv.Key], kv.Value);
                             else
                                 undesiredPitches[kv.Key] = kv.Value;
                     currGrabbedNotes++;
@@ -508,6 +514,61 @@ namespace Compositor.Rules
                 if (f.TimeStart.Beat == n.TimeStart.Beat)
                     freq *= 0.7;
                 if (f.Strength + lastStrength > minimumRequiredForApply + distance / 8)
+                    freq *= 0.2;
+            }
+            
+            return freq;
+        }
+    }
+
+    class TritoneRule : MelodyRule
+    {
+        const double minimumRequiredForApply = 1.1;
+
+        IEnumerable<Note> LastTritones;
+
+        public override bool _IsApplicable()
+        {
+            if (Notes.Count > 1)
+            {
+                LastTritones = findLastTritone();
+                return true;
+            }
+            return false;
+        }
+
+        private IEnumerable<Note> findLastTritone()
+        {
+            if (Notes.Count == 6)
+            {
+                double f = 1;
+            }
+
+            return Notes.Where(f => (
+                f.Pitch.isTritone &&
+                //(f.Pitch.isTritoneLow ^ n.Pitch.isTritoneLow) &&
+                ((LastNote.TimeEnd - f.TimeStart).Bar <= 3) &&
+                ((LastNote.TimeEnd - f.TimeStart).Position > 6)
+                // (f.Strength >= minimumRequiredForApply)
+              ));
+        }
+
+        public override double Apply(Note n)
+        {
+            if (!LastNote.Pitch.isTritone)
+                return 1;
+
+            double lastStrength = Melody.getStrengthIf(n);
+            if (lastStrength < minimumRequiredForApply)
+                return 1;
+
+            double freq = 1;
+            foreach (Note f in LastTritones)
+            {
+                int distance = (n.TimeStart - f.TimeStart).Position;
+                if (f.TimeStart.Beat == n.TimeStart.Beat)
+                    freq *= 0.7;
+                if (f.Strength + lastStrength > minimumRequiredForApply + distance / 16)
                     freq *= 0.2;
             }
             
