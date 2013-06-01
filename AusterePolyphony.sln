@@ -1,13 +1,22 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PitchBase", "PitchBase\PitchBase.csproj", "{C63080DF-94BA-46A1-90B7-A4CFF3E5BB7B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compositor", "Compositor\Compositor.csproj", "{18BEB320-8613-4D40-B0F3-AFFCFBA90C3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneratorGUI", "GeneratorGUI\GeneratorGUI.csproj", "{B9ACB908-43FF-434F-932A-105579E21D3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesUnitTest", "Tests\NotesUnitTest\NotesUnitTest.csproj", "{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RulesTest", "Tests\NoteRulesTest\RulesTest.csproj", "{1B6781BC-1229-4523-ADFB-A9916CF6A70D}"
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = AusterePolyphony.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -47,11 +56,32 @@ Global
 		{B9ACB908-43FF-434F-932A-105579E21D3F}.Release|Mixed Platforms.Build.0 = Release|x86
 		{B9ACB908-43FF-434F-932A-105579E21D3F}.Release|x86.ActiveCfg = Release|x86
 		{B9ACB908-43FF-434F-932A-105579E21D3F}.Release|x86.Build.0 = Release|x86
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D}.Release|x86.ActiveCfg = Release|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = AusterePolyphony.vsmdi
+	GlobalSection(NestedProjects) = preSolution
+		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D} = {C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}
+		{1B6781BC-1229-4523-ADFB-A9916CF6A70D} = {C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}
 	EndGlobalSection
 EndGlobal

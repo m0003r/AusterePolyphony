@@ -1,0 +1,641 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Melody.Fakes</name>
+    </assembly>
+    <members>
+        <member name="T:Compositor.Fakes.ShimMelodyGenerator">
+            <summary>Shim type of Compositor.MelodyGenerator</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimMelodyGenerator.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimMelodyGenerator.#ctor(Compositor.MelodyGenerator)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimMelodyGenerator.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimMelodyGenerator.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.ConstructorClefModusTimeInt32IChooseNextStrategy">
+            <summary>Sets the shim of MelodyGenerator.MelodyGenerator(Clef Clef, Modus Modus, Time Time, Int32 seed, IChooseNextStrategy Strategy)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.GenerateUInt32">
+            <summary>Sets the shim of MelodyGenerator.Generate(UInt32 Length)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.MelodyGet">
+            <summary>Sets the shim of MelodyGenerator.get_Melody()</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.MelodySetMelody">
+            <summary>Sets the shim of MelodyGenerator.set_Melody(Melody value)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.SeedGet">
+            <summary>Sets the shim of MelodyGenerator.get_Seed()</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.SeedSetInt32">
+            <summary>Sets the shim of MelodyGenerator.set_Seed(Int32 value)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.SetSeedInt32">
+            <summary>Sets the shim of MelodyGenerator.SetSeed(Int32 givenSeed)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.Step">
+            <summary>Sets the shim of MelodyGenerator.Step()</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator._Stepb__0KeyValuePairOfNoteDouble">
+            <summary>Sets the shim of MelodyGenerator.&lt;Step&gt;b__0(KeyValuePair`2&lt;Note,Double&gt; kv)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator._chooseNextNoteb__2KeyValuePairOfNoteDouble">
+            <summary>Sets the shim of MelodyGenerator.&lt;chooseNextNote&gt;b__2(KeyValuePair`2&lt;Note,Double&gt; kv)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.chooseNextNote">
+            <summary>Sets the shim of MelodyGenerator.chooseNextNote()</summary>
+        </member>
+        <member name="T:Compositor.Fakes.ShimMelodyGenerator.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.GenerateUInt32">
+            <summary>Sets the shim of MelodyGenerator.Generate(UInt32 Length)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.MelodyGet">
+            <summary>Sets the shim of MelodyGenerator.get_Melody()</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.MelodySetMelody">
+            <summary>Sets the shim of MelodyGenerator.set_Melody(Melody value)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.SeedGet">
+            <summary>Sets the shim of MelodyGenerator.get_Seed()</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.SeedSetInt32">
+            <summary>Sets the shim of MelodyGenerator.set_Seed(Int32 value)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.SetSeedInt32">
+            <summary>Sets the shim of MelodyGenerator.SetSeed(Int32 givenSeed)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.Step">
+            <summary>Sets the shim of MelodyGenerator.Step()</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimMelodyGenerator.AllInstances.chooseNextNote">
+            <summary>Sets the shim of MelodyGenerator.chooseNextNote()</summary>
+        </member>
+        <member name="T:Compositor.Fakes.ShimQuadraticNextStrategy">
+            <summary>Shim type of Compositor.QuadraticNextStrategy</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimQuadraticNextStrategy.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimQuadraticNextStrategy.#ctor(Compositor.QuadraticNextStrategy)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimQuadraticNextStrategy.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimQuadraticNextStrategy.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimQuadraticNextStrategy.Bind(Compositor.IChooseNextStrategy)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimQuadraticNextStrategy.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimQuadraticNextStrategy.ChooseNextIEnumerableOfKeyValuePairOfNoteDouble">
+            <summary>Sets the shim of QuadraticNextStrategy.ChooseNext(IEnumerable`1&lt;KeyValuePair`2&lt;Note,Double&gt;&gt; allowed)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimQuadraticNextStrategy.ConstructorInt32">
+            <summary>Sets the shim of QuadraticNextStrategy.QuadraticNextStrategy(Int32 seed)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimQuadraticNextStrategy._ChooseNextb__0KeyValuePairOfNoteDouble">
+            <summary>Sets the shim of QuadraticNextStrategy.&lt;ChooseNext&gt;b__0(KeyValuePair`2&lt;Note,Double&gt; kv)</summary>
+        </member>
+        <member name="T:Compositor.Fakes.ShimQuadraticNextStrategy.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimQuadraticNextStrategy.AllInstances.ChooseNextIEnumerableOfKeyValuePairOfNoteDouble">
+            <summary>Sets the shim of QuadraticNextStrategy.ChooseNext(IEnumerable`1&lt;KeyValuePair`2&lt;Note,Double&gt;&gt; allowed)</summary>
+        </member>
+        <member name="T:Compositor.Fakes.ShimTimer">
+            <summary>Shim type of Compositor.Timer</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimTimer.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimTimer.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Fakes.ShimTimer.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimTimer.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimTimer.ContainsString">
+            <summary>Sets the shim of Timer.Contains(String Name)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimTimer.FlushString">
+            <summary>Sets the shim of Timer.Flush(String Name)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimTimer.StartString">
+            <summary>Sets the shim of Timer.Start(String Name)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimTimer.StaticConstructor">
+            <summary>Sets the shim of Timer.Timer()</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimTimer.StopString">
+            <summary>Sets the shim of Timer.Stop(String Name)</summary>
+        </member>
+        <member name="P:Compositor.Fakes.ShimTimer.TotalString">
+            <summary>Sets the shim of Timer.Total(String Name)</summary>
+        </member>
+        <member name="T:Compositor.Fakes.StubIChooseNextStrategy">
+            <summary>Stub type of Compositor.IChooseNextStrategy</summary>
+        </member>
+        <member name="M:Compositor.Fakes.StubIChooseNextStrategy.#ctor">
+            <summary>Initializes a new instance of type StubIChooseNextStrategy</summary>
+        </member>
+        <member name="F:Compositor.Fakes.StubIChooseNextStrategy.ChooseNextIEnumerableOfKeyValuePairOfNoteDouble">
+            <summary>Sets the stub of IChooseNextStrategy.ChooseNext(IEnumerable`1&lt;KeyValuePair`2&lt;Note,Double&gt;&gt; Freqs)</summary>
+        </member>
+        <member name="M:Compositor.Fakes.StubIChooseNextStrategy.m::Compositor#IChooseNextStrategy#ChooseNext(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{Compositor.Levels.Note,System.Double}})">
+            <summary>Sets the stub of IChooseNextStrategy.ChooseNext(IEnumerable`1&lt;KeyValuePair`2&lt;Note,Double&gt;&gt; Freqs)</summary>
+        </member>
+        <member name="T:Compositor.Fakes.StubMelodyGenerator">
+            <summary>Stub type of Compositor.MelodyGenerator</summary>
+        </member>
+        <member name="M:Compositor.Fakes.StubMelodyGenerator.#ctor(PitchBase.Clef,PitchBase.Modus,Compositor.Time,System.Int32,Compositor.IChooseNextStrategy)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:Compositor.Fakes.StubMelodyGenerator.InitializeStub">
+            <summary>Initializes a new instance of type StubMelodyGenerator</summary>
+        </member>
+        <member name="P:Compositor.Fakes.StubMelodyGenerator.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:Compositor.Fakes.StubMelodyGenerator.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:Compositor.Fakes.StubMelodyGenerator.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:Compositor.Fakes.StubQuadraticNextStrategy">
+            <summary>Stub type of Compositor.QuadraticNextStrategy</summary>
+        </member>
+        <member name="M:Compositor.Fakes.StubQuadraticNextStrategy.#ctor(System.Int32)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:Compositor.Fakes.StubQuadraticNextStrategy.InitializeStub">
+            <summary>Initializes a new instance of type StubQuadraticNextStrategy</summary>
+        </member>
+        <member name="P:Compositor.Fakes.StubQuadraticNextStrategy.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:Compositor.Fakes.StubQuadraticNextStrategy.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:Compositor.Fakes.StubQuadraticNextStrategy.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.ShimLeapsData">
+            <summary>Shim type of Compositor.Levels.LeapsData</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimLeapsData.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimLeapsData.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimLeapsData.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimLeapsData.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimLeapsData.StaticConstructor">
+            <summary>Sets the shim of LeapsData.LeapsData()</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.ShimMelody">
+            <summary>Shim type of Compositor.Levels.Melody</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimMelody.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimMelody.#ctor(Compositor.Levels.Melody)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimMelody.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimMelody.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimMelody.Bind(System.Collections.IEnumerable)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimMelody.Bind(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.Int32,PitchBase.Pitch}})">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimMelody.Bind(System.Collections.Generic.IEnumerable{Compositor.Levels.Note})">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AddNoteNote">
+            <summary>Sets the shim of Melody.AddNote(Note n)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AddVariants">
+            <summary>Sets the shim of Melody.AddVariants()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.ClefGet">
+            <summary>Sets the shim of Melody.get_Clef()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.ClefSetClef">
+            <summary>Sets the shim of Melody.set_Clef(Clef value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.ConstructorClefModusTime">
+            <summary>Sets the shim of Melody.Melody(Clef Clef, Modus Modus, Time Time)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.DiapasonGet">
+            <summary>Sets the shim of Melody.get_Diapason()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.DiapasonSetListOfPitch">
+            <summary>Sets the shim of Melody.set_Diapason(List`1&lt;Pitch&gt; value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.FirstNote">
+            <summary>Sets the shim of Melody.FirstNote()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.GetEnumerator">
+            <summary>Sets the shim of Melody.GetEnumerator()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.GetLastInt32">
+            <summary>Sets the shim of Melody.GetLast(Int32 count)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.InitFirstNote">
+            <summary>Sets the shim of Melody.InitFirstNote()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.ItemGetInt32">
+            <summary>Sets the shim of Melody.get_Item(Int32 i)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.ModusGet">
+            <summary>Sets the shim of Melody.get_Modus()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.ModusSetModus">
+            <summary>Sets the shim of Melody.set_Modus(Modus value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.NoteCountGet">
+            <summary>Sets the shim of Melody.get_NoteCount()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.NotesGet">
+            <summary>Sets the shim of Melody.get_Notes()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.RemoveLastBoolean">
+            <summary>Sets the shim of Melody.RemoveLast(Boolean ban)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.SetupDiapasonClefModus">
+            <summary>Sets the shim of Melody.SetupDiapason(Clef Clef, Modus Modus)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.SystemCollectionsGenericIEnumerableCompositorLevelsNoteGetEnumerator">
+            <summary>Sets the shim of Melody.System.Collections.Generic.IEnumerable&lt;Compositor.Levels.Note&gt;.GetEnumerator()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.SystemCollectionsGenericIEnumerableSystemCollectionsGenericKeyValuePairSystemInt32PitchBasePitchGetEnumerator">
+            <summary>Sets the shim of Melody.System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.Int32,PitchBase.Pitch&gt;&gt;.GetEnumerator()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.TimeGet">
+            <summary>Sets the shim of Melody.get_Time()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.TimeSetTime">
+            <summary>Sets the shim of Melody.set_Time(Time value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody._InitFirstNoteb__aPitch">
+            <summary>Sets the shim of Melody.&lt;InitFirstNote&gt;b__a(Pitch p)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.adjustStrengthDoubleDouble">
+            <summary>Sets the shim of Melody.adjustStrength(Double strength, Double adjust)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.banNoteNote">
+            <summary>Sets the shim of Melody.banNote(Note n)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.calculateStrengthNoteNoteNote">
+            <summary>Sets the shim of Melody.calculateStrength(Note prev, Note curr, Note next)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.getStrengthIfNote">
+            <summary>Sets the shim of Melody.getStrengthIf(Note next)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.updateFreqs">
+            <summary>Sets the shim of Melody.updateFreqs()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.updateStrenghts">
+            <summary>Sets the shim of Melody.updateStrenghts()</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.ShimMelody.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.AddNoteNote">
+            <summary>Sets the shim of Melody.AddNote(Note n)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.AddVariants">
+            <summary>Sets the shim of Melody.AddVariants()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.ClefGet">
+            <summary>Sets the shim of Melody.get_Clef()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.ClefSetClef">
+            <summary>Sets the shim of Melody.set_Clef(Clef value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.DiapasonGet">
+            <summary>Sets the shim of Melody.get_Diapason()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.DiapasonSetListOfPitch">
+            <summary>Sets the shim of Melody.set_Diapason(List`1&lt;Pitch&gt; value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.FirstNote">
+            <summary>Sets the shim of Melody.FirstNote()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.GetEnumerator">
+            <summary>Sets the shim of Melody.GetEnumerator()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.GetLastInt32">
+            <summary>Sets the shim of Melody.GetLast(Int32 count)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.InitFirstNote">
+            <summary>Sets the shim of Melody.InitFirstNote()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.ItemGetInt32">
+            <summary>Sets the shim of Melody.get_Item(Int32 i)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.ModusGet">
+            <summary>Sets the shim of Melody.get_Modus()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.ModusSetModus">
+            <summary>Sets the shim of Melody.set_Modus(Modus value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.NoteCountGet">
+            <summary>Sets the shim of Melody.get_NoteCount()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.NotesGet">
+            <summary>Sets the shim of Melody.get_Notes()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.RemoveLastBoolean">
+            <summary>Sets the shim of Melody.RemoveLast(Boolean ban)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.SetupDiapasonClefModus">
+            <summary>Sets the shim of Melody.SetupDiapason(Clef Clef, Modus Modus)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.SystemCollectionsGenericIEnumerableCompositorLevelsNoteGetEnumerator">
+            <summary>Sets the shim of Melody.System.Collections.Generic.IEnumerable&lt;Compositor.Levels.Note&gt;.GetEnumerator()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.SystemCollectionsGenericIEnumerableSystemCollectionsGenericKeyValuePairSystemInt32PitchBasePitchGetEnumerator">
+            <summary>Sets the shim of Melody.System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.Int32,PitchBase.Pitch&gt;&gt;.GetEnumerator()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.TimeGet">
+            <summary>Sets the shim of Melody.get_Time()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.TimeSetTime">
+            <summary>Sets the shim of Melody.set_Time(Time value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.adjustStrengthDoubleDouble">
+            <summary>Sets the shim of Melody.adjustStrength(Double strength, Double adjust)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.banNoteNote">
+            <summary>Sets the shim of Melody.banNote(Note n)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.calculateStrengthNoteNoteNote">
+            <summary>Sets the shim of Melody.calculateStrength(Note prev, Note curr, Note next)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.getStrengthIfNote">
+            <summary>Sets the shim of Melody.getStrengthIf(Note next)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.updateFreqs">
+            <summary>Sets the shim of Melody.updateFreqs()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimMelody.AllInstances.updateStrenghts">
+            <summary>Sets the shim of Melody.updateStrenghts()</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.ShimNote">
+            <summary>Shim type of Compositor.Levels.Note</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimNote.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimNote.#ctor(Compositor.Levels.Note)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimNote.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimNote.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AddVariants">
+            <summary>Sets the shim of Note.AddVariants()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.CalcStatePitchPitch">
+            <summary>Sets the shim of Note.CalcState(Pitch me, Pitch previous)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.ConstructorPitchTimeInt32Note">
+            <summary>Sets the shim of Note.Note(Pitch Pitch, Time TimeStart, Int32 Duration, Note Previous)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.DurationGet">
+            <summary>Sets the shim of Note.get_Duration()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.DurationSetInt32">
+            <summary>Sets the shim of Note.set_Duration(Int32 value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.LeapGet">
+            <summary>Sets the shim of Note.get_Leap()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.LeapSetInterval">
+            <summary>Sets the shim of Note.set_Leap(Interval value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.TimeEndGet">
+            <summary>Sets the shim of Note.get_TimeEnd()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.TimeStartGet">
+            <summary>Sets the shim of Note.get_TimeStart()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.TimeStartSetTime">
+            <summary>Sets the shim of Note.set_TimeStart(Time value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.ToString">
+            <summary>Sets the shim of Note.ToString()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.UpdateFreqsDictionaryOfNoteDouble">
+            <summary>Sets the shim of Note.UpdateFreqs(Dictionary`2&lt;Note,Double&gt; Freqs)</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.ShimNote.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.AddVariants">
+            <summary>Sets the shim of Note.AddVariants()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.DurationGet">
+            <summary>Sets the shim of Note.get_Duration()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.DurationSetInt32">
+            <summary>Sets the shim of Note.set_Duration(Int32 value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.LeapGet">
+            <summary>Sets the shim of Note.get_Leap()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.LeapSetInterval">
+            <summary>Sets the shim of Note.set_Leap(Interval value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.TimeEndGet">
+            <summary>Sets the shim of Note.get_TimeEnd()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.TimeStartGet">
+            <summary>Sets the shim of Note.get_TimeStart()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.TimeStartSetTime">
+            <summary>Sets the shim of Note.set_TimeStart(Time value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.ToString01">
+            <summary>Sets the shim of Note.ToString()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimNote.AllInstances.UpdateFreqsDictionaryOfNoteDouble">
+            <summary>Sets the shim of Note.UpdateFreqs(Dictionary`2&lt;Note,Double&gt; Freqs)</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.ShimRuledLevel`1">
+            <summary>Shim type of Compositor.Levels.RuledLevel`1</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimRuledLevel`1.#ctor(Compositor.Levels.RuledLevel{`0})">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimRuledLevel`1.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.ShimRuledLevel`1.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.AddRules">
+            <summary>Sets the shim of RuledLevel`1.AddRules()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.Constructor">
+            <summary>Sets the shim of RuledLevel`1.RuledLevel`1()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.Filter">
+            <summary>Sets the shim of RuledLevel`1.Filter()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.FreqsGet">
+            <summary>Sets the shim of RuledLevel`1.get_Freqs()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.FreqsSetDictionaryOfNoteDouble">
+            <summary>Sets the shim of RuledLevel`1.set_Freqs(Dictionary`2&lt;Note,Double&gt; value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1._Filterb__0KeyValuePairOfNoteDouble">
+            <summary>Sets the shim of RuledLevel`1.&lt;Filter&gt;b__0(KeyValuePair`2&lt;Note,Double&gt; kv)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1._Filterb__1KeyValuePairOfNoteDouble">
+            <summary>Sets the shim of RuledLevel`1.&lt;Filter&gt;b__1(KeyValuePair`2&lt;Note,Double&gt; kv)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.banNote">
+            <summary>Sets the shim of RuledLevel`1.ban(Note what)</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.ShimRuledLevel`1.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.AllInstances.AddRules">
+            <summary>Sets the shim of RuledLevel`1.AddRules()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.AllInstances.Filter">
+            <summary>Sets the shim of RuledLevel`1.Filter()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.AllInstances.FreqsGet">
+            <summary>Sets the shim of RuledLevel`1.get_Freqs()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.AllInstances.FreqsSetDictionaryOfNoteDouble">
+            <summary>Sets the shim of RuledLevel`1.set_Freqs(Dictionary`2&lt;Note,Double&gt; value)</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.ShimRuledLevel`1.AllInstances.banNote">
+            <summary>Sets the shim of RuledLevel`1.ban(Note what)</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.StubMelody">
+            <summary>Stub type of Compositor.Levels.Melody</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubMelody.#ctor(PitchBase.Clef,PitchBase.Modus,Compositor.Time)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubMelody.AddVariants">
+            <summary>Sets the stub of Melody.AddVariants()</summary>
+        </member>
+        <member name="F:Compositor.Levels.Fakes.StubMelody.AddVariants01">
+            <summary>Sets the stub of Melody.AddVariants()</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubMelody.InitializeStub">
+            <summary>Initializes a new instance of type StubMelody</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubMelody.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubMelody.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubMelody.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.StubNote">
+            <summary>Stub type of Compositor.Levels.Note</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubNote.#ctor(PitchBase.Pitch,Compositor.Time,System.Int32,Compositor.Levels.Note)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubNote.AddVariants">
+            <summary>Sets the stub of Note.AddVariants()</summary>
+        </member>
+        <member name="F:Compositor.Levels.Fakes.StubNote.AddVariants01">
+            <summary>Sets the stub of Note.AddVariants()</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubNote.InitializeStub">
+            <summary>Initializes a new instance of type StubNote</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubNote.ToString">
+            <summary>Sets the stub of Note.ToString()</summary>
+        </member>
+        <member name="F:Compositor.Levels.Fakes.StubNote.ToString01">
+            <summary>Sets the stub of Note.ToString()</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubNote.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubNote.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubNote.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:Compositor.Levels.Fakes.StubRuledLevel`1">
+            <summary>Stub type of Compositor.Levels.RuledLevel`1</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubRuledLevel`1.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubRuledLevel`1.AddVariants">
+            <summary>Sets the stub of RuledLevel`1.AddVariants()</summary>
+        </member>
+        <member name="F:Compositor.Levels.Fakes.StubRuledLevel`1.AddVariants01">
+            <summary>Sets the stub of RuledLevel`1.AddVariants()</summary>
+        </member>
+        <member name="M:Compositor.Levels.Fakes.StubRuledLevel`1.InitializeStub">
+            <summary>Initializes a new instance of type StubRuledLevel</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubRuledLevel`1.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubRuledLevel`1.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:Compositor.Levels.Fakes.StubRuledLevel`1.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+    </members>
+</doc>
