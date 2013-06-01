@@ -10,6 +10,74 @@ namespace Compositor.Rules
 {
     using NotesList = List<Note>;
 
+
+/***
+ * Улучшенные правила скачка:
+ * 
+ * Сумма заполнений должна быть >= 2/3 величины скачка
+ * С каждой стороны должно быть минимум 1/4 величины скачка (для скачков больше квинты)
+ */
+
+    class GravityRule : MelodyRule
+    {
+        //double desiredCenter;
+        double gravityPoint;
+        double gravityForce;
+
+        public override void Init(Melody parent)
+        {
+            base.Init(parent);
+            //desiredCenter = Melody.Diapason.Average(p => p.Value);
+        }
+
+        public override bool _IsApplicable()
+        {
+            //double actualCenter = Melody.notes.Sum(n => n.Pitch.Value * n.Duration) / (double)Melody.Time.Position;
+            //double diff = desiredCenter - actualCenter;
+            gravityPoint = LastNote.Pitch.Value + LastNote.Uncomp;
+            gravityForce = LastNote.Uncomp;
+
+            return Math.Abs(gravityForce) > 2;
+        }
+
+        public override double Apply(Note n)
+        {
+            double distance = n.Pitch.Value - gravityPoint;
+            double force = distance * gravityForce;
+            // Console.WriteLine(" >>>>> Gravity to {0}: {1}", n.Pitch.Value, force);
+            if (force < 0)
+                return 1;
+            if (force > 40)
+                return 0.1;
+            return 1 - force / 45.0;
+        }
+    }
+
+    class LeapCompensation : MelodyRule
+    {
+
+        public override bool _IsApplicable()
+        {
+            return (LeapSmooth.Count > 0);
+        }
+
+        const int UncompDenySmooth = 6;
+        const int UncompDenyLeap = 4;
+
+        public override double Apply(Note n)
+        {
+            if (Math.Sign(n.Leap.Degrees) == Math.Sign(LastNote.Uncomp))
+            {
+                if (Math.Abs(LastNote.Uncomp) >= UncompDenyLeap)
+                    return n.Leap.isLeap ? 0 : 1;
+                if (Math.Abs(LastNote.Uncomp) >= UncompDenySmooth)
+                    return 0;
+            }
+
+            return 1;                
+        }
+    }
+
     class AfterLeapRules : MelodyRule
     {
         private LeapAfterCoSmooth CoSmooth;

@@ -66,8 +66,8 @@ namespace Compositor.Rules
 
         private double OppDirRule(Note NextNote)
         {
-            int prevLeap = Math.Abs(Leap.Degrees);
-            int nextLeap = Math.Abs(NextNote.Leap.Degrees);
+            int prevLeap = Leap.AbsDeg;
+            int nextLeap = NextNote.Leap.AbsDeg;
 
             //в другую сторону можно сразу же скакать, если на меньшее расстояние
             return (prevLeap > nextLeap) ? 0.6 : 0; 

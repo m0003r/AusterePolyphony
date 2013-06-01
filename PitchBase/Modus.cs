@@ -11,6 +11,7 @@ namespace PitchBase
         private IntervalAlt[] alt;
         public int NoteStart { get; private set; }
         private int KeysDelta;
+        public string Name { get; private set; }
 
         //Количество знаков в ладу
         public int Keys
@@ -57,7 +58,7 @@ namespace PitchBase
         private static int[] mixolydian = { 0, 1, 1, 0, 0, 1, -1 };
         private static int[] aeolian = { 0, 1, -1, 0, 0, -1, -1 };
 
-        private Modus(int[] alt, int n, int keysDelta)
+        private Modus(int[] alt, int n, int keysDelta, string name)
         {
             if (alt.Length != 7)
                 throw new ArgumentException();
@@ -65,36 +66,37 @@ namespace PitchBase
             this.alt = alt.Select<int, IntervalAlt>(x => (IntervalAlt)(x)).ToArray<IntervalAlt>();
             NoteStart = n;
             this.KeysDelta = keysDelta;
+            this.Name = name;
         }
 
         public static Modus Ionian(int start = 0)
         {
-            return new Modus(ionian, start, 0);
+            return new Modus(ionian, start, 0, "ionian");
         }
 
         public static Modus Dorian(int start = 0) // -> -2
         {
-            return new Modus(dorian, start, -2);
+            return new Modus(dorian, start, -2, "dorian");
         }
 
         public static Modus Phrygian(int start = 0) // -> -4
         {
-            return new Modus(phrygian, start, -4);
+            return new Modus(phrygian, start, -4, "phrygian");
         }
 
         public static Modus Lydian(int start = 0) // -> +1
         {
-            return new Modus(lydian, start, 1);
+            return new Modus(lydian, start, 1, "lydian");
         }
 
         public static Modus Mixolydian(int start = 0) // -> -1
         {
-            return new Modus(mixolydian, start, -1);
+            return new Modus(mixolydian, start, -1, "mixolydian");
         }
 
         public static Modus Aeolian(int start = 0) // -> -3
         {
-            return new Modus(aeolian, start, -3);
+            return new Modus(aeolian, start, -3, "aeolian");
         }
 
         internal Interval baseToDegree(uint degree)

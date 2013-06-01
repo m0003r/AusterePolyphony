@@ -4,42 +4,120 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Compositor.Helpers;
 using Compositor.Rules;
 using PitchBase;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("RulesTest")]
 namespace Compositor.Levels
 {
     using NotesList = List<Note>;
+    using LSList = List<LeapOrSmooth>;
+
+    public class LeapOrSmooth
+    {
+        public bool isLeap;
+        public bool isSmooth { get { return !isLeap; } }
+        public Time TimeStart;
+        public int Duration;
+        public Time TimeEnd { get { return TimeStart + Duration; } }
+        public int NotesCount { get { return notes.Count; } }
+        public Interval Interval;
+
+        public bool Upwards { get { return Interval.Upwards; } }
+
+        private NotesList notes;
+
+        public LeapOrSmooth(Note a, Note b)
+        {
+            TimeStart = a.TimeStart;
+            Duration = (b.TimeEnd - TimeStart).Beats;
+            isLeap = b.Leap.isLeap;
+            Interval = b.Pitch - a.Pitch;
+
+            notes = new NotesList();
+            notes.Add(a);
+            notes.Add(b);
+        }
+
+        public bool CanAdd(Note n)
+        {
+            return ((n.Leap.isLeap == isLeap) && (n.Leap.Upwards == Upwards));
+        }
+
+        public void Add(Note n)
+        {
+            if (!CanAdd(n))
+                throw new Exception("Invalid adding to LeapOrSmooth");
+
+            Interval = Interval + n.Leap;
+            Duration += n.Duration;
+            notes.Add(n);
+        }
+
+        public void Delete()
+        {
+            if (NotesCount <= 2)
+                throw new Exception("Cannot delete from two-note LeapOrSmooth");
+
+            Note n = notes.Last();
+            Interval = Interval - n.Leap;
+            Duration -= n.Duration;
+
+            notes.RemoveAt(NotesCount - 1);
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(isLeap ? "Leap(" : "Smooth(");
+            sb.Append(NotesCount);
+            sb.Append("/");
+            sb.Append(Duration);
+            sb.Append(") ");
+            sb.Append(Interval.ToString());
+
+            return sb.ToString();
+        }
+    }
 
     [Rule(typeof(CadenzaRule))]
     [Rule(typeof(TrillRule))]
     [Rule(typeof(SyncopaRule))]
+    [Rule(typeof(BreveRule))]
     [Rule(typeof(TritoneRule))]
     [Rule(typeof(PeakRule))]
+    [Rule(typeof(PeakRule2))]
     [Rule(typeof(ManyQuartersRule))]
     [Rule(typeof(DottedHalveRestrictionRule))]
     [Rule(typeof(AfterLeapRules))]
     [Rule(typeof(DenyTwoNoteSequence))]
     [Rule(typeof(DenyTwoNoteRhytmicSequence))]
     [Rule(typeof(DenySequence))]
-    [Rule(typeof(AverageHeight))]
+    [Rule(typeof(GravityRule))]
+    [Rule(typeof(LeapCompensation))]
     [Rule(typeof(DenyStrongNotesRepeat))]
 
-    public class Melody : RuledLevel<Melody>, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>>, IEnumerable
+    public class Melody : RuledLevel<Melody>, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>> , IEnumerable
     {
         public Clef Clef { get; private set; }
         public Modus Modus { get; private set; }
         public Time Time { get; private set; }
 
+        public int Reserve { get; private set; }
+        public int Uncomp { get; private set; }
+
         internal NotesList notes;
+        internal LSList leapsmooth;
         internal List<Pitch> Diapason { get; private set; }
 
-        Dictionary<Note, double> protoFreqs;
+        Dictionary<Note, double> firstNoteFreqs;
 
         internal uint DesiredLength;
 
         public NotesList Notes { get { return new NotesList(notes); } }
+        public LSList LeapSmooth { get { return new LSList(leapsmooth); } }
 
         internal Pitch Higher;
         internal Pitch Lower;
@@ -51,6 +129,8 @@ namespace Compositor.Levels
             this.Time = Time;
 
             notes = new NotesList();
+            leapsmooth = new LSList();
+            Reserve = Uncomp = 0;
 
             Time.Position = 0;
             SetupDiapason(Clef, Modus);
@@ -68,27 +148,22 @@ namespace Compositor.Levels
 
         private void InitFirstNote()
         {
-            protoFreqs = new Dictionary<Note, double>();
+            firstNoteFreqs = new Dictionary<Note, double>();
 
-            List<Pitch> pi = Diapason.FindAll(
-                delegate(Pitch p)
-                {
-                    return ((p.Degree % 7 == 4) || (p.Degree % 7 == 0));
-                }
-            );
+            List<Pitch> pi = Diapason.FindAll(p => ((p.Degree % 7 == 4) || (p.Degree % 7 == 0)));
 
             foreach (Pitch p in pi)
             {
-                protoFreqs[new Note(p, Time, 4)] = 0.5;
-                protoFreqs[new Note(p, Time, 6)] = 0.7;
-                protoFreqs[new Note(p, Time, 8)] = 1;
-                protoFreqs[new Note(p, Time, 12)] = 1;
+                firstNoteFreqs[new Note(p, Time, 4)] = 0.5;
+                firstNoteFreqs[new Note(p, Time, 6)] = 0.7;
+                firstNoteFreqs[new Note(p, Time, 8)] = 1;
+                firstNoteFreqs[new Note(p, Time, 12)] = 1;
             }
         }
 
         private void FirstNote()
         {
-            Freqs = new Dictionary<Note, double>(protoFreqs);
+            Freqs = new Dictionary<Note, double>(firstNoteFreqs);
         }
 
         internal void RemoveLast(bool ban = true)
@@ -99,16 +174,24 @@ namespace Compositor.Levels
             
             if (ban)
             {
-                if (notes.Count > 0)
-                {
-                    notes.Last().ban(n);
-                    Freqs = notes.Last().Freqs;
-                }
-                else
-                {
-                    protoFreqs[n] = 0;
-                    FirstNote();
-                }
+                banNote(n);
+            }
+
+            updateLeapsSmooth(true);
+            updateUncomp();
+        }
+
+        private void banNote(Note n)
+        {
+            if (notes.Count > 0)
+            {
+                notes.Last().ban(n);
+                Freqs = notes.Last().Freqs;
+            }
+            else
+            {
+                firstNoteFreqs[n] = 0;
+                FirstNote();
             }
         }
 
@@ -126,12 +209,12 @@ namespace Compositor.Levels
             }
         }
 
-        private void AdjustFreqs()
+        private void updateFreqs()
         {
             if (notes.Count > 0)
-                notes.Last().AdjustFreqs(Freqs);
+                notes.Last().UpdateFreqs(Freqs);
             else
-                protoFreqs = Freqs;
+                firstNoteFreqs = Freqs;
         }
 
         private void updateStrenghts()
@@ -163,11 +246,11 @@ namespace Compositor.Levels
         {
             return strength * adjust;
 
-            if (adjust > strength)
+            /*if (adjust > strength)
                 return adjust;
 
             else
-                return strength + (strength - adjust) / 8;
+                return strength + (strength - adjust) / 8;*/
         }
 
         internal double getStrengthIf(Note next)
@@ -175,17 +258,29 @@ namespace Compositor.Levels
             return calculateStrength(notes[notes.Count - 2], notes[notes.Count - 1], next);
         }
 
+        private double rhytmicStopStrength(int prevDur, int currDur)
+        {
+            double k = (currDur - prevDur) / prevDur;
+            return (k > 1.5) ? k * 0.8 : 1;
+
+        }
+
         private double calculateStrength(Note prev, Note curr, Note next)
         {
-            double Strength = 1;// (curr.Duration >= 8) ? 1 : 0.5;
+            const double basicStrength = 1;
+            const double changeDirectionAdjust = 1.5;
+            const double leapAdjustCoefficent = 0.02;
+            const double offBeatAdjust = 0.7;
+
+            double Strength = basicStrength;// (curr.Duration >= 8) ? 1 : 0.5;
 
             if (next != null)
             {
                 if (curr.Leap.Upwards ^ next.Leap.Upwards)
-                    Strength = adjustStrength(Strength, 1.5);
+                    Strength = adjustStrength(Strength, changeDirectionAdjust);
 
                 if (next.Leap.AbsDeg > 1)
-                    Strength = adjustStrength(Strength, 1.5 + 0.02 * next.Leap.AbsDeg);
+                    Strength = adjustStrength(Strength, changeDirectionAdjust + leapAdjustCoefficent * next.Leap.AbsDeg);
             }
 
             /* if (curr.Duration == prev.Duration)
@@ -197,10 +292,13 @@ namespace Compositor.Levels
 
             */
             if (curr.Leap.AbsDeg > 1)
-                Strength = adjustStrength(Strength, 1.5 + 0.02 * curr.Leap.AbsDeg);
+                Strength = adjustStrength(Strength, changeDirectionAdjust + leapAdjustCoefficent * curr.Leap.AbsDeg);
 
             if ((curr.TimeStart.Beats % 4) != 0)
-                Strength *= 0.7;
+                Strength *= offBeatAdjust;
+
+            if (prev.Duration < curr.Duration)
+                Strength *= rhytmicStopStrength(prev.Duration, curr.Duration);
 
             /*double durCoeff = (double)curr.Duration / (double)prev.Duration;
             if (durCoeff < 1)
@@ -212,14 +310,123 @@ namespace Compositor.Levels
             return Strength;
         }
 
-        internal void AddNote(Note n)
+        public void AddNote(Note n)
         {
-            AdjustFreqs();
+            updateFreqs();
             notes.Add(n);            
             filtered = false;
             Time += n.Duration;
 
             updateStrenghts();
+            updateLeapsSmooth();
+            updateUncomp();
+        }
+
+        private bool CoSign(int a, int b)
+        {
+            return (Math.Sign(a) == Math.Sign(b));
+        }
+
+
+        private void updateUncomp()
+        {
+            Reserve = Uncomp = 0;
+
+            foreach (var ls in LeapSmooth)
+            {
+                int deg = ls.Interval.Degrees;
+
+                if (ls.isSmooth)
+                    updateUncompIfSmooth(deg);
+                else
+                    updateUncompIfLeap(deg);
+
+            }
+            Notes.Last().Uncomp = Uncomp;
+            Notes.Last().Reserve = Reserve;
+
+        }
+
+        private void updateUncompIfLeap(int deg)
+        {
+            if (Reserve != 0)
+                if (CoSign(Reserve, deg))
+                    Uncomp += Reserve;
+                else
+                {
+                    if (Math.Abs(Reserve) >= Math.Abs(deg * 2))
+                        Reserve += deg * 2;
+                    else
+                        Reserve = 0;
+                }
+
+            Uncomp += deg;
+        }
+
+        private void updateUncompIfSmooth(int deg)
+        {
+            if ((Reserve == 0) || (CoSign(Reserve, deg)))
+                Reserve += deg;
+            else
+                if (Math.Abs(Reserve) >= Math.Abs(deg * 2))
+                    Reserve += deg * 2;
+                else
+                    Reserve = deg + Reserve / 2;
+
+            if (Uncomp != 0)
+            {
+                if (CoSign(Uncomp, deg))
+                    Uncomp += deg / 2;
+                else
+                    if (Math.Abs(Uncomp) <= Math.Abs(deg * 2))
+                        Uncomp = 0;
+                    else
+                        Uncomp += deg * 2;
+
+            }
+        }
+
+        private void updateLeapsSmooth(bool delete = false)
+        {
+            if (notes.Count < 2)
+                return;
+
+            LeapOrSmooth ls;
+
+
+            if (delete)
+            {
+                if (leapsmooth.Count == 0)
+                    return;
+
+                if (leapsmooth.Last().NotesCount == 2)
+                {
+                    leapsmooth.RemoveAt(leapsmooth.Count - 1);
+                    return;
+                }
+
+                leapsmooth.Last().Delete();
+
+                return;
+            }
+
+            if (notes.Count == 2)
+            {
+                ls = new LeapOrSmooth(notes[0], notes[1]);
+                leapsmooth.Add(ls);
+                return;
+            }
+
+            ls = leapsmooth.Last();
+            var lastNote = notes.Last();
+
+            if (ls.CanAdd(lastNote))
+                ls.Add(lastNote);
+            else
+            {
+                ls = new LeapOrSmooth(notes[notes.Count - 2], lastNote);
+                leapsmooth.Add(ls);
+            }
         }
 
         public Note this[int i] { get { return notes[i]; } }
@@ -248,11 +455,12 @@ namespace Compositor.Levels
             while (iter.MoveNext());
         }
         
+        
         public IEnumerator GetEnumerator()
         {
             return (IEnumerator)GetEnumerator();
         }
-
+        
 
         class SubNoteIterator : IEnumerator<KeyValuePair<int, Pitch>>, IEnumerator
         {

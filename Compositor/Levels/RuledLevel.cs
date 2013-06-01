@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Compositor.Helpers;
+using Compositor.Rules;
 
 namespace Compositor.Levels
 {
@@ -68,23 +68,32 @@ namespace Compositor.Levels
                 where kv.Value > MinimumFrequency
                 select kv.Key;
 
-            foreach (Rule<T> r in Rules)
+            Timer.Start("filter");
+
+            //foreach (Rule<T> r in Rules)
+            Rules
+                .AsParallel()
+                .ForAll(r =>
             {
                 r.Init((T)this);
                 if (r.IsApplicable())
-                    foreach (Note n in toFilter)
+                    toFilter
+                        .AsParallel()
+                        .ForAll(n =>
                     {
                         /*if (Freqs[n] == 0)
                             break;*/
 
                         freq = r.Apply(n);
-                        if (freq != 1)
+                        /*if (freq != 1)
                             Console.WriteLine("Rule {0} to note {1} (@ {2}) = {3:F}",
-                                r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);
+                                r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);*/
                         Freqs[n] *= freq;
-                    }
-            }
-            
+                    });
+            });
+
+            Timer.Stop("filter");
+
             filtered = true;
             return Freqs;
         }
