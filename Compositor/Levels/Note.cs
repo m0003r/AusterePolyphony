@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Compositor.Helpers;
 using Compositor.Rules;
 using PitchBase;
 
 namespace Compositor.Levels
 {
 
-    [Rule(typeof(StableOnDownBeatRule))]
+    //[Rule(typeof(StableOnDownBeatRule))]
     [Rule(typeof(DenyDoubleBrevesRule))]
     [Rule(typeof(EightRestrictionsAfterRule))]
     [Rule(typeof(EightRestrictionsBeforeRule))]
@@ -31,6 +30,8 @@ namespace Compositor.Levels
         public Interval Leap { get; private set; }
 
         public List<Pitch> Diapason;
+
+        public int Reserve, Uncomp;
 
         public Note(Pitch Pitch, Time TimeStart, int Duration, Note Previous = null)
             : base()
@@ -84,7 +85,7 @@ namespace Compositor.Levels
             }
         }
 
-        internal void AdjustFreqs(Dictionary<Note, double> Freqs)
+        internal void UpdateFreqs(Dictionary<Note, double> Freqs)
         {
             this.Freqs = Freqs;
         }

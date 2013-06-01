@@ -6,7 +6,7 @@ using System.Text;
 using PitchBase;
 using Compositor.Levels;
 
-namespace Compositor
+namespace Compositor.Rules
 {
     abstract class MelodyRule : Rule<Melody>
     {
@@ -18,6 +18,7 @@ namespace Compositor
         protected Time Time { get { return Melody.Time; } }
         protected Pitch Higher { get { return Melody.Higher; } }
         protected Pitch Lower { get { return Melody.Lower; } }
+        protected List<LeapOrSmooth> LeapSmooth { get { return Melody.LeapSmooth; } }
 
         public virtual void Init(Melody parent)
         {

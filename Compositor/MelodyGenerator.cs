@@ -14,72 +14,67 @@ namespace Compositor
 
     public class MelodyGenerator
     {
-        private Random rand;
         public Melody Melody { get; private set; }
         public int Seed { get; private set; }
+        public int StepLimit { get; private set; }
 
-        private const double MinimumAccumulatedFrequency = 0.3;
+        IChooseNextStrategy chooseStrategy;
 
-        public MelodyGenerator(Clef Clef, Modus Modus, Time Time, int seed = 0)
+        const double MinimumAccumulatedFrequency = 0.3;
+        const double MinimumNoteFrequencyAllowed = 0.02;
+
+        public MelodyGenerator(Clef Clef, Modus Modus, Time Time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy Strategy = null)
         {
+            StepLimit = stepLimit;
             Melody = new Melody(Clef, Modus, Time);
-            SetupRand(seed);
+            if (Strategy == null)
+            {
+                SetSeed(seed);
+                chooseStrategy = new DefaultNextStrategy(this.Seed);
+            }
+            else
+                chooseStrategy = Strategy;
         }
 
-        private void SetupRand(int seed)
+        private void SetSeed(int givenSeed)
         {
-            if (seed == 0)
+            if (givenSeed == 0)
                 this.Seed = (int)DateTime.Now.Ticks;
             else
-                this.Seed = seed;
-
-            rand = new Random(this.Seed);
+                this.Seed = givenSeed;
         }
 
-        public void Generate(uint Length)
+        public int Generate(uint Length)
         {
             uint DesiredLength = Length * (uint)Melody.Time.Beats * 4;
             int steps = 0;
 
             Melody.DesiredLength = DesiredLength;
 
-            while ((Melody.Time.Position < DesiredLength) && (steps < 10000))
+            while ((Melody.Time.Position < DesiredLength) && (steps < StepLimit))
             {
                 Step();
                 steps++;
             }
+
+            return steps;
         }
 
         private void Step()
         {
             Melody.Filter();
-            double max = Melody.Freqs.Max(kv => (kv.Value > 0.01) ? kv.Value : 0);
+            double max = Melody.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
             if (max > MelodyGenerator.MinimumAccumulatedFrequency) //должно быть что-то приличное!
-            {
-                chooseFrom(Melody.Freqs);
-            }
+                chooseNextNote();
             else
                 Melody.RemoveLast();
         }
 
-        private void chooseFrom(NotesFreq allowed)
+        private void chooseNextNote()
         {
-            double freqS = allowed.Sum(kv => kv.Value);
-            double r = rand.NextDouble() * freqS;
-            double accumulator = 0;
-
-            foreach (KeyValuePair<Note, double> kv in allowed)
-            {
-                accumulator += kv.Value;
-                if (kv.Value < 0.02) //более строги будем здесь
-                    continue;
-                if (accumulator > r)
-                {
-                    Melody.AddNote(kv.Key);
-                    break;
-                }
-            }
+            Note next = chooseStrategy.ChooseNext(Melody.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed));
+            Melody.AddNote(next);
         }
     }
 }

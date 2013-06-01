@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{18BEB320-8613-4D40-B0F3-AFFCFBA90C3E}</ProjectGuid>
+    <ProjectGuid>{76313143-A559-46D8-8959-527BC8A51AA6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Compositor</RootNamespace>
-    <AssemblyName>Melody</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>AssertExtension</RootNamespace>
+    <AssemblyName>AssertExtension</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -31,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,32 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChooseNextStrategy\NextStrategies.cs" />
-    <Compile Include="Rules\Base\RulesAttribute.cs" />
-    <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />
-    <Compile Include="Levels\Melody.cs" />
-    <Compile Include="Levels\NoteSequencer.cs" />
-    <Compile Include="Levels\RuledLevel.cs" />
-    <Compile Include="Rules\Base\Rule.cs" />
-    <Compile Include="Rules\LeapMelodyRules.cs" />
-    <Compile Include="MelodyGenerator.cs" />
-    <Compile Include="Rules\Base\MelodyRule.cs" />
-    <Compile Include="Rules\LeapNoteRules.cs" />
-    <Compile Include="Rules\MelodyRules.cs" />
-    <Compile Include="Levels\Note.cs" />
-    <Compile Include="Rules\Base\NoteRule.cs" />
-    <Compile Include="Rules\NoteRules.cs" />
+    <Compile Include="MyAssertExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PitchBase\PitchBase.csproj">
-      <Project>{C63080DF-94BA-46A1-90B7-A4CFF3E5BB7B}</Project>
-      <Name>PitchBase</Name>
+    <ProjectReference Include="..\..\Compositor\Compositor.csproj">
+      <Project>{18beb320-8613-4d40-b0f3-affcfba90c3e}</Project>
+      <Name>Compositor</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Rules\Запас и неск.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

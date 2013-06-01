@@ -46,12 +46,12 @@ namespace Compositor.Rules
     {
         public override bool IsApplicable()
         {
-            return (Me.Duration == 1);
+            return (Duration == 1);
         }
 
         public override double Apply(Note NextNote)
         {
-            return (NextNote.Duration > 4) ? 0 : 1;
+            return (NextNote.Duration > 4) ? 0 : 0.5;
         }
     }
 
@@ -66,7 +66,13 @@ namespace Compositor.Rules
 
         public override double Apply(Note NextNote)
         {
-            return (NextNote.Duration == 1) ? 0 : 1;
+            if (NextNote.Duration == 1)
+            {
+                if (Duration == 2) return 0.2;
+                if (Duration == 6) return 0.5;
+                return 0;
+            }
+            return 1;
         }
     }
 }

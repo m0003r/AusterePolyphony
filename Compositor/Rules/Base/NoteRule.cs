@@ -6,7 +6,7 @@ using System.Text;
 using PitchBase;
 using Compositor.Levels;
 
-namespace Compositor
+namespace Compositor.Rules
 {
     abstract class NoteRule : Rule<Note>
     {

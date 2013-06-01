@@ -41,6 +41,26 @@ namespace Compositor.Rules
         }
     }
 
+    class BreveRule : MelodyRule
+    {
+        private int lastBar;
+
+        public override void Init(Melody parent)
+        {
+            base.Init(parent);
+            lastBar = (int)Melody.DesiredLength - Time.Beats * 4;
+        }
+
+        public override bool _IsApplicable()
+        {
+            return (Time.Position < lastBar); //если мы не в предпоследнем такте
+        }
+
+        public override double Apply(Note n)
+        {
+            return (n.Duration == 16) ? 0 : 1;
+        }
+    }
     /*********************************************************************/
 
     class TrillRule : MelodyRule
@@ -66,6 +86,7 @@ namespace Compositor.Rules
     /*********************************************************************/
 
     //запрещаем писать половину после нечетверти и двух четвертей с сильной доли
+    // -1329812680 !!!
     class SyncopaRule : MelodyRule
     {
         private NotesList last;
@@ -92,7 +113,13 @@ namespace Compositor.Rules
 
         public override double Apply(Note n)
         {
-            return (n.Duration == 4) ? 0 : 1;
+            if (n.Duration == 4)
+                return 0;
+
+            if (n.Duration == 8)
+                return (n.TimeStart.Beat == 4) ? 0 : 1;
+
+            return 1;
         }
     }
 
@@ -104,7 +131,7 @@ namespace Compositor.Rules
      * другой звук тритона был мелодической вершиной
      */
 
-    class TritoneRule : MelodyRule
+    /*class TritoneRule : MelodyRule
     {
         public override bool _IsApplicable()
         {
@@ -119,7 +146,7 @@ namespace Compositor.Rules
             double koeff = (1 - n.Duration / 16.0);
             return n.TimeStart.strongTime ? koeff / 2 : koeff;
         }
-    }
+    }*/
 
     /*********************************************************************/
 
@@ -160,6 +187,28 @@ namespace Compositor.Rules
             }
             return 1;
         }
+    }
+
+    //474605227
+    class PeakRule2 : MelodyRule
+    {
+        LeapOrSmooth last;
+
+        public override bool _IsApplicable()
+        {
+            if (LeapSmooth.Count < 2)
+                return false;
+
+            last = LeapSmooth.Last();
+
+            return (LeapSmooth[LeapSmooth.Count - 2].Interval.AbsDeg == last.Interval.AbsDeg);
+        }
+
+        public override double Apply(Note n)
+        {
+            return last.CanAdd(n) ? 1 : 0;
+        }
+
     }
 
     class ManyQuartersRule : MelodyRule
@@ -283,13 +332,14 @@ namespace Compositor.Rules
         public override double Apply(Note n)
         {
             if (n.Duration == deniedDuration)
-                return ((patternDuration % 8) == 0) ? 0 : 0.5;
+                return ((patternDuration % 8) == 0) ? 0.1 : 0.9;
 
             return 1;
         }
     }
 
-    //TODO: seed = -967466835 ???
+    //TODO: seed = -967466835, -450168169
+
     class DenySequence : MelodyRule
     {
         class SequencePattern
@@ -359,7 +409,13 @@ namespace Compositor.Rules
                 foreach (int diff in diffs)
                     diffAccumulator += Math.Pow((diff - average), 2);
 
-                return Math.Sqrt(diffAccumulator / (double)comparedLength);
+                double rawSpread = Math.Sqrt(diffAccumulator / (double)comparedLength);
+                double Spread = rawSpread;
+
+                if (average > 5) //это уже линеарная имитация...
+                    Spread *= 1.5;
+
+                return Spread;
             }
 
             public Dictionary<int, double> undesiredNotes()
@@ -391,7 +447,7 @@ namespace Compositor.Rules
 
             undesiredPitches = new Dictionary<int,double>();
 
-            if (Melody.Time.Position == 106)
+            if (Melody.Time.Position == 90)
                 tooLong = false;
 
             SequencePattern pattern;
@@ -405,7 +461,7 @@ namespace Compositor.Rules
                     else
                         foreach (KeyValuePair<int, double> kv in pattern.undesiredNotes())
                             if (undesiredPitches.ContainsKey(kv.Key))
-                                undesiredPitches[kv.Key] = Math.Max(undesiredPitches[kv.Key], kv.Value);
+                                undesiredPitches[kv.Key] = Math.Min(undesiredPitches[kv.Key], kv.Value);
                             else
                                 undesiredPitches[kv.Key] = kv.Value;
                     currGrabbedNotes++;
@@ -434,41 +490,6 @@ namespace Compositor.Rules
             }
             else
                 return 1;
-        }
-    }
-
-    class AverageHeight : MelodyRule
-    {
-        double desiredCenter;
-        double gravityPoint;
-        double gravityForce;
-
-        public override void  Init(Melody parent)
-        {
- 	        base.Init(parent);
-            desiredCenter = Melody.Diapason.Average(p => p.Value);
-        }
-
-        public override bool _IsApplicable()
-        {
-            double actualCenter = Melody.notes.Sum(n => n.Pitch.Value * n.Duration) / (double)Melody.Time.Position;
-            double diff = desiredCenter - actualCenter;
-            gravityPoint = desiredCenter + diff;
-            gravityForce = diff;
-
-            return Math.Abs(gravityForce) > 2;
-        }
-
-        public override double Apply(Note n)
-        {
-            double distance = n.Pitch.Value - gravityPoint;
-            double force = distance * gravityForce;
-            // Console.WriteLine(" >>>>> Gravity to {0}: {1}", n.Pitch.Value, force);
-            if (force < 0)
-                return 1;
-            if (force > 40)
-                return 0.1;
-            return 1 - force / 45.0;
         }
     }
 
@@ -508,6 +529,93 @@ namespace Compositor.Rules
                 if (f.TimeStart.Beat == n.TimeStart.Beat)
                     freq *= 0.7;
                 if (f.Strength + lastStrength > minimumRequiredForApply + distance / 8)
+                    freq *= 0.2;
+            }
+            
+            return freq;
+        }
+    }
+
+    class TooManyEightsRule : MelodyRule
+    {
+        private Time lastEightPosition;
+
+        public override bool _IsApplicable()
+        {
+            var lastEight = Notes.FindLast(n => n.Duration == 1);
+            if (lastEight != null)
+            {
+                lastEightPosition = lastEight.TimeStart;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public override double Apply(Note n)
+        {
+            const int safeDistance = 4 * 16;
+
+            if (n.Duration != 1)
+                return 1;
+
+            var distance = n.TimeStart - lastEightPosition;
+
+            if (distance.Beats > safeDistance)
+                return 1;
+            else
+                return Math.Pow(distance.Beats, 2) / safeDistance*2;
+        }
+    }
+
+    class TritoneRule : MelodyRule
+    {
+        const double minimumRequiredForApply = 1.1;
+
+        IEnumerable<Note> LastTritones;
+
+        public override bool _IsApplicable()
+        {
+            if (Notes.Count > 1)
+            {
+                LastTritones = findLastTritone();
+                return true;
+            }
+            return false;
+        }
+
+        private IEnumerable<Note> findLastTritone()
+        {
+            /*if (Notes.Count == 6)
+            {
+                double f = 1;
+            }*/
+
+            return Notes.Where(f => (
+                f.Pitch.isTritone &&
+                //(f.Pitch.isTritoneLow ^ n.Pitch.isTritoneLow) &&
+                ((LastNote.TimeEnd - f.TimeStart).Bar <= 3) &&
+                ((LastNote.TimeEnd - f.TimeStart).Position > 6)
+                // (f.Strength >= minimumRequiredForApply)
+              ));
+        }
+
+        public override double Apply(Note n)
+        {
+            if (!LastNote.Pitch.isTritone)
+                return 1;
+
+            double lastStrength = Melody.getStrengthIf(n);
+            if (lastStrength < minimumRequiredForApply)
+                return 1;
+
+            double freq = 1;
+            foreach (Note f in LastTritones)
+            {
+                int distance = (n.TimeStart - f.TimeStart).Position;
+                if (f.TimeStart.Beat == n.TimeStart.Beat)
+                    freq *= 0.7;
+                if (f.Strength + lastStrength > minimumRequiredForApply + distance / 16)
                     freq *= 0.2;
             }
             
