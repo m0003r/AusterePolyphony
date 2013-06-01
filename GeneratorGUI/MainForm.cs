@@ -28,8 +28,9 @@ namespace GeneratorGUI
             Compositor.Timer.Flush("filter");
             Compositor.Timer.Start("generator");
             InitGenerator(clefList.SelectedIndex - 1, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value, (int)maxSteps.Value);
-            Generator.Generate((uint)barsCount.Value);
+            int steps = Generator.Generate((uint)barsCount.Value);
             Console.WriteLine("Total filtering time: {0}\nTotal generation time: {1}", Compositor.Timer.Total("filter"), Compositor.Timer.Stop("generator"));
+            Console.WriteLine("Total steps: {0}\n", steps);
             prepareOutput();
 
             //dumpLeapsSmooth();

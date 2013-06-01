@@ -44,7 +44,7 @@ namespace Compositor
                 this.Seed = givenSeed;
         }
 
-        public void Generate(uint Length)
+        public int Generate(uint Length)
         {
             uint DesiredLength = Length * (uint)Melody.Time.Beats * 4;
             int steps = 0;
@@ -56,6 +56,8 @@ namespace Compositor
                 Step();
                 steps++;
             }
+
+            return steps;
         }
 
         private void Step()
