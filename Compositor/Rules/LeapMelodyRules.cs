@@ -63,9 +63,11 @@ namespace Compositor.Rules
 
         const int UncompDenySmooth = 6;
         const int UncompDenyLeap = 4;
+        const int ReserveLimit = 8;
 
         public override double Apply(Note n)
         {
+            // ход в сторону нескомпенсированности
             if (Math.Sign(n.Leap.Degrees) == Math.Sign(LastNote.Uncomp))
             {
                 if (Math.Abs(LastNote.Uncomp) >= UncompDenyLeap)
@@ -74,7 +76,19 @@ namespace Compositor.Rules
                     return 0;
             }
 
-            return 1;                
+            // ход против запаса или если запас 0
+
+            if (Math.Sign(LastNote.Reserve) != Math.Sign(n.Leap.Degrees))
+            {
+                if (n.Leap.Degrees < 5)
+                    return 1;
+                else
+                    return Math.Abs(n.Leap.Degrees) < Math.Abs(LastNote.Reserve * 4) ? 1 : 0;
+            }
+            else
+            {
+                return Math.Abs(n.Leap.Degrees + n.Reserve) < ReserveLimit ? 0 : 1;
+            }
         }
     }
 

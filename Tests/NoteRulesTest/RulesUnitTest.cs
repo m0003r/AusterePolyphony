@@ -68,7 +68,7 @@ namespace RulesTest
             return result;
         }
 
-        internal Melody CreateNoteStream(Modus m, Clef c, bool perfectTime, out List<Pitch> diapason, params int[] infoList)
+        internal Melody CreateMelody(Modus m, Clef c, bool perfectTime, out List<Pitch> diapason, params int[] infoList)
         {
             List<Note> notes = CreateNotes(m, c, perfectTime, out diapason, infoList: infoList);
 
@@ -97,7 +97,7 @@ namespace RulesTest
         public void TestSyncopa()
         {
             List<Pitch> Diapason;
-            Melody m = CreateNoteStream(Modus.Aeolian(9), Clef.Treble, false, out Diapason, 6, 8, 2, 2, 3, 2);
+            Melody m = CreateMelody(Modus.Aeolian(9), Clef.Treble, false, out Diapason, 6, 8, 2, 2, 3, 2);
 
             Dictionary<Note, double> freqs = m.Filter();
 
@@ -108,7 +108,7 @@ namespace RulesTest
         public void TestMultiLeaps()
         {
             List<Pitch> Diapason;
-            Melody m = CreateNoteStream(Modus.Phrygian(4), Clef.Treble, true, out Diapason, 2, 8, 3, 8, 4, 8, 3, 8);
+            Melody m = CreateMelody(Modus.Phrygian(4), Clef.Treble, true, out Diapason, 2, 8, 3, 8, 4, 8, 3, 8);
 
             Dictionary<Note, double> freqs = m.Filter();
 

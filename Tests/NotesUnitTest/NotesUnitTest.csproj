@@ -59,9 +59,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Fakes Include="Fakes\Melody.fakes" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\PitchBase\PitchBase.csproj">
       <Project>{c63080df-94ba-46a1-90b7-a4cff3e5bb7b}</Project>
       <Name>PitchBase</Name>
