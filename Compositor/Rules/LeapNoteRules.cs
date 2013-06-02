@@ -27,13 +27,18 @@ namespace Compositor.Rules
 
         private double OppDirRule(Note NextNote)
         {
-            if ((Duration > 2) && (NextNote.Duration > 2))
-                return 0.85; //от белой к белой также хорошо прыгать
+            if (Duration > 2)
+            {
+                if (NextNote.Duration > 2)
+                    return 0.85; //от белой к белой также хорошо прыгать
+                else
+                    return 0.7;
+            }
 
-            if ((Duration == 2) && (NextNote.Duration > 2))
-                return 0.7; //от четверти к белой тоже хорошо
+            if (Duration == 2)
+                return (Leap.Upwards) ? 0 : 0.5;
 
-            return 0.5; //иначе не очень
+            return 0; //иначе не очень
         }
 
         private double CoDirRule(Note NextNote)

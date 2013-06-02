@@ -63,45 +63,18 @@ namespace GeneratorGUI
                 default: return;
             }
 
+            Generator = null;
+
             Generator = new MelodyGenerator(Clef, Modus, Time.Create(perfect), seed, stepLimit);
         }
 
         private void prepareOutput()
         {
-            outputArea.Text = formatLily();
+            outputArea.Text = Generator.Lily();
             gvOut.Text = Generator.GenerationGraph();
 
-            saveLilyButton.Enabled = true;
             engraveButton.Enabled = true;
-            saveGraphButton.Enabled = true;
             drawGraphButton.Enabled = true;
-        }
-
-        static string[] clefNamesList =  {"treble", "soprano", "mezzosoprano", "alto", "tenor", "baritone", "bass"};
-
-        private string formatLily()
-        {
-            Pitch p = new Pitch(0, Generator.Melody.Modus);
-
-            string key = p.StringForm;
-            string modus, clef, time;
-            StringBuilder notes = new StringBuilder();
-
-            modus = "\\" + Generator.Melody.Modus.Name;
-            clef = clefNamesList[(int)Generator.Melody.Clef + 1];
-            time = (perfectTime.Checked ? "3" : "4") + "/2";
-
-            foreach (Note n in Generator.Melody.Notes)
-            {
-                notes.Append(n);
-                notes.AppendFormat("^\"{0}\"", n.Reserve);
-                notes.AppendFormat("_\"{0}\"", n.Uncomp);
-                notes.Append(" ");
-            }
-
-            string format = Resources.ScoreTemplate;
-            return string.Format(format, Generator.Seed, key, modus, clef, time, notes);
-            
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -109,11 +82,6 @@ namespace GeneratorGUI
             modiList.SelectedIndex = 1;
             startNotes.SelectedIndex = 2;
             clefList.SelectedIndex = 0;
-        }
-
-        private void saveLilyButton_Click(object sender, EventArgs e)
-        {
-            SaveLily();
         }
 
         private void SaveLily()
@@ -163,11 +131,6 @@ namespace GeneratorGUI
             Process s = (Process)sender;
             if (s.ExitCode == 0)
                 Process.Start("out\\" + fname + "_graph.pdf");
-        }
-
-        private void saveGraphButton_Click(object sender, EventArgs e)
-        {
-            SaveGraph();
         }
 
         private void SaveGraph()

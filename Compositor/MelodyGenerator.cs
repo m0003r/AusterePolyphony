@@ -12,6 +12,11 @@ namespace Compositor
     using NotesFreq = Dictionary<Note, double>;
     using NotesList = List<Note>;
 
+    public class StopGeneration : Exception
+    {
+
+    }
+
     public class MelodyGenerator
     {
         public Melody Melody { get; private set; }
@@ -20,7 +25,7 @@ namespace Compositor
 
         IChooseNextStrategy chooseStrategy;
 
-        const double MinimumAccumulatedFrequency = 0.3;
+        const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
 
         public MelodyGenerator(Clef Clef, Modus Modus, Time Time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy Strategy = null)
@@ -46,34 +51,58 @@ namespace Compositor
 
         public int Generate(uint Length)
         {
-            uint DesiredLength = Length * (uint)Melody.Time.Beats * 4;
+            uint lengthInBeats = Length * (uint)Melody.Time.Beats * 4;
             int steps = 0;
 
-            Melody.DesiredLength = DesiredLength;
+            Melody.setLength(lengthInBeats);
 
-            while ((Melody.Time.Position < DesiredLength) && (steps < StepLimit))
+            try
             {
-                Step();
-                steps++;
+                while ((Melody.Time.Position < lengthInBeats) && (steps < StepLimit))
+                {
+                    Step();
+                    steps++;
+                }
+            }
+            catch (StopGeneration)
+            {
+
             }
 
             return steps;
         }
 
-        private void Step()
+        private void Step(bool dumpResult = false)
         {
-            Melody.Filter();
+            Melody.Filter(dumpResult);
             double max = Melody.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
             if (max > MelodyGenerator.MinimumAccumulatedFrequency) //должно быть что-то приличное!
-                chooseNextNote();
+                chooseNextNote(dumpResult);
             else
-                Melody.RemoveLast();
+            {
+                if (Melody.NoteCount > 0)
+                    Melody.RemoveLast();
+                else
+                    Melody.FirstNote();
+            }
         }
 
-        private void chooseNextNote()
+        private void chooseNextNote(bool dumpResult = false)
         {
-            Note next = chooseStrategy.ChooseNext(Melody.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed));
+            var possibleNext = Melody.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
+
+            if (dumpResult)
+            {
+                var sb = new StringBuilder();
+                foreach (var kv in Melody.Freqs)
+                {
+                    sb.AppendFormat("{0} => {1}; ", kv.Key.ToString(), kv.Value);
+                }
+                Console.WriteLine(sb);
+            }
+
+            Note next = chooseStrategy.ChooseNext(possibleNext);
             Melody.AddNote(next);
         }
     }

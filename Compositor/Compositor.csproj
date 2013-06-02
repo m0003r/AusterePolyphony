@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChooseNextStrategy\NextStrategies.cs" />
+    <Compile Include="Levels\TwoVoices.cs" />
     <Compile Include="Rules\Base\RulesAttribute.cs" />
     <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />
     <Compile Include="Levels\Melody.cs" />
@@ -59,13 +60,13 @@
     <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PitchBase\PitchBase.csproj">
-      <Project>{C63080DF-94BA-46A1-90B7-A4CFF3E5BB7B}</Project>
-      <Name>PitchBase</Name>
-    </ProjectReference>
+    <Content Include="Rules\Запас и неск.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Rules\Запас и неск.txt" />
+    <ProjectReference Include="..\PitchBase\PitchBase.csproj">
+      <Project>{c63080df-94ba-46a1-90b7-a4cff3e5bb7b}</Project>
+      <Name>PitchBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

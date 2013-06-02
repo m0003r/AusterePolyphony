@@ -11,31 +11,55 @@ namespace Compositor.Rules
     using NotesList = List<Note>;
     using PitchAtTime = KeyValuePair<int, Pitch>;
 
-    class CadenzaRule : MelodyRule
+    class DenyGamming : MelodyRule
     {
-        private int lastBar;
-
-        public override void Init(Melody parent)
-        {
-            base.Init(parent);
-            lastBar = (int)Melody.DesiredLength - Time.Beats * 4;
-        }
+        private int GammingCount;
+        const int GammingSoftLimit = 6;
 
         public override bool _IsApplicable()
         {
-            return (Time.Position >= lastBar - 16); //если мы не в предпоследнем такте
+            GammingCount = Notes.Reverse<Note>().TakeWhile(n => n.Leap.isSmooth).Count();
+
+            return (GammingCount > GammingSoftLimit);
         }
 
         public override double Apply(Note n)
         {
-            if ((Time.Position < lastBar) && (Time.Position + n.Duration > lastBar)) //нельзя залиговку к последнему такту
-                return 0;
-            if ((Time.Position == lastBar) &&
-                (
-                    (n.Duration != Time.Beats * 4) ||
-                    (n.Pitch.Degree != 0) ||
-                    (n.Leap.AbsDeg >= 2) //и плавным ходом 
-                )) //нельзя ничего в последнем такте кроме долгой тоники
+            return (8.0 - Math.Abs(GammingCount - n.Leap.AbsDeg)) / 8.0;
+        }
+    }
+
+    class CadenzaRule : MelodyRule
+    {
+        private int lastBarStart;
+
+        public override void Init(Melody parent)
+        {
+            base.Init(parent);
+            lastBarStart = (int)Melody.DesiredLength - Time.Beats * 4;
+        }
+
+        public override bool _IsApplicable()
+        {
+            return (Time.Position >= lastBarStart - Time.Beats * 4); //если мы не в предпоследнем такте
+        }
+
+        public override double Apply(Note n)
+        {
+            if (n.TimeEnd.Position < lastBarStart)
+                return 1;
+            if (n.TimeEnd.Position == lastBarStart)
+            {
+                return ((n.Pitch.Degree == 1) || (n.Pitch.Degree == 6)) ? 1 : 0;
+                    
+            }
+            if (n.TimeStart.Position == lastBarStart)
+                //нельзя ничего в последнем такте кроме долгой тоники
+                return ((n.Duration == Time.Beats * 4) && (n.Pitch.Degree == 0) &&
+                          (n.Leap.AbsDeg == 1)) ? 1 : 0;  //достигаемой плавным ходом 
+                    
+
+            if (n.TimeEnd.Position > lastBarStart) //нельзя залиговку к последнему такту
                 return 0;
             return 1;
         }
@@ -620,6 +644,48 @@ namespace Compositor.Rules
             }
             
             return freq;
+        }
+    }
+
+    class TritoneRule2 : MelodyRule
+    {
+        public override bool _IsApplicable()
+        {
+            if (LeapSmooth.Count < 1)
+                return false;
+            else
+                return LeapSmooth.Last().Interval.isTritone;
+        }
+
+        public override double Apply(Note n)
+        {
+            return LeapSmooth.Last().CanAdd(n) ? 1 : 0;
+        }
+    }
+
+    class AfterQuarterNewRule : MelodyRule
+    {
+        bool allowLeap;
+
+        public override bool _IsApplicable()
+        {
+            if (LastNote.Duration != 2)
+                return false;
+
+            if (Melody.NoteCount == 1)
+                allowLeap = false;
+            else
+            {
+                var prelast = Notes[Melody.NoteCount - 2];
+                allowLeap = ((prelast.Duration == 6) && (LastNote.Leap.Degrees == -1));
+            }
+
+            return true;
+        }
+
+        public override double Apply(Note n)
+        {
+            return (allowLeap || (n.Leap.isSmooth)) ? 1 : 0;
         }
     }
 }

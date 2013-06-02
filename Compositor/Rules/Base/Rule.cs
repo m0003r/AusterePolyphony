@@ -8,10 +8,14 @@ using Compositor.Levels;
 
 namespace Compositor.Rules
 {
-    interface Rule<T>
+    interface Rule<T, N> : Rule
     {
         void Init(T me);
+        double Apply(N n);
+    }
+
+    public interface Rule
+    {
         bool IsApplicable();
-        double Apply(Note n);
     }
 }

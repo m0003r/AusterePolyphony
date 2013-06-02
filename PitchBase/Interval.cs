@@ -140,5 +140,30 @@ namespace PitchBase
                 return false;
             }
         }
+
+        public bool isTritone
+        {
+            get
+            {
+                return isDimQuinta || isAugQuarta;
+            }
+        }
+
+        public bool isDimQuinta
+        {
+            get
+            {
+                return (((uint)Type % 7 == 4) && (Alteration == IntervalAlt.Diminished));
+            }
+        }
+
+
+        public bool isAugQuarta
+        {
+            get
+            {
+                return (((uint)Type % 7 == 3) && (Alteration == IntervalAlt.Augmented));
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ using Compositor.Levels;
 
 namespace Compositor.Rules
 {
-    abstract class NoteRule : Rule<Note>
+    abstract class NoteRule : Rule<Note, Note>
     {
         protected Note Me;
 

@@ -25,9 +25,17 @@ namespace RulesTest
             }
         }
 
+        internal void AreAllowed(Note expectedNote,
+            Dictionary<Note, double> freqs)
+        {
+            AreAllowed(n => n.Equals(expectedNote), freqs);
+        }
+
         internal void AreAllowed(Predicate<Note> expectedNote,
             Dictionary<Note, double> freqs)
         {
+            int count = freqs.Count(kv => expectedNote(kv.Key));
+            Assert.IsTrue(count > 0);
             Satisfy(expectedNote, x => x > 0.03, freqs);
         }
 
@@ -58,7 +66,11 @@ namespace RulesTest
                 else
                 {
                     Note n = new Note(diapason[pos], t, ni, prev);
+                    if (prev != null)
+                        AreAllowed(n, prev.Freqs);
+                    t += ni;
                     n.Diapason = diapason;
+                    n.Filter();
                     prev = n;
                     result.Add(n);
                     isPos = true;
@@ -68,14 +80,17 @@ namespace RulesTest
             return result;
         }
 
-        internal Melody CreateMelody(Modus m, Clef c, bool perfectTime, out List<Pitch> diapason, params int[] infoList)
+        internal Melody CreateMelody(uint length, Modus m, Clef c, bool perfectTime, out List<Pitch> diapason, params int[] infoList)
         {
             List<Note> notes = CreateNotes(m, c, perfectTime, out diapason, infoList: infoList);
 
             Melody mel = new Melody(c, m, Time.Create(perfectTime));
+            mel.setLength(length);
 
             foreach (var n in notes)
             {
+                var freqs = mel.Filter();
+                AreAllowed(n, freqs);
                 mel.AddNote(n);
             }
 
@@ -97,7 +112,7 @@ namespace RulesTest
         public void TestSyncopa()
         {
             List<Pitch> Diapason;
-            Melody m = CreateMelody(Modus.Aeolian(9), Clef.Treble, false, out Diapason, 6, 8, 2, 2, 3, 2);
+            Melody m = CreateMelody(500, Modus.Aeolian(9), Clef.Treble, false, out Diapason, 5, 8, 1, 2, 2, 2);
 
             Dictionary<Note, double> freqs = m.Filter();
 
@@ -108,13 +123,51 @@ namespace RulesTest
         public void TestMultiLeaps()
         {
             List<Pitch> Diapason;
-            Melody m = CreateMelody(Modus.Phrygian(4), Clef.Treble, true, out Diapason, 2, 8, 3, 8, 4, 8, 3, 8);
+            Melody m = CreateMelody(500, Modus.Phrygian(4), Clef.Treble, false, out Diapason, 2, 8, 3, 8, 4, 8, 3, 8);
 
             Dictionary<Note, double> freqs = m.Filter();
 
             AreDenied(n => n.Pitch == Diapason[10], freqs);
         }
 
+        [TestMethod]
+        public void TestCadenza()
+        {
+            List<Pitch> Diapason;
+            Melody m = CreateMelody(36, Modus.Dorian(2), Clef.Treble, true, out Diapason, 5, 12, 4, 4, 3, 4, 2, 4);
+
+            Dictionary<Note, double> freqs = m.Filter();
+
+            AreAllowed(n => (n.Pitch == Diapason[1]) && (n.Duration == 12), freqs);
+        }
+
+        [TestMethod]
+        public void TestCadenza2()
+        {
+            List<Pitch> Diapason;
+            Melody m = CreateMelody(24, Modus.Dorian(2), Clef.Treble, true, out Diapason, 5, 4, 8, 6, 7, 2);
+
+            Dictionary<Note, double> freqs = m.Filter();
+
+            AreAllowed(n => (n.Pitch == Diapason[8]) && (n.Duration == 12), freqs);
+        }
+
+        [TestMethod]
+        public void TestTritone()
+        {
+            List<Pitch> Diapason;
+
+            try
+            {
+                Melody m = CreateMelody(24, Modus.Dorian(2), Clef.Treble, true, out Diapason, 3, 4, 6, 4);
+            }
+            catch (AssertFailedException)
+            {
+                return;
+            }
+
+            Assert.Fail("Can't catch expected fail");
+        }
     
     }
 }

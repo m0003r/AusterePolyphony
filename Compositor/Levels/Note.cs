@@ -3,18 +3,19 @@ using System.Collections.Generic;
 
 using Compositor.Rules;
 using PitchBase;
+using System.Text;
 
 namespace Compositor.Levels
 {
 
-    [Rule(typeof(StableOnDownBeatRule))]
+    //[Rule(typeof(StableOnDownBeatRule))]
     [Rule(typeof(DenyDoubleBrevesRule))]
     [Rule(typeof(EightRestrictionsAfterRule))]
     [Rule(typeof(EightRestrictionsBeforeRule))]
     [Rule(typeof(AfterSmoothLeapRule))]
     [Rule(typeof(AfterLeapLeapRule))]
 
-    public class Note : RuledLevel<Note>
+    public class Note : RuledLevel<Note, Note>, IComparable<Note>, IDeniable//, IComparable
     {
         public Pitch Pitch;
 
@@ -32,6 +33,9 @@ namespace Compositor.Levels
         public List<Pitch> Diapason;
 
         public int Reserve, Uncomp;
+
+        public Rule DeniedRule { get; set; }
+        public bool isBanned { get; set; }
 
         public Note(Pitch Pitch, Time TimeStart, int Duration, Note Previous = null)
             : base()
@@ -56,7 +60,7 @@ namespace Compositor.Levels
             return me - previous;
         }
 
-        protected override void AddVariants()
+        protected override void AddVariants(bool dumpResult = false)
         {
             Time newPos = TimeStart + Duration;
             double v;
@@ -65,6 +69,16 @@ namespace Compositor.Levels
                 if ((v = this.allowPitchAfterAt(p, newPos)) > 0)
                     foreach (Note n in this.GenerateDurations(p, newPos))
                         Freqs[n] = v * this.DurationCoeff(n.Duration);
+
+            if (dumpResult)
+            {
+                var sb = new StringBuilder();
+
+                foreach (var kv in Freqs)
+                    sb.AppendFormat("{0}=>{1}\n", kv.Key.ToString(), kv.Value);
+
+                Console.WriteLine(sb);
+            }
         }
          
 
@@ -88,6 +102,21 @@ namespace Compositor.Levels
         internal void UpdateFreqs(Dictionary<Note, double> Freqs)
         {
             this.Freqs = Freqs;
+        }
+
+        public int CompareTo(Note obj)
+        {
+            if (Pitch.Value > obj.Pitch.Value)
+                return 1;
+            if (Pitch.Value < obj.Pitch.Value)
+                return -1;
+
+            return Duration.CompareTo(obj.Duration);
+        }
+
+        public bool Equals(Note obj)
+        {
+            return (TimeStart == obj.TimeStart) && (Pitch == obj.Pitch) && (Duration == obj.Duration);
         }
     }
 }

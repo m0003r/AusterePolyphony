@@ -16,16 +16,23 @@ namespace Compositor
             rand = new Random(seed);
         }
 
+        private double getNextDouble(double freqSum)
+        {
+            double result = rand.NextDouble();
+                        
+            return result * freqSum;
+        }
+
         public Note ChooseNext(IEnumerable<KeyValuePair<Note, double>> allowed)
         {
-            double freqS = allowed.Sum(kv => kv.Value);
-            double r = rand.NextDouble() * freqS;
+            double freqSum = allowed.Sum(kv => kv.Value);
+            double r = getNextDouble(freqSum);
             double accumulator = 0;
 
             foreach (KeyValuePair<Note, double> kv in allowed)
             {
                 accumulator += kv.Value;
-                if (accumulator > r)
+                if (accumulator >= r)
                     return kv.Key;
             }
 

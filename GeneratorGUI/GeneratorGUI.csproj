@@ -61,7 +61,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GVOutput.cs" />
+    <Compile Include="GraphOutput.cs" />
+    <Compile Include="LilyOutput.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

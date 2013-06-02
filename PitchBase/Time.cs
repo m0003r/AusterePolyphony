@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Compositor
+namespace PitchBase
 {
     public class Time
     {
@@ -101,6 +101,26 @@ namespace Compositor
                 throw new Exception("Can't perform addition on differend-perfected times");
 
             return me - aux.Position;
+        }
+
+        public static bool operator ==(Time me, Time aux)
+        {
+            return (me.perfectus == aux.perfectus) && (me.Position == aux.Position);
+        }
+
+        public static bool operator !=(Time me, Time aux)
+        {
+            return !(me == aux);
+        }
+
+        public bool Equals(Time aux)
+        {
+            return (this == aux);
+        }
+
+        public override string ToString()
+        {
+            return String.Format("({0}/2) {1}:{2}", Beats, Bar, Beat);
         }
     }
 }

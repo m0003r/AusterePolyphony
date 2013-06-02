@@ -8,7 +8,7 @@ using Compositor.Levels;
 
 namespace Compositor.Rules
 {
-    abstract class MelodyRule : Rule<Melody>
+    abstract class MelodyRule : Rule<Melody, Note>
     {
         protected Melody Melody;
 

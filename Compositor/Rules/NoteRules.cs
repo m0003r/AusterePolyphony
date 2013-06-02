@@ -68,7 +68,7 @@ namespace Compositor.Rules
         {
             if (NextNote.Duration == 1)
             {
-                if (Duration == 2) return 0.2;
+                if (Duration == 2) return 0.05;
                 if (Duration == 6) return 0.5;
                 return 0;
             }

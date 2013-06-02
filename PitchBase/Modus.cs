@@ -114,5 +114,10 @@ namespace PitchBase
                 default: return new Interval(IntervalType.Prima, alt[0]);
             } 
         }
+
+        public override string ToString()
+        {
+            return String.Format("{0} {1}", new Pitch(0, this).StringForm, Name);
+        }
     }
 }
