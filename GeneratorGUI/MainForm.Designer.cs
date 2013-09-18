@@ -339,6 +339,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.splitContainer);
+
             this.Name = "MainForm";
             this.Text = "Генератор мелодий";
             this.Load += new System.EventHandler(this.MainForm_Load);

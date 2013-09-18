@@ -107,6 +107,7 @@ namespace Compositor.Levels
 
             Timer.Stop("filter");
 
+
             filtered = true;
             return Freqs;
         }

@@ -27,6 +27,7 @@ namespace Compositor
         {
             double freqSum = allowed.Sum(kv => kv.Value);
             double r = getNextDouble(freqSum);
+
             double accumulator = 0;
 
             foreach (KeyValuePair<Note, double> kv in allowed)

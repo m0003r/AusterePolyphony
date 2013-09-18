@@ -43,6 +43,9 @@ namespace GeneratorGUI
                 Console.WriteLine(" * {0}", ls.ToString());
             };
 
+
+            engraveButton.Enabled = true;
+            drawGraphButton.Enabled = true;
         }
 
         private void InitGenerator(int ClefIndex, int noteStart, bool perfect, int seed, int stepLimit)
@@ -75,6 +78,7 @@ namespace GeneratorGUI
 
             engraveButton.Enabled = true;
             drawGraphButton.Enabled = true;
+
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -132,6 +136,7 @@ namespace GeneratorGUI
             if (s.ExitCode == 0)
                 Process.Start("out\\" + fname + "_graph.pdf");
         }
+
 
         private void SaveGraph()
         {

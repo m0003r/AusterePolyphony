@@ -103,6 +103,7 @@ namespace Compositor
             }
 
             Note next = chooseStrategy.ChooseNext(possibleNext);
+
             Melody.AddNote(next);
         }
     }
