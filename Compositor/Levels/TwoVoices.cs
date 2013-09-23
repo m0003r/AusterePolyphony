@@ -8,7 +8,7 @@ using Compositor.Rules;
 
 namespace Compositor.Levels
 {
-    public class TwoNotes : IDeniable
+    public class TwoNotes : IDeniable, IComparable<TwoNotes>
     {
         public Note Note1;
         public Note Note2;
@@ -22,17 +22,35 @@ namespace Compositor.Levels
             DeniedRule = null;
             this.Note1 = Note1;
             this.Note2 = Note2;
+            Freqs = null;
         }
 
+        public Interval Interval { get { return Note1.Pitch - Note2.Pitch; } }
+
         public Time Time { get { return (Note1.TimeEnd.Beats > Note2.TimeEnd.Beats) ? Note1.TimeEnd : Note2.TimeEnd; } }
+
+        public int CompareTo(TwoNotes other)
+        {
+            int c1 = Note1.CompareTo(other.Note1);
+            return (c1 == 0) ? Note2.CompareTo(other.Note2) : c1;
+        }
+
+        public override string ToString()
+        {
+            return Note1.ToString() + "@" + Note1.TimeStart.ToString() + "; " + Note2.ToString() + "@" + Note2.TimeStart.ToString();
+        }
+
+        public Dictionary<TwoNotes, double> Freqs;
     }
 
+    [Rule(typeof(ConsonantesSimult))]
+    [Rule(typeof(DenyParallelConsonantes))]
     public class TwoVoices : RuledLevel<TwoVoices, TwoNotes>
     {
         public Melody Voice1 { get; private set; }
         public Melody Voice2 { get; private set; }
 
-        private Melody lastAdded;
+        public Dictionary<TwoNotes, double> firstFreqs;
 
         internal List<TwoNotes> twonotes;
 
@@ -42,6 +60,10 @@ namespace Compositor.Levels
             Voice2 = new Melody(Clef2, Modus, Time);
 
             twonotes = new List<TwoNotes>();
+            firstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
+
+            Freqs = firstFreqs;
+            filtered = true;
         }
 
         protected override void AddVariants(bool dumpResult = false)
@@ -58,7 +80,7 @@ namespace Compositor.Levels
                 var l1 = Voice1.Notes.Last();
                 var l2 = Voice2.Notes.Last();
 
-                int diff = l1.TimeEnd.Beats - l2.TimeEnd.Beats;
+                int diff = l1.TimeEnd.Position - l2.TimeEnd.Position;
                 if (diff == 0)
                     AddTwoNotesVariants(Filtered1, Filtered2);
                 else if (diff < 0)
@@ -107,13 +129,17 @@ namespace Compositor.Levels
 
         internal void AddTwoNotes(TwoNotes next)
         {
+            if (twonotes.Count > 0)
+                twonotes.Last().Freqs = Freqs;
+
             twonotes.Add(next);
 
-            if (next.Note1 != Voice1.Notes.Last())
+            if ((Voice1.notes.Count == 0) || !(Voice1.EndsWith(next.Note1)))
                 Voice1.AddNote(next.Note1);
-            if (next.Note2 != Voice2.Notes.Last())
-                Voice1.AddNote(next.Note1);
+            if ((Voice2.notes.Count == 0) || !(Voice2.EndsWith(next.Note2)))
+                Voice2.AddNote(next.Note2);
 
+            filtered = false;
         }
 
         internal void setLength(uint lengthInBeats)
@@ -124,16 +150,42 @@ namespace Compositor.Levels
 
         public int NoteCount { get { return twonotes.Count; } }
 
-        internal void RemoveLast()
+        internal void RemoveLast(bool ban = true)
         {
-            throw new NotImplementedException();
-        }
+            if (twonotes.Count > 1)
+            {
+                var removed = twonotes.Last();
+                twonotes.RemoveAt(twonotes.Count - 1);
+                var new_last = twonotes.Last();
 
-        internal void FirstNote()
-        {
-            throw new NotImplementedException();
+                if (removed.Note1 != new_last.Note1)
+                    Voice1.RemoveLast(false);
+                if (removed.Note2 != new_last.Note2)
+                    Voice2.RemoveLast(false);
+
+                if (ban)
+                    new_last.Freqs[removed] = 0;
+
+                Freqs = new_last.Freqs;
+
+            }
+            else if (twonotes.Count == 1)
+            {
+                Voice1.RemoveLast(false);
+                Voice2.RemoveLast(false);
+                var removed = twonotes.Last(); 
+                twonotes.RemoveAt(0);
+                firstFreqs[removed] = 0;
+
+                FirstNote();
+            }
         }
 
         public Time Time { get { return NoteCount > 0 ? twonotes.Last().Time : Time.Create(Voice1.Time.perfectus); } }
+
+        internal void FirstNote()
+        {
+            Freqs = firstFreqs;
+        }
     }
 }

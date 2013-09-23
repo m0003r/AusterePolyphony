@@ -184,23 +184,11 @@ namespace Compositor.Levels
             Time -= n.Duration;
             notes.RemoveAt(notes.Count - 1);
             
-            if (ban)
-            {
-                banNote(n);
-            }
-
-            updateLeapsSmooth(true);
-            updateUncomp();
-        }
-
-        private void banNote(Note n)
-        {
-            if ((n.TimeStart.Position == 4) && (n.ToString() == "d''2."))
-                throw new StopGeneration();
-
             if (notes.Count > 0)
             {
-                notes.Last().ban(n);
+                if (ban)
+                    notes.Last().ban(n);
+
                 Freqs = notes.Last().Freqs;
             }
             else
@@ -208,7 +196,11 @@ namespace Compositor.Levels
                 firstNoteFreqs[n] = 0;
                 FirstNote();
             }
+
+            updateLeapsSmooth(true);
+            updateUncomp();
         }
+
 
         protected override void AddVariants(bool dumpResult = false)
         {
@@ -452,6 +444,15 @@ namespace Compositor.Levels
         public Note this[int i] { get { return notes[i]; } }
 
         public int NoteCount { get { return notes.Count; } }
+
+        public bool EndsWith(Note n)
+        {
+            if (notes.Count == 0)
+                return false;
+            else
+                return (notes.Last() == n);
+
+        }
 
         IEnumerator<Note> IEnumerable<Note>.GetEnumerator()
         {

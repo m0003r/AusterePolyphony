@@ -130,7 +130,7 @@ namespace PitchBase
         {
             get
             {
-                uint d = (uint)Type % 7;
+                uint d = ModDeg;
                 if (d == 4)
                     return Alteration == IntervalAlt.Natural;
                 if (d > 3)
@@ -140,6 +140,20 @@ namespace PitchBase
                 return false;
             }
         }
+
+        public bool Dissonance { get { return !Consonance; } }
+
+        public bool PerfectConsonance
+        {
+            get
+            {
+                if (Dissonance)
+                    return false;
+                else
+                    return ((ModDeg == 4) || (ModDeg == 0));
+            }
+        }
+
 
         public bool isTritone
         {
@@ -164,6 +178,11 @@ namespace PitchBase
             {
                 return (((uint)Type % 7 == 3) && (Alteration == IntervalAlt.Augmented));
             }
+        }
+
+        public uint ModDeg
+        {
+            get { return (uint)Type % 7; }
         }
     }
 }

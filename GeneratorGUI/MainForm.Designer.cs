@@ -240,7 +240,7 @@
             this.maxSteps.Size = new System.Drawing.Size(127, 20);
             this.maxSteps.TabIndex = 16;
             this.maxSteps.Value = new decimal(new int[] {
-            5000,
+            3000,
             0,
             0,
             0});

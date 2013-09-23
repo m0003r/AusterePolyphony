@@ -66,20 +66,30 @@ namespace GeneratorGUI.Properties {
         ///\language &quot;deutsch&quot;
         ///
         ///\header {{
-        ///   tagline = &quot;&quot;
-        ///   composer = &quot;Seed: {0}&quot;
+        ///  tagline = &quot;&quot;
+        ///  composer = &quot;Seed: {0}&quot;
         ///}}
         ///
-        ///\new Score &lt;&lt;
-        ///  {1}
-        ///&gt;&gt;
-        ///
-        ///\layout {{ }}
-        ///
-        ///\midi {{
-        ///  \context {{
-        ///    \Score
-        ///    tempoWholesPerMinute = #(ly:make-moment 72 2)
+        ///\score {{
+        ///  \new StaffGroup &lt;&lt;
+        ///{1}
+        ///  &gt;&gt;
+        ///  
+        ///  \layout {{ 
+        ///    \context {{
+        ///      \Voice
+        ///      \remove &quot;Note_heads_engraver&quot;
+        ///      \consists &quot;Completion_heads_engraver&quot;
+        ///      \remove &quot;Rest_engraver&quot;
+        ///      \consists &quot;Completion_rest_engraver&quot;
+        ///    }}
+        ///  }}
+        ///  
+        ///  \midi {{
+        ///    \context {{
+        ///      \Score
+        ///      tempoWholesPerMinute = #(ly:make-moment 72 2)
+        ///    }}
         ///  }}
         ///}}.
         /// </summary>
@@ -90,20 +100,15 @@ namespace GeneratorGUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to \new Voice \with {{
-        ///    \remove &quot;Note_heads_engraver&quot;
-        ///    \consists &quot;Completion_heads_engraver&quot;
-        ///    \remove &quot;Rest_engraver&quot;
-        ///    \consists &quot;Completion_rest_engraver&quot;
-        ///  }}
-        ///  {{
-        ///    \set Staff.midiInstrument = #&quot;synth voice&quot;
-        ///    \key {0} {1}
-        ///    \clef {2}
-        ///    \time {3}
-        ///
-        ///    {4}
-        ///  }}.
+        ///   Looks up a localized string similar to \new Staff
+        ///    {{
+        ///      \set Staff.midiInstrument = #&quot;synth voice&quot;
+        ///      \key {0} {1}
+        ///      \clef {2}
+        ///      \time {3}
+        ///      
+        ///      {4}
+        ///    }}.
         /// </summary>
         internal static string VoiceTemplate {
             get {
