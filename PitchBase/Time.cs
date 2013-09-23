@@ -7,7 +7,7 @@ namespace PitchBase
 {
     public class Time
     {
-        private bool perfectus;
+        public bool perfectus { get; private set; }
 
         public int Beats {
             get {

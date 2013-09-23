@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChooseNextStrategy\NextStrategies.cs" />
+    <Compile Include="Generators\TwoVoiceGenerator.cs" />
+    <Compile Include="Generators\IGenerator.cs" />
     <Compile Include="Levels\TwoVoices.cs" />
     <Compile Include="Rules\Base\RulesAttribute.cs" />
     <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />
@@ -49,7 +51,7 @@
     <Compile Include="Levels\RuledLevel.cs" />
     <Compile Include="Rules\Base\Rule.cs" />
     <Compile Include="Rules\LeapMelodyRules.cs" />
-    <Compile Include="MelodyGenerator.cs" />
+    <Compile Include="Generators\MelodyGenerator.cs" />
     <Compile Include="Rules\Base\MelodyRule.cs" />
     <Compile Include="Rules\LeapNoteRules.cs" />
     <Compile Include="Rules\MelodyRules.cs" />

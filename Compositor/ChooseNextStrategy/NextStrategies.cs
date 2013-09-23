@@ -7,7 +7,7 @@ using Compositor.Levels;
 
 namespace Compositor
 {
-    class DefaultNextStrategy : IChooseNextStrategy
+    class DefaultNextStrategy<T> : IChooseNextStrategy<T>
     {
         Random rand;
 
@@ -23,14 +23,14 @@ namespace Compositor
             return result * freqSum;
         }
 
-        public Note ChooseNext(IEnumerable<KeyValuePair<Note, double>> allowed)
+        public T ChooseNext(IEnumerable<KeyValuePair<T, double>> allowed)
         {
             double freqSum = allowed.Sum(kv => kv.Value);
             double r = getNextDouble(freqSum);
 
             double accumulator = 0;
 
-            foreach (KeyValuePair<Note, double> kv in allowed)
+            foreach (KeyValuePair<T, double> kv in allowed)
             {
                 accumulator += kv.Value;
                 if (accumulator >= r)
@@ -41,7 +41,7 @@ namespace Compositor
         }
     }
 
-    public class QuadraticNextStrategy : IChooseNextStrategy
+    public class QuadraticNextStrategy<T> : IChooseNextStrategy<T>
     {
         Random rand;
         
@@ -50,13 +50,13 @@ namespace Compositor
             rand = new Random(seed);
         }
 
-        public Note ChooseNext(IEnumerable<KeyValuePair<Note, double>> allowed)
+        public T ChooseNext(IEnumerable<KeyValuePair<T, double>> allowed)
         {
             double freqS = allowed.Sum(kv => Math.Pow(kv.Value, 3));
             double r = rand.NextDouble() * freqS;
             double accumulator = 0;
 
-            foreach (KeyValuePair<Note, double> kv in allowed)
+            foreach (KeyValuePair<T, double> kv in allowed)
             {
                 accumulator += Math.Pow(kv.Value, 3);
                 if (accumulator > r)

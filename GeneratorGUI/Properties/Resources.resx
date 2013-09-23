@@ -127,8 +127,22 @@
    composer = "Seed: {0}"
 }}
 
-\score {{
-  \new Voice \with {{
+\new Score &lt;&lt;
+  {1}
+&gt;&gt;
+
+\layout {{ }}
+
+\midi {{
+  \context {{
+    \Score
+    tempoWholesPerMinute = #(ly:make-moment 72 2)
+  }}
+}}</value>
+    <comment>Non-formatting curly braces must be doubled</comment>
+  </data>
+  <data name="VoiceTemplate" xml:space="preserve">
+    <value>\new Voice \with {{
     \remove "Note_heads_engraver"
     \consists "Completion_heads_engraver"
     \remove "Rest_engraver"
@@ -136,20 +150,11 @@
   }}
   {{
     \set Staff.midiInstrument = #"synth voice"
-    \key {1} {2}
-    \clef {3}
-    \time {4}
+    \key {0} {1}
+    \clef {2}
+    \time {3}
 
-    {5}
-  }}
-  \midi {{
-    \context {{
-      \Score
-      tempoWholesPerMinute = #(ly:make-moment 72 2)
-    }}
-  }}
-  \layout {{ }}
-}}</value>
-    <comment>Non-formatting curly braces must be doubled</comment>
+    {4}
+  }}</value>
   </data>
 </root>

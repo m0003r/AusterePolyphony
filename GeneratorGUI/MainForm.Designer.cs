@@ -172,6 +172,7 @@
             "Басовый"});
             this.clefList.Location = new System.Drawing.Point(202, 19);
             this.clefList.Name = "clefList";
+            this.clefList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.clefList.Size = new System.Drawing.Size(79, 95);
             this.clefList.TabIndex = 8;
             // 
@@ -339,7 +340,6 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.splitContainer);
-
             this.Name = "MainForm";
             this.Text = "Генератор мелодий";
             this.Load += new System.EventHandler(this.MainForm_Load);

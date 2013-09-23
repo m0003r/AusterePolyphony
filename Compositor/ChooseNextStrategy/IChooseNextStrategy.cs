@@ -7,8 +7,8 @@ using Compositor.Levels;
 
 namespace Compositor
 {
-    public interface IChooseNextStrategy
+    public interface IChooseNextStrategy<T>
     {
-        Note ChooseNext(IEnumerable<KeyValuePair<Note, double>> Freqs);
+        T ChooseNext(IEnumerable<KeyValuePair<T, double>> Freqs);
     }
 }

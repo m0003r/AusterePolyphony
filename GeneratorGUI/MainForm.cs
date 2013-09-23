@@ -1,22 +1,17 @@
-﻿using System;
+﻿using Compositor;
+using PitchBase;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-
-using Compositor;
-using Compositor.Levels;
-using PitchBase;
-
-using GeneratorGUI.Properties;
-using System.Text;
 
 namespace GeneratorGUI
 {
     public partial class MainForm : Form
     {
         public string fname = "";
-        private MelodyGenerator Generator;
+        private IGenerator Generator;
 
         public MainForm()
         {
@@ -25,35 +20,26 @@ namespace GeneratorGUI
 
         private void makeButton_Click(object sender, EventArgs e)
         {
+
+            var clefs = new List<int>();
+            foreach (int index in clefList.SelectedIndices)
+                clefs.Add(index - 1);
+
             Compositor.Timer.Flush("filter");
             Compositor.Timer.Start("generator");
-            InitGenerator(clefList.SelectedIndex - 1, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value, (int)maxSteps.Value);
+
+            InitGenerator(clefs, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value, (int)maxSteps.Value);
             int steps = Generator.Generate((uint)barsCount.Value);
             Console.WriteLine("Total filtering time: {0}\nTotal generation time: {1}", Compositor.Timer.Total("filter"), Compositor.Timer.Stop("generator"));
             Console.WriteLine("Total steps: {0}\n", steps);
             prepareOutput();
 
-            //dumpLeapsSmooth();
         }
 
-        private void dumpLeapsSmooth()
+
+        private void InitGenerator(List<int> ClefIndices, int noteStart, bool perfect, int seed, int stepLimit)
         {
-            foreach (var ls in Generator.Melody.LeapSmooth)
-            {
-                Console.WriteLine(" * {0}", ls.ToString());
-            };
-
-
-            engraveButton.Enabled = true;
-            drawGraphButton.Enabled = true;
-        }
-
-        private void InitGenerator(int ClefIndex, int noteStart, bool perfect, int seed, int stepLimit)
-        {
-            fname = "";
             Modus Modus;
-            Clef Clef = (Clef)ClefIndex;
-
 
             switch (modiList.SelectedIndex)
             {
@@ -68,13 +54,26 @@ namespace GeneratorGUI
 
             Generator = null;
 
-            Generator = new MelodyGenerator(Clef, Modus, Time.Create(perfect), seed, stepLimit);
+            if (ClefIndices.Count == 1)
+            {
+                Clef Clef = (Clef)ClefIndices[0];
+
+                GC.Collect();
+                Generator = new MelodyGenerator(Clef, Modus, Time.Create(perfect), seed, stepLimit);
+            }
+            if (ClefIndices.Count == 2)
+            {
+                Clef c1 = (Clef)ClefIndices[0], c2 = (Clef)ClefIndices[1];
+                Generator = new TwoVoiceGenerator(c1, c2, Modus, Time.Create(perfect), seed, stepLimit);
+            }
+
         }
 
         private void prepareOutput()
         {
-            outputArea.Text = Generator.Lily();
-            gvOut.Text = Generator.GenerationGraph();
+            outputArea.Text = LilyOutput.Lily(Generator);
+            if (Generator is MelodyGenerator)
+                gvOut.Text = ((MelodyGenerator)Generator).GenerationGraph();
 
             engraveButton.Enabled = true;
             drawGraphButton.Enabled = true;
