@@ -8,24 +8,22 @@ using Compositor.Levels;
 
 namespace Compositor.Rules
 {
-    abstract class MelodyRule : Rule<Melody, Note>
+    abstract class TwoVoicesRule : Rule<TwoVoices, TwoNotes>
     {
-        protected Melody Melody;
+        protected TwoVoices Melody;
 
         
-        protected List<Note> Notes { get { return Melody.notes; } }
-        protected Note LastNote { get { return Notes.Last(); } }
+        protected List<TwoNotes> Notes { get { return Melody.twonotes; } }
+        protected int NotesCount { get { return Melody.twonotes.Count; } }
+        protected TwoNotes LastNote { get { return Notes.Last(); } }
         protected Time Time { get { return Melody.Time; } }
-        protected Pitch Higher { get { return Melody.Higher; } }
-        protected Pitch Lower { get { return Melody.Lower; } }
-        protected List<LeapOrSmooth> LeapSmooth { get { return Melody.LeapSmooth; } }
 
-        public virtual void Init(Melody parent)
+        public virtual void Init(TwoVoices parent)
         {
             Melody = parent;
         }
 
-        protected List<Note> GetLast(int count)
+        protected List<TwoNotes> GetLast(int count)
         {
             if (Notes.Count < count)
                 throw new ArgumentOutOfRangeException("count", "Requested last-notes count is greater than notes count");
@@ -40,7 +38,7 @@ namespace Compositor.Rules
 
         public abstract bool _IsApplicable();
 
-        public abstract double Apply(Note n);
+        public abstract double Apply(TwoNotes n);
     }
 }
 

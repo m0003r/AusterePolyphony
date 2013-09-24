@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using PitchBase;
 using Compositor.Levels;
+using Compositor.Helpers;
 
 namespace Compositor
 {
-    public interface IChooseNextStrategy<T>
+    interface Rule<T>
     {
-        T ChooseNext(IEnumerable<KeyValuePair<T, double>> Freqs);
+        void Init(T me);
+        bool IsApplicable();
+        double Apply(Note n);
     }
 }

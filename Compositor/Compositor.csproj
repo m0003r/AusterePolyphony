@@ -41,31 +41,38 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChooseNextStrategy\NextStrategies.cs" />
+    <Compile Include="Generators\TwoVoiceGenerator.cs" />
+    <Compile Include="Generators\IGenerator.cs" />
+    <Compile Include="Levels\TwoNotes.cs" />
+    <Compile Include="Levels\TwoVoices.cs" />
+    <Compile Include="Rules\Base\TwoVoicesRule.cs" />
     <Compile Include="Rules\Base\RulesAttribute.cs" />
     <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />
     <Compile Include="Levels\Melody.cs" />
     <Compile Include="Levels\NoteSequencer.cs" />
     <Compile Include="Levels\RuledLevel.cs" />
     <Compile Include="Rules\Base\Rule.cs" />
-    <Compile Include="Rules\LeapMelodyRules.cs" />
-    <Compile Include="MelodyGenerator.cs" />
+    <Compile Include="Rules\Melody\LeapMelodyRules.cs" />
+    <Compile Include="Generators\MelodyGenerator.cs" />
     <Compile Include="Rules\Base\MelodyRule.cs" />
-    <Compile Include="Rules\LeapNoteRules.cs" />
-    <Compile Include="Rules\MelodyRules.cs" />
+    <Compile Include="Rules\Melody\LeapNoteRules.cs" />
+    <Compile Include="Rules\Melody\MelodyRules.cs" />
     <Compile Include="Levels\Note.cs" />
     <Compile Include="Rules\Base\NoteRule.cs" />
-    <Compile Include="Rules\NoteRules.cs" />
+    <Compile Include="Rules\Melody\NoteRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rules\TwoVoices\BaseCons.cs" />
+    <Compile Include="Rules\TwoVoices\Neighbors.cs" />
     <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PitchBase\PitchBase.csproj">
-      <Project>{C63080DF-94BA-46A1-90B7-A4CFF3E5BB7B}</Project>
-      <Name>PitchBase</Name>
-    </ProjectReference>
+    <Content Include="Rules\Запас и неск.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Rules\Запас и неск.txt" />
+    <ProjectReference Include="..\PitchBase\PitchBase.csproj">
+      <Project>{c63080df-94ba-46a1-90b7-a4cff3e5bb7b}</Project>
+      <Name>PitchBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

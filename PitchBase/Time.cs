@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Compositor
+namespace PitchBase
 {
     public class Time
     {
-        private bool perfectus;
+        public bool perfectus { get; private set; }
 
         public int Beats {
             get {
@@ -65,6 +65,32 @@ namespace Compositor
             }
         }
 
+        /*
+         * Returns:
+         *   Strongness of time
+         */ 
+        public uint Strongness
+        {
+            get
+            {
+                if (Beat == 0)
+                    return 4;
+
+                uint n = 0;
+                int b = Beat;
+
+                if (perfectus && (b > 8))
+                    b -= 4;
+
+                while (b % 2 == 0)
+                {
+                    b /= 2;
+                    n++;
+                }
+                return n;
+            }
+        }
+
         private Time(bool perfectus)
         {
             this.perfectus = perfectus;
@@ -101,6 +127,26 @@ namespace Compositor
                 throw new Exception("Can't perform addition on differend-perfected times");
 
             return me - aux.Position;
+        }
+
+        public static bool operator ==(Time me, Time aux)
+        {
+            return (me.perfectus == aux.perfectus) && (me.Position == aux.Position);
+        }
+
+        public static bool operator !=(Time me, Time aux)
+        {
+            return !(me == aux);
+        }
+
+        public bool Equals(Time aux)
+        {
+            return (this == aux);
+        }
+
+        public override string ToString()
+        {
+            return String.Format("({0}/2) {1}:{2}", Beats, Bar, Beat);
         }
     }
 }

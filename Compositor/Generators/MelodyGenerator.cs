@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Compositor.Levels;
+using Compositor.Rules;
+using PitchBase;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using PitchBase;
-using Compositor.Rules;
-using Compositor.Levels;
 
 namespace Compositor
 {
@@ -17,25 +16,37 @@ namespace Compositor
 
     }
 
-    public class MelodyGenerator
+    public class MelodyGenerator : IGenerator
     {
         public Melody Melody { get; private set; }
         public int Seed { get; private set; }
         public int StepLimit { get; private set; }
 
-        IChooseNextStrategy chooseStrategy;
+        IChooseNextStrategy<Note> chooseStrategy;
 
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
 
-        public MelodyGenerator(Clef Clef, Modus Modus, Time Time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy Strategy = null)
+        public List<Melody> GetNotes()
+        {
+            var res = new List<Melody>();
+            res.Add(Melody);
+            return res;
+        }
+
+        public int GetSeed()
+        {
+            return Seed;
+        }        
+
+        public MelodyGenerator(Clef Clef, Modus Modus, Time Time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy<Note> Strategy = null)
         {
             StepLimit = stepLimit;
             Melody = new Melody(Clef, Modus, Time);
             if (Strategy == null)
             {
                 SetSeed(seed);
-                chooseStrategy = new DefaultNextStrategy(this.Seed);
+                chooseStrategy = new DefaultNextStrategy<Note>(this.Seed);
             }
             else
                 chooseStrategy = Strategy;

@@ -83,10 +83,12 @@ namespace Compositor.Levels
     }
 
     [Rule(typeof(CadenzaRule))]
+    [Rule(typeof(DenyGamming))]
     [Rule(typeof(TrillRule))]
     [Rule(typeof(SyncopaRule))]
     [Rule(typeof(BreveRule))]
     [Rule(typeof(TritoneRule))]
+    [Rule(typeof(TritoneRule2))]
     [Rule(typeof(PeakRule))]
     [Rule(typeof(PeakRule2))]
     [Rule(typeof(ManyQuartersRule))]
@@ -96,11 +98,12 @@ namespace Compositor.Levels
     [Rule(typeof(DenyTwoNoteRhytmicSequence))]
     [Rule(typeof(DenySequence))]
     [Rule(typeof(GravityRule))]
-    [Rule(typeof(LimitGamming))]
     [Rule(typeof(LeapCompensation))]
     [Rule(typeof(DenyStrongNotesRepeat))]
+    [Rule(typeof(AfterQuarterNewRule))]
+    [Rule(typeof(TooManyEightsRule))]
 
-    public class Melody : RuledLevel<Melody>, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>> , IEnumerable
+    public class Melody : RuledLevel<Melody, Note>, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>> , IEnumerable
     {
         public Clef Clef { get; private set; }
         public Modus Modus { get; private set; }
@@ -139,6 +142,11 @@ namespace Compositor.Levels
             FirstNote();
         }
 
+        public void setLength(uint DesiredLength)
+        {
+            this.DesiredLength = DesiredLength;
+        }
+
         private void SetupDiapason(Clef Clef, Modus Modus)
         {
             PitchFactory pf = new PitchFactory(Modus, Clef);
@@ -151,18 +159,22 @@ namespace Compositor.Levels
         {
             firstNoteFreqs = new Dictionary<Note, double>();
 
-            List<Pitch> pi = Diapason.FindAll(p => ((p.Degree % 7 == 4) || (p.Degree % 7 == 0)));
+            List<Pitch> pi = Diapason.FindAll(p => ((p.Degree == 4) || (p.Degree == 0)));
+
+            double k;
 
             foreach (Pitch p in pi)
             {
-                firstNoteFreqs[new Note(p, Time, 4)] = 0.5;
-                firstNoteFreqs[new Note(p, Time, 6)] = 0.7;
-                firstNoteFreqs[new Note(p, Time, 8)] = 1;
-                firstNoteFreqs[new Note(p, Time, 12)] = 1;
+                k = (p.Degree == 0) ? 1 : 0.5;
+
+                firstNoteFreqs[new Note(p, Time, 4)] = 0.5 * k;
+                firstNoteFreqs[new Note(p, Time, 6)] = k;
+                firstNoteFreqs[new Note(p, Time, 8)] = k;
+                firstNoteFreqs[new Note(p, Time, 12)] = 0.7 *k;
             }
         }
 
-        private void FirstNote()
+        internal void FirstNote()
         {
             Freqs = new Dictionary<Note, double>(firstNoteFreqs);
         }
@@ -173,20 +185,11 @@ namespace Compositor.Levels
             Time -= n.Duration;
             notes.RemoveAt(notes.Count - 1);
             
-            if (ban)
-            {
-                banNote(n);
-            }
-
-            updateLeapsSmooth(true);
-            updateUncomp();
-        }
-
-        private void banNote(Note n)
-        {
             if (notes.Count > 0)
             {
-                notes.Last().ban(n);
+                if (ban)
+                    notes.Last().ban(n);
+
                 Freqs = notes.Last().Freqs;
             }
             else
@@ -194,9 +197,13 @@ namespace Compositor.Levels
                 firstNoteFreqs[n] = 0;
                 FirstNote();
             }
+
+            updateLeapsSmooth(true);
+            updateUncomp();
         }
 
-        protected override void AddVariants()
+
+        protected override void AddVariants(bool dumpResult = false)
         {
             if (Notes.Count == 0)
                 FirstNote();
@@ -206,7 +213,7 @@ namespace Compositor.Levels
                 if (Notes.Last().Diapason == null)
                     Notes.Last().Diapason = Diapason;
 
-                Freqs = Notes.Last().Filter();
+                Freqs = Notes.Last().Filter(dumpResult);
             }
         }
 
@@ -331,7 +338,8 @@ namespace Compositor.Levels
 
         private void updateUncomp()
         {
-            Reserve = Uncomp = 0;
+            Reserve = 0;
+            Uncomp = 0;
 
             foreach (var ls in LeapSmooth)
             {
@@ -343,8 +351,12 @@ namespace Compositor.Levels
                     updateUncompIfLeap(deg);
 
             }
-            Notes.Last().Uncomp = Uncomp;
-            Notes.Last().Reserve = Reserve;
+
+            if (Notes.Count > 0)
+            {
+                Notes.Last().Uncomp = Uncomp;
+                Notes.Last().Reserve = Reserve;
+            }
 
         }
 
@@ -389,7 +401,7 @@ namespace Compositor.Levels
 
         private void updateLeapsSmooth(bool delete = false)
         {
-            if (notes.Count < 2)
+            if ((notes.Count < 2) && (!delete))
                 return;
 
             LeapOrSmooth ls;
@@ -433,6 +445,15 @@ namespace Compositor.Levels
         public Note this[int i] { get { return notes[i]; } }
 
         public int NoteCount { get { return notes.Count; } }
+
+        public bool EndsWith(Note n)
+        {
+            if (notes.Count == 0)
+                return false;
+            else
+                return (notes.Last() == n);
+
+        }
 
         IEnumerator<Note> IEnumerable<Note>.GetEnumerator()
         {

@@ -10,7 +10,7 @@ using Compositor.Levels;
 
 namespace GeneratorGUI
 {
-    public static class GVOutput
+    public static class GraphOutputExtension
     {
         private static string graph = "";
         private static readonly string prelude = "digraph \"Seed {0}\" {{\r\naspect=\"1.0\"\r\n";
@@ -20,10 +20,8 @@ namespace GeneratorGUI
         private static string MakeNodeLabel(Note n)
         {
             string r = "<" + n.ToString() + "<br /><font point-size=\"10\">";
-            r += "l: " + n.Leap.Degrees.ToString() + "<br />";
             r += "t: " + n.TimeStart.Position.ToString() + "<br />";
-            r += "d: " + n.Duration.ToString() + "<br />";
-            r += "6: " + (n.Pitch.isTritone?"yes":"no");
+            r += "d: " + (n.DeniedRule);
             return r + "</font>>";
         }
 
@@ -81,7 +79,8 @@ namespace GeneratorGUI
             if (n.Freqs != null)
             {
                 foreach (KeyValuePair<Note, double> kv in
-                    n.Freqs.Where(kv => (kv.Value > 0.001) || (kv.Key.isBanned))   )
+                    n.Freqs.Where(kv => (kv.Value > 0.03) || (kv.Key.isBanned))   
+                    )
                     {
                     res += (MakeNode(kv.Key, n, kv.Value) + "\r\n");
                     if (kv.Key.isBanned)

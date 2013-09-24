@@ -57,6 +57,7 @@
     <Compile Include="ModusTest.cs" />
     <Compile Include="PitchTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\Melody.fakes" />

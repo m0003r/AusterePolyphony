@@ -7,13 +7,19 @@ using Compositor.Rules;
 
 namespace Compositor.Levels
 {
-    public abstract class RuledLevel<T> where T: RuledLevel<T>
+    public interface IDeniable
     {
-        internal static List<Rule<T>> Rules;
+        Rule DeniedRule { get; set; }
+        bool isBanned { get; set; }
+    }
 
-        public bool isBanned = false;
+    public abstract class RuledLevel<T, N> where T: RuledLevel<T, N> where N: IDeniable
+    {
+        internal static List<Rule<T, N>> Rules;
+
+        //public bool isBanned = false;
         protected bool filtered;
-        public Dictionary<Note, double> Freqs { get; protected set; }
+        public Dictionary<N, double> Freqs { get; protected set; }
 
         private const double MinimumFrequency = 0.01;
 
@@ -23,11 +29,11 @@ namespace Compositor.Levels
 
             if (Rules == null)
             {
-                Rules = new List<Rule<T>>();
+                Rules = new List<Rule<T, N>>();
                 AddRules();
             }
 
-            Freqs = new Dictionary<Note, double>();
+            Freqs = new Dictionary<N, double>();
         }
 
         private void AddRules()
@@ -36,8 +42,8 @@ namespace Compositor.Levels
 
             Type ruleClass;
             Type[] interfaces;
-            Type expectedInterface = typeof(Rule<T>);
-            Rule<T> instance;
+            Type expectedInterface = typeof(Rule<T, N>);
+            Rule<T, N> instance;
 
             foreach (RuleAttribute t in attrs)
             {
@@ -46,59 +52,67 @@ namespace Compositor.Levels
 
                 if (interfaces.Contains(expectedInterface))
                 {
-                    instance = (Rule<T>)System.Activator.CreateInstance(ruleClass);
+                    instance = (Rule<T, N>)System.Activator.CreateInstance(ruleClass);
                     Rules.Add(instance);
                 }
             }
         }
 
-        protected abstract void AddVariants();
+        protected abstract void AddVariants(bool dumpResult = false);
 
-        public Dictionary<Note, double> Filter()
+        public Dictionary<N, double> Filter(bool dumpResult = false)
         {
             if (filtered)
                 return Freqs;
 
             double freq;
 
-            AddVariants();
+            AddVariants(dumpResult);
 
-            IEnumerable<Note> toFilter =
+            IEnumerable<N> toFilter =
                 from kv in Freqs.ToList()
-                where kv.Value > MinimumFrequency
+                where kv.Value >= MinimumFrequency
                 select kv.Key;
 
             Timer.Start("filter");
 
-            //foreach (Rule<T> r in Rules)
             Rules
-                .AsParallel()
-                .ForAll(r =>
+                //cause strage problems
+                //.AsParallel().ForAll(r =>
+                .ForEach(r =>
             {
                 r.Init((T)this);
                 if (r.IsApplicable())
                     toFilter
-                        .AsParallel()
-                        .ForAll(n =>
+                        //cause strage problems
+                        //.AsParallel().ForAll(n =>
+                        .ToList().ForEach(n =>
                     {
-                        /*if (Freqs[n] == 0)
-                            break;*/
+                        if (Freqs[n] >= MinimumFrequency)
+                        {
+                            freq = r.Apply(n);
+                            /*if (dumpResult)
+                                Console.WriteLine("Rule {0} to note {1} (@ {2}) = {3:F}",
+                                    r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);*/
 
-                        freq = r.Apply(n);
-                        /*if (freq != 1)
-                            Console.WriteLine("Rule {0} to note {1} (@ {2}) = {3:F}",
-                                r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);*/
-                        Freqs[n] *= freq;
+                            Freqs[n] *= freq;
+
+                            if (freq == 0)
+                            {
+                                n.DeniedRule = r;
+                            }
+                        }
                     });
             });
 
             Timer.Stop("filter");
 
+
             filtered = true;
             return Freqs;
         }
 
-        public void ban(Note what)
+        public void ban(N what)
         {
             if (Freqs.ContainsKey(what))
             {

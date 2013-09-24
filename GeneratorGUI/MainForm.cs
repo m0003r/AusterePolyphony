@@ -1,22 +1,17 @@
-﻿using System;
+﻿using Compositor;
+using PitchBase;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-
-using Compositor;
-using Compositor.Levels;
-using PitchBase;
-
-using GeneratorGUI.Properties;
-using System.Text;
 
 namespace GeneratorGUI
 {
     public partial class MainForm : Form
     {
         public string fname = "";
-        private MelodyGenerator Generator;
+        private IGenerator Generator;
 
         public MainForm()
         {
@@ -25,32 +20,26 @@ namespace GeneratorGUI
 
         private void makeButton_Click(object sender, EventArgs e)
         {
+
+            var clefs = new List<int>();
+            foreach (int index in clefList.SelectedIndices)
+                clefs.Add(index - 1);
+
             Compositor.Timer.Flush("filter");
             Compositor.Timer.Start("generator");
-            InitGenerator(clefList.SelectedIndex - 1, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value, (int)maxSteps.Value);
+
+            InitGenerator(clefs, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value, (int)maxSteps.Value);
             int steps = Generator.Generate((uint)barsCount.Value);
             Console.WriteLine("Total filtering time: {0}\nTotal generation time: {1}", Compositor.Timer.Total("filter"), Compositor.Timer.Stop("generator"));
-            Console.WriteLine("Steps: {0}", steps);
+            Console.WriteLine("Total steps: {0}\n", steps);
             prepareOutput();
 
-            //dumpLeapsSmooth();
         }
 
-        private void dumpLeapsSmooth()
-        {
-            foreach (var ls in Generator.Melody.LeapSmooth)
-            {
-                Console.WriteLine(" * {0}", ls.ToString());
-            };
 
-        }
-
-        private void InitGenerator(int ClefIndex, int noteStart, bool perfect, int seed, int stepLimit)
+        private void InitGenerator(List<int> ClefIndices, int noteStart, bool perfect, int seed, int stepLimit)
         {
-            fname = "";
             Modus Modus;
-            Clef Clef = (Clef)ClefIndex;
-
 
             switch (modiList.SelectedIndex)
             {
@@ -63,45 +52,33 @@ namespace GeneratorGUI
                 default: return;
             }
 
-            Generator = new MelodyGenerator(Clef, Modus, Time.Create(perfect), seed, stepLimit);
+            Generator = null;
+
+            if (ClefIndices.Count == 1)
+            {
+                Clef Clef = (Clef)ClefIndices[0];
+
+                GC.Collect();
+                Generator = new MelodyGenerator(Clef, Modus, Time.Create(perfect), seed, stepLimit);
+            }
+            if (ClefIndices.Count == 2)
+            {
+                Clef c1 = (Clef)ClefIndices[0], c2 = (Clef)ClefIndices[1];
+                Generator = new TwoVoiceGenerator(c1, c2, Modus, Time.Create(perfect), seed, stepLimit);
+            }
+
         }
 
         private void prepareOutput()
         {
-            outputArea.Text = formatLily();
-            gvOut.Text = Generator.GenerationGraph();
-
-            saveLilyButton.Enabled = true;
-            engraveButton.Enabled = true;
-            saveGraphButton.Enabled = true;
-            drawGraphButton.Enabled = true;
-        }
-
-        static string[] clefNamesList =  {"treble", "soprano", "mezzosoprano", "alto", "tenor", "baritone", "bass"};
-
-        private string formatLily()
-        {
-            Pitch p = new Pitch(0, Generator.Melody.Modus);
-
-            string key = p.StringForm;
-            string modus, clef, time;
-            StringBuilder notes = new StringBuilder();
-
-            modus = "\\" + Generator.Melody.Modus.Name;
-            clef = clefNamesList[(int)Generator.Melody.Clef + 1];
-            time = (perfectTime.Checked ? "3" : "4") + "/2";
-
-            foreach (Note n in Generator.Melody.Notes)
+            outputArea.Text = LilyOutput.Lily(Generator);
+            if (Generator is MelodyGenerator)
             {
-                notes.Append(n);
-                notes.AppendFormat("^\"{0}\"", n.Reserve);
-                notes.AppendFormat("_\"{0}\"", n.Uncomp);
-                notes.Append(" ");
+                gvOut.Text = ((MelodyGenerator)Generator).GenerationGraph();
+                drawGraphButton.Enabled = true;
             }
 
-            string format = Resources.ScoreTemplate;
-            return string.Format(format, Generator.Seed, key, modus, clef, time, notes);
-            
+            engraveButton.Enabled = true;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -109,11 +86,6 @@ namespace GeneratorGUI
             modiList.SelectedIndex = 1;
             startNotes.SelectedIndex = 2;
             clefList.SelectedIndex = 0;
-        }
-
-        private void saveLilyButton_Click(object sender, EventArgs e)
-        {
-            SaveLily();
         }
 
         private void SaveLily()
@@ -155,7 +127,21 @@ namespace GeneratorGUI
         {
             Process s = (Process)sender;
             if (s.ExitCode == 0)
+            {
                 Process.Start("out\\" + fname + ".pdf");
+                EnablePlay();
+            }
+        }
+
+        private void EnablePlay()
+        {
+            if (playButton.InvokeRequired)
+            {
+                Action act = EnablePlay;
+                playButton.Invoke(act);
+            }
+            else
+                playButton.Enabled = true;
         }
 
         private void gvCompleted(object sender, EventArgs e)
@@ -165,10 +151,6 @@ namespace GeneratorGUI
                 Process.Start("out\\" + fname + "_graph.pdf");
         }
 
-        private void saveGraphButton_Click(object sender, EventArgs e)
-        {
-            SaveGraph();
-        }
 
         private void SaveGraph()
         {
@@ -198,6 +180,11 @@ namespace GeneratorGUI
             p.Exited += new EventHandler(gvCompleted);
             p.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory() + "\\out";
             p.Start();
+        }
+
+        private void playButton_Click(object sender, EventArgs e)
+        {
+            Process.Start("out\\" + fname + ".mid");
         }
     }
 }
