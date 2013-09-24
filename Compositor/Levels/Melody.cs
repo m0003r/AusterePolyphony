@@ -546,5 +546,10 @@ namespace Compositor.Levels
 
             public KeyValuePair<int, Pitch> Current { get { return new KeyValuePair<int, Pitch>(position, melody[NoteNumber].Pitch); } }
         }
+
+        internal bool Finished()
+        {
+            return (Time.Position == DesiredLength);
+        }
     }
 }

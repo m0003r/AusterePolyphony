@@ -65,10 +65,15 @@ namespace Compositor
 
             try
             {
-                while ((Melodies.Time.Position < lengthInBeats) && (steps < StepLimit))
+                while ((!Melodies.Finished()) && (steps < StepLimit))
                 {
-                    Step();
-                    steps++;
+                    if (Melodies.Time.Position > lengthInBeats)
+                        Melodies.RemoveLast();
+                    else
+                    {
+                        Step();
+                        steps++;
+                    }
                 }
             }
             catch (StopGeneration)

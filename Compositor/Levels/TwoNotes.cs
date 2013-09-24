@@ -26,7 +26,14 @@ namespace Compositor.Levels
 
         public Interval Interval { get { return Note1.Pitch - Note2.Pitch; } }
 
-        public Time Time { get { return (Note1.TimeEnd.Beats > Note2.TimeEnd.Beats) ? Note1.TimeEnd : Note2.TimeEnd; } }
+        public Time TimeStart { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position) ? Note1.TimeStart : Note2.TimeStart; } }
+        public Time TimeEnd { get { return (Note1.TimeEnd.Position > Note2.TimeEnd.Position) ? Note1.TimeEnd : Note2.TimeEnd; } }
+
+        public Note Changed { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position) ? Note1 : Note2; } }
+        public Note Stayed { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position) ? Note2 : Note1; } }
+
+        public bool Simult { get { return (Note1.TimeStart.Position == Note2.TimeStart.Position); } }
+        public bool EndSimult { get { return (Note1.TimeEnd.Position == Note2.TimeEnd.Position); } }
 
         public int CompareTo(TwoNotes other)
         {

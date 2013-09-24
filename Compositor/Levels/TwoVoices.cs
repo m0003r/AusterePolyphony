@@ -7,9 +7,15 @@ using Compositor.Rules;
 
 namespace Compositor.Levels
 {
+
     [Rule(typeof(ConsonantesSimult))]
+    [Rule(typeof(LinearDiss))]
     [Rule(typeof(DenyParallelConsonantes))]
     [Rule(typeof(DenyStraightToConsonans))]
+    [Rule(typeof(ComplementRule))]
+    [Rule(typeof(ComplementRule2))]
+    [Rule(typeof(DenyCrossing))]
+    [Rule(typeof(SusPassRule1))]
     public class TwoVoices : RuledLevel<TwoVoices, TwoNotes>
     {
         public Melody Voice1 { get; private set; }
@@ -19,8 +25,12 @@ namespace Compositor.Levels
 
         internal List<TwoNotes> twonotes;
 
+        public Time Time { get; private set; }
+
         public TwoVoices(Clef Clef1, Clef Clef2, Modus Modus, Time Time)
         {
+            this.Time = Time;
+
             Voice1 = new Melody(Clef1, Modus, Time);
             Voice2 = new Melody(Clef2, Modus, Time);
 
@@ -110,6 +120,10 @@ namespace Compositor.Levels
                 Voice2.AddNote(next.Note2);
 
             filtered = false;
+
+            Time = next.Note1.TimeEnd;
+            if (Time.Position < next.Note2.TimeEnd.Position)
+                Time = next.Note2.TimeEnd;
         }
 
         internal void setLength(uint lengthInBeats)
@@ -138,6 +152,10 @@ namespace Compositor.Levels
 
                 Freqs = new_last.Freqs;
 
+                Time = new_last.Note1.TimeEnd;
+                if (Time.Position < new_last.Note2.TimeEnd.Position)
+                    Time = new_last.Note2.TimeEnd;
+
             }
             else if (twonotes.Count == 1)
             {
@@ -148,14 +166,20 @@ namespace Compositor.Levels
                 firstFreqs[removed] = 0;
 
                 FirstNote();
-            }
-        }
 
-        public Time Time { get { return NoteCount > 0 ? twonotes.Last().Time : Time.Create(Voice1.Time.perfectus); } }
+                Time.Position = 0;
+            }
+
+        }
 
         internal void FirstNote()
         {
             Freqs = firstFreqs;
+        }
+
+        internal bool Finished()
+        {
+            return (Voice1.Finished() && Voice2.Finished());
         }
     }
 }

@@ -20,7 +20,6 @@ namespace GeneratorGUI
 
         private void makeButton_Click(object sender, EventArgs e)
         {
-
             var clefs = new List<int>();
             foreach (int index in clefList.SelectedIndices)
                 clefs.Add(index - 1);

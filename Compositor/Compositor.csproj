@@ -62,7 +62,10 @@
     <Compile Include="Rules\Melody\NoteRules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\TwoVoices\BaseCons.cs" />
-    <Compile Include="Rules\TwoVoices\Neighbors.cs" />
+    <Compile Include="Rules\TwoVoices\BaseDiss.cs" />
+    <Compile Include="Rules\TwoVoices\CrossingRules.cs" />
+    <Compile Include="Rules\TwoVoices\RhytmicRule.cs" />
+    <Compile Include="Rules\TwoVoices\Suspension.cs" />
     <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>

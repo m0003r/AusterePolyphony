@@ -578,7 +578,7 @@ namespace Compositor.Rules
 
         public override double Apply(Note n)
         {
-            const int safeDistance = 4 * 16;
+            const double safeDistance = 4 * 16;
 
             if (n.Duration != 1)
                 return 1;
@@ -588,7 +588,7 @@ namespace Compositor.Rules
             if (distance.Beats > safeDistance)
                 return 1;
             else
-                return Math.Pow(distance.Beats, 2) / safeDistance*2;
+                return Math.Pow(distance.Beats/safeDistance, 3);
         }
     }
 

@@ -11,7 +11,7 @@ namespace Compositor.Rules
     {
         public override bool _IsApplicable()
         {
-            return true;// (LastNote.Note1.TimeEnd == LastNote.Note2.TimeEnd);
+            return LastNote.EndSimult;
         }
 
         public override double Apply(TwoNotes NextNotes)
@@ -49,7 +49,7 @@ namespace Compositor.Rules
 
         public override bool _IsApplicable()
         {
-            return (LastNote.Note1.TimeEnd == LastNote.Note2.TimeEnd);
+            return LastNote.EndSimult;
         }
 
         public override double Apply(TwoNotes NextNotes)
