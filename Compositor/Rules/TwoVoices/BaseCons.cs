@@ -11,7 +11,7 @@ namespace Compositor.Rules
     {
         public override bool _IsApplicable()
         {
-            return (LastNote.Note1.TimeEnd == LastNote.Note2.TimeEnd);
+            return true;// (LastNote.Note1.TimeEnd == LastNote.Note2.TimeEnd);
         }
 
         public override double Apply(TwoNotes NextNotes)
@@ -41,6 +41,22 @@ namespace Compositor.Rules
         {
             var i = NextNotes.Interval.ModDeg;
             return (degrees == i) ? 0 : 1;
+        }
+    }
+
+    class DenyStraightToConsonans : TwoVoicesRule
+    {
+
+        public override bool _IsApplicable()
+        {
+            return (LastNote.Note1.TimeEnd == LastNote.Note2.TimeEnd);
+        }
+
+        public override double Apply(TwoNotes NextNotes)
+        {
+            return ((NextNotes.Interval.PerfectConsonance) &&
+                (NextNotes.Note1.Leap.Upwards == NextNotes.Note2.Leap.Upwards) &&
+                (NextNotes.Note1.Leap.isLeap)) ? 0 : 1;
         }
     }
 

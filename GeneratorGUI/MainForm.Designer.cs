@@ -47,6 +47,7 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.playButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxSteps)).BeginInit();
@@ -189,7 +190,7 @@
             // 
             this.engraveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.engraveButton.Enabled = false;
-            this.engraveButton.Location = new System.Drawing.Point(212, 454);
+            this.engraveButton.Location = new System.Drawing.Point(211, 454);
             this.engraveButton.Name = "engraveButton";
             this.engraveButton.Size = new System.Drawing.Size(106, 25);
             this.engraveButton.TabIndex = 12;
@@ -240,7 +241,7 @@
             this.maxSteps.Size = new System.Drawing.Size(127, 20);
             this.maxSteps.TabIndex = 16;
             this.maxSteps.Value = new decimal(new int[] {
-            3000,
+            5000,
             0,
             0,
             0});
@@ -291,6 +292,7 @@
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.playButton);
             this.splitContainer.Panel1.Controls.Add(this.outputArea);
             this.splitContainer.Panel1.Controls.Add(this.engraveButton);
             // 
@@ -331,6 +333,18 @@
             this.groupBox2.TabIndex = 20;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Параметры генерации";
+            // 
+            // playButton
+            // 
+            this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.playButton.Enabled = false;
+            this.playButton.Location = new System.Drawing.Point(99, 453);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(106, 25);
+            this.playButton.TabIndex = 13;
+            this.playButton.Text = "Послушать";
+            this.playButton.UseVisualStyleBackColor = true;
+            this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
             // MainForm
             // 
@@ -381,6 +395,7 @@
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button playButton;
 
     }
 }

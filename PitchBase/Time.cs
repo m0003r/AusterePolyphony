@@ -65,6 +65,32 @@ namespace PitchBase
             }
         }
 
+        /*
+         * Returns:
+         *   Strongness of time
+         */ 
+        public uint Strongness
+        {
+            get
+            {
+                if (Beat == 0)
+                    return 4;
+
+                uint n = 0;
+                int b = Beat;
+
+                if (perfectus && (b > 8))
+                    b -= 4;
+
+                while (b % 2 == 0)
+                {
+                    b /= 2;
+                    n++;
+                }
+                return n;
+            }
+        }
+
         private Time(bool perfectus)
         {
             this.perfectus = perfectus;

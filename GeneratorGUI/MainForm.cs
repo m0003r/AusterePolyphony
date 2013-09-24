@@ -73,11 +73,12 @@ namespace GeneratorGUI
         {
             outputArea.Text = LilyOutput.Lily(Generator);
             if (Generator is MelodyGenerator)
+            {
                 gvOut.Text = ((MelodyGenerator)Generator).GenerationGraph();
+                drawGraphButton.Enabled = true;
+            }
 
             engraveButton.Enabled = true;
-            drawGraphButton.Enabled = true;
-
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -126,7 +127,21 @@ namespace GeneratorGUI
         {
             Process s = (Process)sender;
             if (s.ExitCode == 0)
+            {
                 Process.Start("out\\" + fname + ".pdf");
+                EnablePlay();
+            }
+        }
+
+        private void EnablePlay()
+        {
+            if (playButton.InvokeRequired)
+            {
+                Action act = EnablePlay;
+                playButton.Invoke(act);
+            }
+            else
+                playButton.Enabled = true;
         }
 
         private void gvCompleted(object sender, EventArgs e)
@@ -165,6 +180,11 @@ namespace GeneratorGUI
             p.Exited += new EventHandler(gvCompleted);
             p.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory() + "\\out";
             p.Start();
+        }
+
+        private void playButton_Click(object sender, EventArgs e)
+        {
+            Process.Start("out\\" + fname + ".mid");
         }
     }
 }

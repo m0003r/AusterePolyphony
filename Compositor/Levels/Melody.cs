@@ -101,6 +101,7 @@ namespace Compositor.Levels
     [Rule(typeof(LeapCompensation))]
     [Rule(typeof(DenyStrongNotesRepeat))]
     [Rule(typeof(AfterQuarterNewRule))]
+    [Rule(typeof(TooManyEightsRule))]
 
     public class Melody : RuledLevel<Melody, Note>, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>> , IEnumerable
     {

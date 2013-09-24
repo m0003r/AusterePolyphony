@@ -14,6 +14,7 @@ namespace Compositor.Rules
 
         
         protected List<TwoNotes> Notes { get { return Melody.twonotes; } }
+        protected int NotesCount { get { return Melody.twonotes.Count; } }
         protected TwoNotes LastNote { get { return Notes.Last(); } }
         protected Time Time { get { return Melody.Time; } }
 
