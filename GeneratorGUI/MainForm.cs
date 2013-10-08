@@ -31,8 +31,19 @@ namespace GeneratorGUI
             int steps = Generator.Generate((uint)barsCount.Value);
             Console.WriteLine("Total filtering time: {0}\nTotal generation time: {1}", Compositor.Timer.Total("filter"), Compositor.Timer.Stop("generator"));
             Console.WriteLine("Total steps: {0}\n", steps);
-            prepareOutput();
 
+            if (steps == maxSteps.Value)
+            {
+                var dr = MessageBox.Show("Не удалось завершить сочинение за указанное количество шагов!", "Ошибка", MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation);
+                if (dr == System.Windows.Forms.DialogResult.Retry)
+                    makeButton_Click(sender, e);
+                if (dr == System.Windows.Forms.DialogResult.Cancel)
+                    prepareOutput();
+            }
+            else
+            {
+                prepareOutput();
+            }
         }
 
 

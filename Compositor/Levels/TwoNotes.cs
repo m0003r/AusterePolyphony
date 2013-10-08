@@ -15,10 +15,13 @@ namespace Compositor.Levels
         public Rule DeniedRule { get; set; }
         public bool isBanned { get; set; }
 
+        public bool Suspension;
+
         public TwoNotes(Note Note1, Note Note2)
         {
             isBanned = false;
             DeniedRule = null;
+            Suspension = false;
             this.Note1 = Note1;
             this.Note2 = Note2;
             Freqs = null;

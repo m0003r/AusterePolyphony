@@ -43,6 +43,7 @@ namespace Compositor.Levels
             this.Pitch = Pitch;
             this.TimeStart = TimeStart;
             this.Duration = Duration;
+            
             if (Previous != null)
             {
                 this.Leap = CalcState(Pitch, Previous.Pitch);

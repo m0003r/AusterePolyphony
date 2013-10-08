@@ -8,14 +8,19 @@ using Compositor.Rules;
 namespace Compositor.Levels
 {
 
+    [Rule(typeof(DistanceRule))]
+    
     [Rule(typeof(ConsonantesSimult))]
     [Rule(typeof(LinearDiss))]
+    [Rule(typeof(AfterDiss))]
     [Rule(typeof(DenyParallelConsonantes))]
     [Rule(typeof(DenyStraightToConsonans))]
     [Rule(typeof(ComplementRule))]
     [Rule(typeof(ComplementRule2))]
     [Rule(typeof(DenyCrossing))]
     [Rule(typeof(SusPassRule1))]
+    [Rule(typeof(SusPassRule2))]
+
     public class TwoVoices : RuledLevel<TwoVoices, TwoNotes>
     {
         public Melody Voice1 { get; private set; }
