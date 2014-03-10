@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using PitchBase;
 using Compositor.Levels;
+using PitchBase;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.Base
 {
-    abstract class TwoVoicesRule : ParamRule<TwoVoices, TwoNotes>
+    abstract class TwoVoicesRule : ParamRule<Levels.TwoVoices, TwoNotes>
     {
-        protected TwoVoices Melody;
+        protected Levels.TwoVoices Melody;
 
         
-        protected List<TwoNotes> Notes { get { return Melody.twonotes; } }
-        protected int NotesCount { get { return Melody.twonotes.Count; } }
+        protected List<TwoNotes> Notes { get { return Melody.Twonotes; } }
+        protected int NotesCount { get { return Melody.Twonotes.Count; } }
         protected TwoNotes LastNote { get { return Notes.Last(); } }
         protected Time Time { get { return Melody.Time; } }
 
-        public override void Init(TwoVoices parent)
+        public override void Init(Levels.TwoVoices parent)
         {
             Melody = parent;
         }
@@ -33,12 +31,12 @@ namespace Compositor.Rules
 
         public override bool IsApplicable()
         {
-            return (Notes.Count == 0) ? false : _IsApplicable();
+            return Notes.Count != 0 && _IsApplicable();
         }
 
         public abstract bool _IsApplicable();
 
-        public abstract override double Apply(TwoNotes n);
+        public abstract override double Apply(TwoNotes nextNotes);
     }
 }
 

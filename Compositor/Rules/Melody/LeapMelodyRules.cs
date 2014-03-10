@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using PitchBase;
 using Compositor.Levels;
+using Compositor.Rules.Base;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.Melody
 {
-    using NotesList = List<Note>;
-
-
 /***
  * Улучшенные правила скачка:
  * 
@@ -21,29 +15,23 @@ namespace Compositor.Rules
     class GravityRule : MelodyRule
     {
         //double desiredCenter;
-        double gravityPoint;
-        double gravityForce;
-
-        public override void Init(Melody parent)
-        {
-            base.Init(parent);
-            //desiredCenter = Melody.Diapason.Average(p => p.Value);
-        }
+        double _gravityPoint;
+        double _gravityForce;
 
         public override bool _IsApplicable()
         {
             //double actualCenter = Melody.notes.Sum(n => n.Pitch.Value * n.Duration) / (double)Melody.Time.Position;
             //double diff = desiredCenter - actualCenter;
-            gravityPoint = LastNote.Pitch.Value + LastNote.Uncomp;
-            gravityForce = LastNote.Uncomp;
+            _gravityPoint = LastNote.Pitch.Value + LastNote.Uncomp;
+            _gravityForce = LastNote.Uncomp;
 
-            return Math.Abs(gravityForce) > 2;
+            return Math.Abs(_gravityForce) > 2;
         }
 
-        public override double Apply(Note n)
+        public override double Apply(Note nextNotes)
         {
-            double distance = n.Pitch.Value - gravityPoint;
-            double force = distance * gravityForce;
+            double distance = nextNotes.Pitch.Value - _gravityPoint;
+            double force = distance * _gravityForce;
             // Console.WriteLine(" >>>>> Gravity to {0}: {1}", n.Pitch.Value, force);
             if (force < 0)
                 return 1;
@@ -67,82 +55,81 @@ namespace Compositor.Rules
 
         //255167827
         //1679803255
-        public override double Apply(Note n)
+        public override double Apply(Note nextNotes)
         {
 
             // ход в сторону нескомпенсированности
             if (LastNote.Uncomp != 0)
-                if (Math.Sign(n.Leap.Degrees) == Math.Sign(LastNote.Uncomp))
+                if (Math.Sign(nextNotes.Leap.Degrees) == Math.Sign(LastNote.Uncomp))
                 {
                     if (Math.Abs(LastNote.Uncomp) >= UncompDenyLeap)
-                        return n.Leap.isLeap ? 0 : 1;
+                        return nextNotes.Leap.IsLeap ? 0 : 1;
                     if (Math.Abs(LastNote.Uncomp) >= UncompDenySmooth)
                         return 0;
                 }
 
             // ход против запаса или если запас 0
-            if (Math.Sign(LastNote.Reserve) != Math.Sign(n.Leap.Degrees))
-            {
-                if (n.Leap.Degrees < 5)
-                    return 1;
-                else
-                    return Math.Abs(n.Leap.Degrees) < Math.Abs(LastNote.Reserve * 4) ? 1 : 0;
-            }
-            return Math.Abs(n.Leap.Degrees + LastNote.Reserve) < ReserveLimit ? 1 : 0;
+            if (Math.Sign(LastNote.Reserve) == Math.Sign(nextNotes.Leap.Degrees))
+                return Math.Abs(nextNotes.Leap.Degrees + LastNote.Reserve) < ReserveLimit ? 1 : 0;
+
+            if (nextNotes.Leap.Degrees < 5)
+                return 1;
+
+            return Math.Abs(nextNotes.Leap.Degrees) < Math.Abs(LastNote.Reserve * 4) ? 1 : 0;
         }
     }
 
     class AfterLeapRules : MelodyRule
     {
-        private LeapAfterCoSmooth CoSmooth;
-        private LeapAfterOppSmooth OppSmooth;
-        private LeapAfterCoLeap CoLeap;
-        private LeapAfterOppLeap OppLeap;
+        private LeapAfterCoSmooth _coSmooth;
+        private LeapAfterOppSmooth _oppSmooth;
+        private LeapAfterCoLeap _coLeap;
+        private LeapAfterOppLeap _oppLeap;
 
         protected Note PreLast;
 
-        private bool lastCo;
-        private bool lastSm;
+        private bool _lastCo;
+        private bool _lastSm;
 
-        public override void Init(Melody parent)
+        public override void Init(Levels.Melody parent)
         {
             base.Init(parent);
 
-            CoSmooth = new LeapAfterCoSmooth();
-            CoLeap = new LeapAfterCoLeap();
-            OppSmooth = new LeapAfterOppSmooth();
-            OppLeap = new LeapAfterOppLeap();
+            _coSmooth = new LeapAfterCoSmooth();
+            _coLeap = new LeapAfterCoLeap();
+            _oppSmooth = new LeapAfterOppSmooth();
+            _oppLeap = new LeapAfterOppLeap();
 
-            CoSmooth.Init(Melody);
-            CoLeap.Init(Melody);
-            OppSmooth.Init(Melody);
-            OppLeap.Init(Melody);
+            _coSmooth.Init(Melody);
+            _coLeap.Init(Melody);
+            _oppSmooth.Init(Melody);
+            _oppLeap.Init(Melody);
         }
 
         public override bool _IsApplicable()
         {
-            if (LastNote.Leap.isSmooth)
+            if (LastNote.Leap.IsSmooth)
                 return false;
             if (Notes.Count < 2)
                 return false;
 
             PreLast = Notes[Notes.Count - 2];
 
-            lastCo = (PreLast.Leap.Upwards == LastNote.Leap.Upwards);
-            lastSm = PreLast.Leap.isSmooth;
+            _lastCo = (PreLast.Leap.Upwards == LastNote.Leap.Upwards);
+            _lastSm = PreLast.Leap.IsSmooth;
 
-            if (lastCo)
-                return lastSm ? CoSmooth.IsApplicable() : CoLeap.IsApplicable();
+            if (_lastCo)
+                return _lastSm ? _coSmooth.IsApplicable() : _coLeap.IsApplicable();
             else
-                return lastSm ? OppSmooth.IsApplicable() : OppLeap.IsApplicable();
+                return _lastSm ? _oppSmooth.IsApplicable() : _oppLeap.IsApplicable();
         }
 
-        public override double Apply(Note n)
+        public override double Apply(Note nextNotes)
         {
-            if (lastCo)
-                return lastSm ? CoSmooth.Apply(n) : CoLeap.Apply(n);
-            else
-                return lastSm ? OppSmooth.Apply(n) : OppLeap.Apply(n);
+            if (_lastCo)
+                return _lastSm ? _coSmooth.Apply(nextNotes) : _coLeap.Apply(nextNotes);
+
+            return _lastSm ? _oppSmooth.Apply(nextNotes) : _oppLeap.Apply(nextNotes);
         }
     }
 
@@ -153,10 +140,10 @@ namespace Compositor.Rules
             return true;
         }
 
-        public override double Apply(Note n)
+        public override double Apply(Note nextNotes)
         {
             //должно быть противонаправленно
-            return (n.Leap.Upwards ^ LastNote.Leap.Upwards) ? 1 : 0; 
+            return (nextNotes.Leap.Upwards ^ LastNote.Leap.Upwards) ? 1 : 0; 
         }
     }
 
@@ -168,11 +155,11 @@ namespace Compositor.Rules
             return (LastNote.Leap.AbsDeg > 4);
         }
 
-        public override double Apply(Note n)
+        public override double Apply(Note nextNotes)
         {
             //то нельзя плавного хода в том же направлении
-            bool co = (n.Leap.Upwards == LastNote.Leap.Upwards);
-            return (co && (Math.Abs(n.Leap.Degrees) == -1)) ? 0 : 1;
+            bool co = (nextNotes.Leap.Upwards == LastNote.Leap.Upwards);
+            return (co && (Math.Abs(nextNotes.Leap.Degrees) == -1)) ? 0 : 1;
         }
     }
 
@@ -183,33 +170,33 @@ namespace Compositor.Rules
             return true;
         }
 
-        public override double Apply(Note n)
+        public override double Apply(Note nextNotes)
         {
             //только плавный ход назад
-            bool backwards = (n.Leap.Upwards ^ LastNote.Leap.Upwards);
-            return (backwards && (n.Leap.AbsDeg == 1)) ? 1 : 0;
+            bool backwards = (nextNotes.Leap.Upwards ^ LastNote.Leap.Upwards);
+            return (backwards && (nextNotes.Leap.AbsDeg == 1)) ? 1 : 0;
         }
     }
 
     class LeapAfterOppLeap : MelodyRule
     {
-        private int leapsInRow = 0;
+        private int _leapsInRow;
 
         public override bool _IsApplicable()
         {
-            IEnumerable<Note> lastLeaps = Notes.Reverse<Note>().TakeWhile(n => n.Leap.AbsDeg > 1);
-            leapsInRow = lastLeaps.Count();
+            var lastLeaps = Notes.Reverse<Note>().TakeWhile(n => n.Leap.AbsDeg > 1);
+            _leapsInRow = lastLeaps.Count();
 
             return true;
         }
 
-        public override double Apply(Note n)
+        public override double Apply(Note nextNotes)
         {
             //только плавный ход назад
-            bool backwards = (n.Leap.Upwards ^ LastNote.Leap.Upwards);
-            bool leapPossible = (leapsInRow < 3);
+            bool backwards = (nextNotes.Leap.Upwards ^ LastNote.Leap.Upwards);
+            bool leapPossible = (_leapsInRow < 3);
 
-            return (backwards && ((n.Leap.AbsDeg == 1) || leapPossible) ) ? 1 : 0;
+            return (backwards && ((nextNotes.Leap.AbsDeg == 1) || leapPossible) ) ? 1 : 0;
         }
     }
 

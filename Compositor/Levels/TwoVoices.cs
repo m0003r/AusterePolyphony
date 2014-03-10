@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Compositor.Rules.Base;
+using Compositor.Rules.TwoVoices;
 using PitchBase;
-using Compositor.Rules;
 
 namespace Compositor.Levels
 {
@@ -16,6 +16,8 @@ namespace Compositor.Levels
     [Rule(typeof(SecondaSeptimaResolution))]
     [Rule(typeof(DenyParallelConsonantes))]
     [Rule(typeof(DenyStraightToConsonans))]
+    [Rule(typeof(DenyHiddenParallelConsonantes))]
+
     [Rule(typeof(ComplementRule))]
     [Rule(typeof(ComplementRule2))]
     [Rule(typeof(DenyCrossing))]
@@ -28,39 +30,38 @@ namespace Compositor.Levels
         public Melody Voice1 { get; private set; }
         public Melody Voice2 { get; private set; }
 
-        public Dictionary<TwoNotes, double> firstFreqs;
+        public Dictionary<TwoNotes, double> FirstFreqs;
 
-        internal List<TwoNotes> twonotes;
+        internal List<TwoNotes> Twonotes;
 
         public Time Time { get; private set; }
 
-        public TwoVoices(Clef Clef1, Clef Clef2, Modus Modus, Time Time)
+        public TwoVoices(Clef clef1, Clef clef2, Modus modus, Time time)
         {
-            this.Time = Time;
+            Time = time;
 
-            Voice1 = new Melody(Clef1, Modus, Time);
-            Voice2 = new Melody(Clef2, Modus, Time);
+            Voice1 = new Melody(clef1, modus, time);
+            Voice2 = new Melody(clef2, modus, time);
 
-            twonotes = new List<TwoNotes>();
-            firstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
+            Twonotes = new List<TwoNotes>();
+            FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
 
-            var keys = new List<TwoNotes>(firstFreqs.Keys);
-            foreach (var key in keys)
-                if (key.Interval.ModDeg == 3)
-                    firstFreqs[key] = 0;
+            var keys = new List<TwoNotes>(FirstFreqs.Keys);
+            foreach (var key in keys.Where(key => key.Interval.ModDeg == 3))
+                FirstFreqs[key] = 0;
 
             FirstNote();
-            filtered = true;
+            Filtered = true;
         }
 
         protected override void AddVariants(bool dumpResult = false)
         {
-            var Filtered1 = Voice1.Filter(dumpResult);
-            var Filtered2 = Voice2.Filter(dumpResult);
+            var filtered1 = Voice1.Filter(dumpResult);
+            var filtered2 = Voice2.Filter(dumpResult);
 
             if (Voice1.NoteCount == 0)
             {
-                AddTwoNotesVariants(Filtered1, Filtered2);
+                AddTwoNotesVariants(filtered1, filtered2);
             }
             else
             {
@@ -69,32 +70,32 @@ namespace Compositor.Levels
 
                 int diff = l1.TimeEnd.Position - l2.TimeEnd.Position;
                 if (diff == 0)
-                    AddTwoNotesVariants(Filtered1, Filtered2);
+                    AddTwoNotesVariants(filtered1, filtered2);
                 else if (diff < 0)
-                    AddToVoice1Variants(Filtered1, l2);
+                    AddToVoice1Variants(filtered1, l2);
                 else
-                    AddToVoice2Variants(l1, Filtered2);
+                    AddToVoice2Variants(l1, filtered2);
             }
 
         }
 
-        private void AddTwoNotesVariants(Dictionary<Note, double> Filtered1, Dictionary<Note, double> Filtered2)
+        private void AddTwoNotesVariants(Dictionary<Note, double> filtered1, Dictionary<Note, double> filtered2)
         {
-            Freqs = CombineFreqs(Filtered1, Filtered2);
+            Freqs = CombineFreqs(filtered1, filtered2);
         }
 
-        private void AddToVoice1Variants(Dictionary<Note, double> Filtered1, Note l2)
+        private void AddToVoice1Variants(Dictionary<Note, double> filtered1, Note l2)
         {
             var f2 = new Dictionary<Note, double>();
             f2[l2] = 1;
-            Freqs = CombineFreqs(Filtered1, f2);
+            Freqs = CombineFreqs(filtered1, f2);
         }
 
-        private void AddToVoice2Variants(Note l1, Dictionary<Note, double> Filtered2)
+        private void AddToVoice2Variants(Note l1, Dictionary<Note, double> filtered2)
         {
             var f1 = new Dictionary<Note, double>();
             f1[l1] = 1;
-            Freqs = CombineFreqs(f1, Filtered2);
+            Freqs = CombineFreqs(f1, filtered2);
         }
 
         private double GetCombinedFreq(double f1, double f2)
@@ -116,61 +117,61 @@ namespace Compositor.Levels
 
         internal void AddTwoNotes(TwoNotes next)
         {
-            if (twonotes.Count > 0)
-                twonotes.Last().Freqs = Freqs;
+            if (Twonotes.Count > 0)
+                Twonotes.Last().Freqs = Freqs;
 
-            twonotes.Add(next);
+            Twonotes.Add(next);
 
             if ((Voice1.notes.Count == 0) || !(Voice1.EndsWith(next.Note1)))
                 Voice1.AddNote(next.Note1);
             if ((Voice2.notes.Count == 0) || !(Voice2.EndsWith(next.Note2)))
                 Voice2.AddNote(next.Note2);
 
-            filtered = false;
+            Filtered = false;
 
             Time = next.Note1.TimeEnd;
             if (Time.Position < next.Note2.TimeEnd.Position)
                 Time = next.Note2.TimeEnd;
         }
 
-        internal void setLength(uint lengthInBeats)
+        internal void SetLength(uint lengthInBeats)
         {
-            Voice1.setLength(lengthInBeats);
-            Voice2.setLength(lengthInBeats);
+            Voice1.SetLength(lengthInBeats);
+            Voice2.SetLength(lengthInBeats);
         }
 
-        public int NoteCount { get { return twonotes.Count; } }
+        public int NoteCount { get { return Twonotes.Count; } }
 
         internal void RemoveLast(bool ban = true)
         {
-            if (twonotes.Count > 1)
+            if (Twonotes.Count > 1)
             {
-                var removed = twonotes.Last();
-                twonotes.RemoveAt(twonotes.Count - 1);
-                var new_last = twonotes.Last();
+                var removed = Twonotes.Last();
+                Twonotes.RemoveAt(Twonotes.Count - 1);
+                var newLast = Twonotes.Last();
 
-                if (removed.Note1 != new_last.Note1)
+                if (removed.Note1 != newLast.Note1)
                     Voice1.RemoveLast(false);
-                if (removed.Note2 != new_last.Note2)
+                if (removed.Note2 != newLast.Note2)
                     Voice2.RemoveLast(false);
 
                 if (ban)
-                    new_last.Freqs[removed] = 0;
+                    newLast.Freqs[removed] = 0;
 
-                Freqs = new_last.Freqs;
+                Freqs = newLast.Freqs;
 
-                Time = new_last.Note1.TimeEnd;
-                if (Time.Position < new_last.Note2.TimeEnd.Position)
-                    Time = new_last.Note2.TimeEnd;
+                Time = newLast.Note1.TimeEnd;
+                if (Time.Position < newLast.Note2.TimeEnd.Position)
+                    Time = newLast.Note2.TimeEnd;
 
             }
-            else if (twonotes.Count == 1)
+            else if (Twonotes.Count == 1)
             {
                 Voice1.RemoveLast(false);
                 Voice2.RemoveLast(false);
-                var removed = twonotes.Last(); 
-                twonotes.RemoveAt(0);
-                firstFreqs[removed] = 0;
+                var removed = Twonotes.Last(); 
+                Twonotes.RemoveAt(0);
+                FirstFreqs[removed] = 0;
 
                 FirstNote();
 
@@ -181,7 +182,7 @@ namespace Compositor.Levels
 
         internal void FirstNote()
         {
-            Freqs = firstFreqs;
+            Freqs = FirstFreqs;
         }
 
         internal bool Finished()

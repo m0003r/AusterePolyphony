@@ -1,6 +1,5 @@
 ﻿using PitchBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace NotesUnitTest
 {
@@ -10,28 +9,14 @@ namespace NotesUnitTest
     ///This is a test class for PitchTest and is intended
     ///to contain all PitchTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestClass]
     public class PitchTest
     {
-
-
-        private TestContext testContextInstance;
-
         /// <summary>
         ///Gets or sets the test context which provides
         ///information about and functionality for the current test run.
         ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
+        public TestContext TestContext { get; set; }
 
         #region Additional test attributes
         // 
@@ -67,25 +52,25 @@ namespace NotesUnitTest
         /// <summary>
         ///A test for isTritoneHigh
         ///</summary>
-        [TestMethod()]
-        public void isTritoneHighTest()
+        [TestMethod]
+        public void IsTritoneHighTest()
         {
-            int PitchValue = 5;
-            Modus PitchModus = Modus.Dorian();
-            Pitch target = new Pitch(PitchValue, PitchModus);
-            Assert.IsTrue(target.isTritoneHigh);
+            const int pitchValue = 5;
+            var pitchModus = Modus.Dorian();
+            var target = new Pitch(pitchValue, pitchModus);
+            Assert.IsTrue(target.IsTritoneHigh);
         }
 
         /// <summary>
         ///A test for isTritoneLow
         ///</summary>
-        [TestMethod()]
-        public void isTritoneLowTest()
+        [TestMethod]
+        public void IsTritoneLowTest()
         {
-            int PitchValue = 2; 
-            Modus PitchModus = Modus.Dorian();
-            Pitch target = new Pitch(PitchValue, PitchModus);
-            Assert.IsTrue(target.isTritoneLow);
+            const int pitchValue = 2; 
+            var pitchModus = Modus.Dorian();
+            var target = new Pitch(pitchValue, pitchModus);
+            Assert.IsTrue(target.IsTritoneLow);
         }
     }
 }

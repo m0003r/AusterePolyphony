@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.Base
 {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-    public class ParamAttribute : System.Attribute
+    public class ParamAttribute : Attribute
     {
         public string ParamName;
         public Type Type;
@@ -18,20 +15,20 @@ namespace Compositor.Rules
             if ( !type.IsInstanceOfType(def))
                 throw new ArgumentException();
 
-            this.ParamName = name;
-            this.Type = type;
-            this.Default = def;
-            this.Desc = desc;
+            ParamName = name;
+            Type = type;
+            Default = def;
+            Desc = desc;
         }
     }
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
-    class RuleNameAttribute : System.Attribute
+    class RuleNameAttribute : Attribute
     {
         public string ParamName { get; set; }
         public RuleNameAttribute(string name)
         {
-            name = ParamName;
+            ParamName = name;
         }
     }
 

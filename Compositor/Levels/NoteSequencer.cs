@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using PitchBase;
 
 namespace Compositor.Levels
@@ -19,16 +17,16 @@ namespace Compositor.Levels
 
     static class NoteSequencerExtension
     {
-        public static double DurationCoeff(this Note me, int Duration)
+        public static double DurationCoeff(this Note me, int duration)
         {
-            if (Duration < 2)
+            if (duration < 2)
                 return 0.5;  //восьмые
-            if (Duration > 6)
-                return 1 - (Math.Log(Duration, 2) - 3) * 0.8;
+            if (duration > 6)
+                return 1 - (Math.Log(duration, 2) - 3) * 0.8;
             return 1;
         }
 
-        public static double allowPitchAfterAt(this Note me, Pitch p2, Time t)
+        public static double AllowPitchAfterAt(this Note me, Pitch p2, Time t)
         {
             if (me.Pitch == p2)
                 return 0; //не бывает никада!
@@ -55,14 +53,13 @@ namespace Compositor.Levels
 
         public static Note[] GenerateDurations(this Note me, Pitch p, Time t)
         {
-            List<Note> v = new List<Note>();
-            List<int> durVar = new List<int>();
+            var durVar = new List<int>();
 
             if (t.Beat % 2 == 1)
                 durVar.Add(1);
             else
             {
-                if (t.allowEight)
+                if (t.AllowEight)
                     durVar.Add(1);
                 durVar.Add(2); //четверти можно везде
 
@@ -99,12 +96,7 @@ namespace Compositor.Levels
                 }
             }
 
-            foreach (int dur in durVar)
-            {
-                v.Add(new Note(p, t, dur, me));
-            }
-
-            return v.ToArray();
+            return durVar.Select(dur => new Note(p, t, dur, me)).ToArray();
         }
     }
 }

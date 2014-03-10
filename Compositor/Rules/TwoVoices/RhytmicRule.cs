@@ -1,26 +1,26 @@
 ﻿using System.Linq;
-
 using Compositor.Levels;
+using Compositor.Rules.Base;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.TwoVoices
 {
     class ComplementRule : TwoVoicesRule
     {
-        static int MinSimultCount = 2;
-        static int MaxSimultCount = 4;
+        private const int MinSimultCount = 2;
+        private const int MaxSimultCount = 4;
 
-        int SimultCount;
+        int _simultCount;
 
         public override bool _IsApplicable()
         {
-            SimultCount = Notes.Reverse<TwoNotes>().TakeWhile(n => n.Simult).Count();
-            return (SimultCount > MinSimultCount);
+            _simultCount = Notes.Reverse<TwoNotes>().TakeWhile(n => n.Simult).Count();
+            return (_simultCount > MinSimultCount);
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            if (NextNotes.Simult)
-                return (double)(MaxSimultCount - SimultCount) / (MaxSimultCount - MinSimultCount);
+            if (nextNotes.Simult)
+                return (double)(MaxSimultCount - _simultCount) / (MaxSimultCount - MinSimultCount);
 
             return 1;
         }
@@ -28,22 +28,22 @@ namespace Compositor.Rules
 
     class ComplementRule2 : TwoVoicesRule
     {
-        static double MinSimultProportion = 0.4;
-        static double MaxSimultProportion = 0.8;
+        private const double MinSimultProportion = 0.4;
+        private const double MaxSimultProportion = 0.8;
 
-        double SimultProportion;
+        double _simultProportion;
 
         public override bool _IsApplicable()
         {
-            int SimultCount = Notes.Count(n => n.Simult);
-            SimultProportion = (double)SimultCount / Notes.Count;
-            return (SimultCount > MinSimultProportion);
+            int simultCount = Notes.Count(n => n.Simult);
+            _simultProportion = (double)simultCount / Notes.Count;
+            return (simultCount > MinSimultProportion);
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            if (NextNotes.Simult)
-                return (MaxSimultProportion - SimultProportion) / (MaxSimultProportion - MinSimultProportion);
+            if (nextNotes.Simult)
+                return (MaxSimultProportion - _simultProportion) / (MaxSimultProportion - MinSimultProportion);
 
             return 1;
         }

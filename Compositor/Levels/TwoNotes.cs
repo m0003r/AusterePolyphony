@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Compositor.Rules.Base;
 using PitchBase;
-using Compositor.Rules;
 
 
 namespace Compositor.Levels
@@ -12,28 +11,32 @@ namespace Compositor.Levels
         public Note Note1;
         public Note Note2;
 
-        public Rule DeniedRule { get; set; }
-        public bool isBanned { get; set; }
+        public IRule DeniedRule { get; set; }
+        public bool IsBanned { get; set; }
 
         public bool Suspension;
 
-        public TwoNotes(Note Note1, Note Note2)
+        public TwoNotes(Note note1, Note note2)
         {
-            isBanned = false;
+            IsBanned = false;
             DeniedRule = null;
             Suspension = false;
-            this.Note1 = Note1;
-            this.Note2 = Note2;
+            Note1 = note1;
+            Note2 = note2;
             Freqs = null;
         }
 
         public Interval Interval { get { return Note1.Pitch - Note2.Pitch; } }
 
-        public Time TimeStart { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position) ? Note1.TimeStart : Note2.TimeStart; } }
+        public Time TimeStart { get { return UpperChanged ? Note1.TimeStart : Note2.TimeStart; } }
         public Time TimeEnd { get { return (Note1.TimeEnd.Position > Note2.TimeEnd.Position) ? Note1.TimeEnd : Note2.TimeEnd; } }
 
-        public Note Changed { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position) ? Note1 : Note2; } }
-        public Note Stayed { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position) ? Note2 : Note1; } }
+        public bool UpperChanged { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position); } }
+
+        public Note Changed { get { return UpperChanged ? Note1 : Note2; } }
+        public Note Stayed { get { return UpperChanged ? Note2 : Note1; } }
+
+        public bool IsSmooth { get { return Simult ? (Note1.Leap.IsSmooth && Note2.Leap.IsSmooth) : (Changed.Leap.IsSmooth); } }
 
         public bool Simult { get { return (Note1.TimeStart.Position == Note2.TimeStart.Position); } }
         public bool EndSimult { get { return (Note1.TimeEnd.Position == Note2.TimeEnd.Position); } }
@@ -46,7 +49,7 @@ namespace Compositor.Levels
 
         public override string ToString()
         {
-            return Note1.ToString() + "@" + Note1.TimeStart.ToString() + "; " + Note2.ToString() + "@" + Note2.TimeStart.ToString();
+            return Note1 + "@" + Note1.TimeStart + "; " + Note2 + "@" + Note2.TimeStart;
         }
 
         public Dictionary<TwoNotes, double> Freqs;

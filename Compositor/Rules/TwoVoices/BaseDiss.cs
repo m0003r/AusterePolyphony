@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Compositor.Levels;
+using Compositor.Rules.Base;
 
-using Compositor.Levels;
-
-namespace Compositor.Rules
+namespace Compositor.Rules.TwoVoices
 {
     // Neighbors
     // Anticipation
@@ -23,12 +19,15 @@ namespace Compositor.Rules
             return LastNote.Interval.Consonance;
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            if (NextNotes.Interval.Consonance)
+            if (nextNotes.Interval.Consonance)
                 return 1;
 
-            return (NextNotes.Changed.Leap.isSmooth) ? 1 : 0;
+            if (nextNotes.Simult)
+                return (nextNotes.Note1.Leap.IsSmooth && nextNotes.Note2.Leap.IsSmooth) ? 1 : 0;
+            else
+                return (nextNotes.Changed.Leap.IsSmooth) ? 1 : 0;
         }
     }
 
@@ -39,15 +38,18 @@ namespace Compositor.Rules
             return LastNote.Interval.Dissonance;
         }
 
-        public override double Apply(TwoNotes n)
+        public override double Apply(TwoNotes nextNotes)
         {
-            if (n.Interval.Dissonance)
+            if (nextNotes.Interval.Dissonance)
                 return 0;
 
-            if ((n.TimeStart.Beat % 4 == 2) && (n.Changed.Leap.Degrees == -2))
+            if ((nextNotes.TimeStart.Beat % 4 == 2) && (nextNotes.Changed.Leap.Degrees == -2))
                 return 1;
 
-            return (n.Changed.Leap.AbsDeg == 1) ? 1 : 0;
+            if (nextNotes.Simult)
+                return (nextNotes.Note1.Leap.IsSmooth && nextNotes.Note2.Leap.IsSmooth) ? 1 : 0;
+            else
+                return (nextNotes.Changed.Leap.IsSmooth) ? 1 : 0;
         }
     }
 
@@ -58,9 +60,9 @@ namespace Compositor.Rules
             return (LastNote.Interval.Degrees == 1 || LastNote.Interval.Degrees == 6);
         }
 
-        public override double Apply(TwoNotes n)
+        public override double Apply(TwoNotes nextNotes)
         {
-            return (n.Interval.ModDeg == 0) ? 0 : 1;
+            return (nextNotes.Interval.ModDeg == 0) ? 0 : 1;
         }
     }
  

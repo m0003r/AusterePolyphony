@@ -1,12 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PitchBase
 {
     public class Interval : IComparable
     {
+        public Interval(IntervalType type, IntervalAlt alteration = IntervalAlt.Natural, bool upwards = true)
+        {
+            if (!CheckAlterable(type, alteration))
+                throw new ArgumentException();
+            Type = type;
+            Alteration = alteration;
+            Upwards = upwards;
+        }
+
         public IntervalType Type { get; protected set; }
         public IntervalAlt Alteration { get; protected set; }
         public bool Upwards { get; protected set; }
@@ -15,7 +21,7 @@ namespace PitchBase
         {
             get
             {
-                int semitones = (int)Math.Truncate(Type.ToSemitones() + Alteration.ToSemitones());
+                var semitones = (int) Math.Truncate(Type.ToSemitones() + Alteration.ToSemitones());
                 return Upwards ? semitones : -semitones;
             }
         }
@@ -24,33 +30,98 @@ namespace PitchBase
         {
             get
             {
-                int deg = (int)Type;
+                var deg = (int) Type;
                 return Upwards ? deg : -deg;
             }
         }
 
-        public int AbsDeg { get { return (int)Type; } }
+        public int AbsDeg
+        {
+            get { return (int) Type; }
+        }
 
         public Interval Abs
         {
+            get { return new Interval(Type, Alteration); }
+        }
+
+        public bool IsLeap
+        {
+            get { return Type.IsLeap(); }
+        }
+
+        public bool IsSmooth
+        {
+            get { return Type.IsCont(); }
+        }
+
+        public bool Consonance
+        {
             get
             {
-                return new Interval(Type, Alteration);
+                uint d = ModDeg;
+                if (d == 4)
+                    return Alteration == IntervalAlt.Natural;
+                if (d > 3)
+                    d = 7 - d;
+                return ((d == 0) || (d == 2));
             }
         }
 
-        public Interval(IntervalType Type, IntervalAlt Alteration = IntervalAlt.Natural, bool Upwards = true)
+        public bool Dissonance
         {
-            if (!checkAlterable(Type, Alteration))
-                throw new ArgumentException();
-            this.Type = Type;
-            this.Alteration = Alteration;
-            this.Upwards = Upwards;
+            get { return !Consonance; }
         }
 
-        private static bool checkAlterable(IntervalType Type, IntervalAlt Alteration)
+        public bool PerfectConsonance
         {
-            double interval = Type.ToSemitones() + Alteration.ToSemitones();
+            get
+            {
+                if (Dissonance)
+                    return false;
+                return ((ModDeg == 4) || (ModDeg == 0));
+            }
+        }
+
+
+        public bool IsTritone
+        {
+            get { return IsDimQuinta || IsAugQuarta; }
+        }
+
+        public bool IsDimQuinta
+        {
+            get { return (((uint) Type%7 == 4) && (Alteration == IntervalAlt.Diminished)); }
+        }
+
+
+        public bool IsAugQuarta
+        {
+            get { return (((uint) Type%7 == 3) && (Alteration == IntervalAlt.Augmented)); }
+        }
+
+        public uint ModDeg
+        {
+            get { return (uint) Type%7; }
+        }
+
+        public int CompareTo(object target)
+        {
+            var t = (Interval) target;
+            if (Type < t.Type)
+                return -1;
+            if (Type > t.Type)
+                return 1;
+            if (Alteration < t.Alteration)
+                return -1;
+            if (Alteration > t.Alteration)
+                return 1;
+            return 0;
+        }
+
+        private static bool CheckAlterable(IntervalType type, IntervalAlt alteration)
+        {
+            double interval = type.ToSemitones() + alteration.ToSemitones();
             return (Math.Truncate(interval) == interval);
         }
 
@@ -58,8 +129,6 @@ namespace PitchBase
         {
             int resSemitones = a.Semitones + b.Semitones;
             bool resUp = true;
-            IntervalType resType;
-            IntervalAlt resAlt;
 
             if (resSemitones < 0)
             {
@@ -69,8 +138,8 @@ namespace PitchBase
                 b = b.Invert();
             }
 
-            resType = (IntervalType)(a.Degrees + b.Degrees);
-            resAlt = resType.CalcAlteration(resSemitones);
+            var resType = (IntervalType) (a.Degrees + b.Degrees);
+            var resAlt = resType.CalcAlteration(resSemitones);
 
             return new Interval(resType, resAlt, resUp);
         }
@@ -91,98 +160,9 @@ namespace PitchBase
             return a.Invert();
         }
 
-        public int CompareTo(object target)
-        {
-            Interval t = (Interval)target;
-            if (this.Type < t.Type)
-                return -1;
-            if (this.Type > t.Type)
-                return 1;
-            if (this.Alteration < t.Alteration)
-                return -1;
-            if (this.Alteration > t.Alteration)
-                return 1;
-            return 0;
-        }
-
         public override String ToString()
         {
-            return Alteration.ToString() + " " + Type.ToString() + (Upwards ? "" : ", down");
-        }
-
-        public bool isLeap
-        {
-            get
-            {
-                return Type.isLeap();
-            }
-        }
-
-        public bool isSmooth
-        {
-            get
-            {
-                return Type.isCont();
-            }
-        }
-
-        public bool Consonance
-        {
-            get
-            {
-                uint d = ModDeg;
-                if (d == 4)
-                    return Alteration == IntervalAlt.Natural;
-                if (d > 3)
-                    d = 7 - d;
-                if ((d == 0) || (d == 2))
-                    return true;
-                return false;
-            }
-        }
-
-        public bool Dissonance { get { return !Consonance; } }
-
-        public bool PerfectConsonance
-        {
-            get
-            {
-                if (Dissonance)
-                    return false;
-                else
-                    return ((ModDeg == 4) || (ModDeg == 0));
-            }
-        }
-
-
-        public bool isTritone
-        {
-            get
-            {
-                return isDimQuinta || isAugQuarta;
-            }
-        }
-
-        public bool isDimQuinta
-        {
-            get
-            {
-                return (((uint)Type % 7 == 4) && (Alteration == IntervalAlt.Diminished));
-            }
-        }
-
-
-        public bool isAugQuarta
-        {
-            get
-            {
-                return (((uint)Type % 7 == 3) && (Alteration == IntervalAlt.Augmented));
-            }
-        }
-
-        public uint ModDeg
-        {
-            get { return (uint)Type % 7; }
+            return Alteration + " " + Type + (Upwards ? "" : ", down");
         }
     }
 }

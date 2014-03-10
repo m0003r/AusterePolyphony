@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using System.Linq;
 using Compositor.Levels;
+using Compositor.Rules.Base;
 using PitchBase;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.TwoVoices
 {
     class DistanceRule : TwoVoicesRule
     {
@@ -16,9 +13,9 @@ namespace Compositor.Rules
             return true;
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            int deg = NextNotes.Interval.AbsDeg;
+            int deg = nextNotes.Interval.AbsDeg;
             double c = 1;
             if (deg > 10)
                 c = (12.0 - deg)/3.0;
@@ -29,8 +26,8 @@ namespace Compositor.Rules
     class DenyCrossing : TwoVoicesRule
     {
 
-        Pitch LowerBound;
-        Pitch UpperBound;
+        Pitch _lowerBound;
+        Pitch _upperBound;
 
         public override bool _IsApplicable()
         {
@@ -39,15 +36,15 @@ namespace Compositor.Rules
             var lb = Notes.Reverse<TwoNotes>().First(n => n.Note1 == lastup);
             var ub = Notes.Reverse<TwoNotes>().First(n => n.Note2 == lastdown);
 
-            LowerBound = lb.Note2.Pitch;
-            UpperBound = ub.Note1.Pitch;
+            _lowerBound = lb.Note2.Pitch;
+            _upperBound = ub.Note1.Pitch;
 
             return true;
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            return ((NextNotes.Note1.Pitch < LowerBound) || (NextNotes.Note2.Pitch > UpperBound)) ? 0 : 1;
+            return ((nextNotes.Note1.Pitch < _lowerBound) || (nextNotes.Note2.Pitch > _upperBound)) ? 0 : 1;
         }
     }
 }

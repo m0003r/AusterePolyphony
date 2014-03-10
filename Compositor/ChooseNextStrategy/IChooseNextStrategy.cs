@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-using Compositor.Levels;
-
-namespace Compositor
+namespace Compositor.ChooseNextStrategy
 {
     public interface IChooseNextStrategy<T>
     {
-        T ChooseNext(IEnumerable<KeyValuePair<T, double>> Freqs);
+        T ChooseNext(IEnumerable<KeyValuePair<T, double>> freqs);
     }
 }

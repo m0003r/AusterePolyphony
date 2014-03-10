@@ -1,93 +1,100 @@
-﻿using Compositor;
+﻿using System.Linq;
+using Compositor.Generators;
+using GeneratorGUI.Properties;
 using PitchBase;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using Timer = Compositor.Timer;
 
 namespace GeneratorGUI
 {
     public partial class MainForm : Form
     {
-        public string fname = "";
-        private IGenerator Generator;
+        public string FName = "";
+        private IGenerator _generator;
 
-        private SettingsForm settingsForm;
+        private readonly SettingsForm _settingsForm;
 
         public MainForm()
         {
             InitializeComponent();
-            settingsForm = new SettingsForm();
+            _settingsForm = new SettingsForm();
         }
 
         private void makeButton_Click(object sender, EventArgs e)
         {
-            var clefs = new List<int>();
-            foreach (int index in clefList.SelectedIndices)
-                clefs.Add(index - 1);
+            var clefs = (from int index in clefList.SelectedIndices select index - 1).ToList();
 
-            Compositor.Timer.Flush("filter");
-            Compositor.Timer.Start("generator");
+            Timer.Flush("filter");
+            Timer.Start("generator");
 
             InitGenerator(clefs, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value, (int)maxSteps.Value);
-            int steps = Generator.Generate((uint)barsCount.Value);
-            Console.WriteLine("Total filtering time: {0}\nTotal generation time: {1}", Compositor.Timer.Total("filter"), Compositor.Timer.Stop("generator"));
-            Console.WriteLine("Total steps: {0}\n", steps);
+            generationProgressBar.Maximum = (int)maxSteps.Value;
+            generationProgressBar.Minimum = 0;
+            generationProgressBar.Value = 0;
+
+            int steps = _generator.Generate((uint)barsCount.Value, s => { if (s % 50 == 0) generationProgressBar.Value = s; return true; });
+            Console.WriteLine(Resources.FilteringGenerationTime, Timer.Total("filter"), Timer.Stop("generator"));
+            Console.WriteLine(Resources.TotalSteps, steps);
 
             if (steps == maxSteps.Value)
             {
-                var dr = MessageBox.Show("Не удалось завершить сочинение за указанное количество шагов!", "Ошибка", MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation);
-                if (dr == System.Windows.Forms.DialogResult.Retry)
+                var dr = MessageBox.Show(Resources.CantFinish, Resources.Error, MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation);
+                if (dr == DialogResult.Retry)
                     makeButton_Click(sender, e);
-                if (dr == System.Windows.Forms.DialogResult.Cancel)
-                    prepareOutput();
+                if (dr == DialogResult.Cancel)
+                    PrepareOutput();
             }
             else
             {
-                prepareOutput();
+                generationProgressBar.Value = (int)maxSteps.Value;
+                PrepareOutput();
             }
         }
 
 
-        private void InitGenerator(List<int> ClefIndices, int noteStart, bool perfect, int seed, int stepLimit)
+        private void InitGenerator(IList<int> clefIndices, int noteStart, bool perfect, int seed, int stepLimit)
         {
-            Modus Modus;
+            Modus modus;
 
             switch (modiList.SelectedIndex)
             {
-                case 0: Modus = Modus.Ionian(noteStart); break;
-                case 1: Modus = Modus.Dorian(noteStart); break;
-                case 2: Modus = Modus.Phrygian(noteStart); break;
-                case 3: Modus = Modus.Lydian(noteStart); break;
-                case 4: Modus = Modus.Mixolydian(noteStart); break;
-                case 5: Modus = Modus.Aeolian(noteStart); break;
+                case 0: modus = Modus.Ionian(noteStart); break;
+                case 1: modus = Modus.Dorian(noteStart); break;
+                case 2: modus = Modus.Phrygian(noteStart); break;
+                case 3: modus = Modus.Lydian(noteStart); break;
+                case 4: modus = Modus.Mixolydian(noteStart); break;
+                case 5: modus = Modus.Aeolian(noteStart); break;
                 default: return;
             }
 
-            Generator = null;
+            _generator = null;
 
-            if (ClefIndices.Count == 1)
+            if (clefIndices.Count == 1)
             {
-                Clef Clef = (Clef)ClefIndices[0];
+                var clef = (Clef)clefIndices[0];
 
                 GC.Collect();
-                Generator = new MelodyGenerator(Clef, Modus, Time.Create(perfect), seed, stepLimit);
+                _generator = new MelodyGenerator(clef, modus, Time.Create(perfect), seed, stepLimit);
             }
-            if (ClefIndices.Count == 2)
+            if (clefIndices.Count == 2)
             {
-                Clef c1 = (Clef)ClefIndices[0], c2 = (Clef)ClefIndices[1];
-                Generator = new TwoVoiceGenerator(c1, c2, Modus, Time.Create(perfect), seed, stepLimit);
+                Clef c1 = (Clef)clefIndices[0], c2 = (Clef)clefIndices[1];
+                _generator = new TwoVoiceGenerator(c1, c2, modus, Time.Create(perfect), seed, stepLimit);
             }
 
         }
 
-        private void prepareOutput()
+        private void PrepareOutput()
         {
-            outputArea.Text = LilyOutput.Lily(Generator);
-            if (Generator is MelodyGenerator)
+            outputArea.Text = LilyOutput.Lily(_generator);
+            var generator = _generator as MelodyGenerator;
+            if (generator != null)
             {
-                gvOut.Text = ((MelodyGenerator)Generator).GenerationGraph();
+                gvOut.Text = generator.GenerationGraph();
                 drawGraphButton.Enabled = true;
             }
 
@@ -103,16 +110,16 @@ namespace GeneratorGUI
 
         private void SaveLily()
         {
-            checkOutDirectory();
-            if (fname == "")
-                fname = "gen_" + DateTime.Now.Ticks.ToString();
-            using (StreamWriter outfile = new StreamWriter("out\\" + fname + ".ly"))
+            CheckOutDirectory();
+            if (FName == "")
+                FName = "gen_" + DateTime.Now.Ticks;
+            using (var outfile = new StreamWriter("out\\" + FName + ".ly"))
             {
                 outfile.Write(outputArea.Text);
             }
         }
 
-        private void checkOutDirectory()
+        private static void CheckOutDirectory()
         {
             if (!Directory.Exists("out"))
                 Directory.CreateDirectory("out");
@@ -126,24 +133,29 @@ namespace GeneratorGUI
 
         private void Engrave()
         {
-            Process p = new Process();
-            p.StartInfo.UseShellExecute = true;
-            p.StartInfo.FileName = "lilypond";
-            p.StartInfo.Arguments = fname + ".ly";
-            p.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory() + "\\out";
-            p.EnableRaisingEvents = true;
-            p.Exited += new EventHandler(engraveCompleted);
+            var p = new Process
+            {
+                StartInfo =
+                {
+                    UseShellExecute = true,
+                    FileName = "lilypond",
+                    Arguments = FName + ".ly",
+                    WorkingDirectory = Directory.GetCurrentDirectory() + "\\out"
+                },
+                EnableRaisingEvents = true
+            };
+
+            p.Exited += EngraveCompleted;
             p.Start();
         }
 
-        private void engraveCompleted(object sender, EventArgs e)
+        private void EngraveCompleted(object sender, EventArgs e)
         {
-            Process s = (Process)sender;
-            if (s.ExitCode == 0)
-            {
-                Process.Start("out\\" + fname + ".pdf");
-                EnablePlay();
-            }
+            var s = (Process)sender;
+            if (s.ExitCode != 0) return;
+
+            Process.Start("out\\" + FName + ".pdf");
+            EnablePlay();
         }
 
         private void EnablePlay()
@@ -157,20 +169,20 @@ namespace GeneratorGUI
                 playButton.Enabled = true;
         }
 
-        private void gvCompleted(object sender, EventArgs e)
+        private void GvCompleted(object sender, EventArgs e)
         {
-            Process s = (Process)sender;
+            var s = (Process)sender;
             if (s.ExitCode == 0)
-                Process.Start("out\\" + fname + "_graph.pdf");
+                Process.Start("out\\" + FName + "_graph.pdf");
         }
 
 
         private void SaveGraph()
         {
-            checkOutDirectory();
-            if (fname == "")
-                fname = "gen_" + DateTime.Now.Ticks.ToString();
-            using (StreamWriter outfile = new StreamWriter("out\\" + fname + ".gv"))
+            CheckOutDirectory();
+            if (FName == "")
+                FName = "gen_" + DateTime.Now.Ticks;
+            using (var outfile = new StreamWriter("out\\" + FName + ".gv"))
             {
                 outfile.Write(gvOut.Text);
             }
@@ -184,25 +196,26 @@ namespace GeneratorGUI
 
         private void DrawGraph()
         {
-            string cmdline = "-Tpdf " + fname + ".gv -o" + fname + "_graph.pdf";
-            Process p = new Process();
-            p.StartInfo.UseShellExecute = true;
-            p.StartInfo.FileName = "dot";
-            p.StartInfo.Arguments = cmdline;
-            p.EnableRaisingEvents = true;
-            p.Exited += new EventHandler(gvCompleted);
+            string cmdline = "-Tpdf " + FName + ".gv -o" + FName + "_graph.pdf";
+            var p = new Process
+            {
+                StartInfo = {UseShellExecute = true, FileName = "dot", Arguments = cmdline},
+                EnableRaisingEvents = true
+            };
+
+            p.Exited += GvCompleted;
             p.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory() + "\\out";
             p.Start();
         }
 
         private void playButton_Click(object sender, EventArgs e)
         {
-            Process.Start("out\\" + fname + ".mid");
+            Process.Start("out\\" + FName + ".mid");
         }
 
         private void settingsButton_Click(object sender, EventArgs e)
         {
-            settingsForm.ShowDialog();
+            _settingsForm.ShowDialog();
         }
     }
 }

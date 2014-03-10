@@ -1,6 +1,5 @@
 ﻿using PitchBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace NotesUnitTest
 {
@@ -10,28 +9,14 @@ namespace NotesUnitTest
     ///This is a test class for ModusTest and is intended
     ///to contain all ModusTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestClass]
     public class ModusTest
     {
-
-
-        private TestContext testContextInstance;
-
         /// <summary>
         ///Gets or sets the test context which provides
         ///information about and functionality for the current test run.
         ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
+        public TestContext TestContext { get; set; }
 
         #region Additional test attributes
         // 
@@ -67,32 +52,32 @@ namespace NotesUnitTest
         /// <summary>
         ///A test for DiatonicStart
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void DiatonicStartTest()
         {
-            Modus target = Modus.Ionian(0);
+            Modus target = Modus.Ionian();
             Assert.AreEqual(0, target.DiatonicStart);
 
-            target = Modus.Dorian(0);
+            target = Modus.Dorian();
             Assert.AreEqual(0, target.DiatonicStart);
 
-            target = Modus.Phrygian(0);
+            target = Modus.Phrygian();
             Assert.AreEqual(0, target.DiatonicStart);
 
-            target = Modus.Lydian(0);
+            target = Modus.Lydian();
             Assert.AreEqual(0, target.DiatonicStart);
 
-            target = Modus.Mixolydian(0);
+            target = Modus.Mixolydian();
             Assert.AreEqual(0, target.DiatonicStart);
 
-            target = Modus.Aeolian(0);
+            target = Modus.Aeolian();
             Assert.AreEqual(0, target.DiatonicStart);
         }
 
         /// <summary>
         ///A test for DiatonicStart2
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void DiatonicStartTest2()
         {
             Modus target = Modus.Ionian(1);
@@ -117,7 +102,7 @@ namespace NotesUnitTest
         /// <summary>
         ///A test for Keys
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void KeysTest()
         {
             Modus target = Modus.Ionian(1);
@@ -143,7 +128,7 @@ namespace NotesUnitTest
         /// <summary>
         ///A test for NotesDelta
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void NotesDeltaTest()
         {
 

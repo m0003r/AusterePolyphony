@@ -1,17 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PitchBase
 {
     public class Time
     {
-        public bool perfectus { get; private set; }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((Time) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Position*397) ^ Perfectus.GetHashCode();
+            }
+        }
+
+        public bool Perfectus { get; private set; }
 
         public int Beats {
             get {
-                return perfectus? 3 : 4;
+                return Perfectus? 3 : 4;
             } 
         }
 
@@ -33,7 +45,6 @@ namespace PitchBase
             }
             set
             {
-                Bar = value;
                 Position = value * BarLength + Beat;
             }
         }
@@ -46,22 +57,21 @@ namespace PitchBase
             }
             set
             {
-                Beat = value;
                 Position = Bar * BarLength + value;
             }
         }
 
-        public bool allowEight
+        public bool AllowEight
         {
             get {
                 return (Beat % 4) >= 2;
             }
         }
 
-        public bool strongTime
+        public bool StrongTime
         {
             get {
-                return perfectus ? (Beat == 0) : ((Beat % 8) == 0);
+                return Perfectus ? (Beat == 0) : ((Beat % 8) == 0);
             }
         }
 
@@ -77,9 +87,9 @@ namespace PitchBase
                     return 4;
 
                 uint n = 0;
-                int b = Beat;
+                var b = Beat;
 
-                if (perfectus && (b > 8))
+                if (Perfectus && (b > 8))
                     b -= 4;
 
                 while (b % 2 == 0)
@@ -93,7 +103,7 @@ namespace PitchBase
 
         private Time(bool perfectus)
         {
-            this.perfectus = perfectus;
+            Perfectus = perfectus;
         }
 
         public static Time Create(bool perfectus = false)
@@ -103,8 +113,7 @@ namespace PitchBase
 
         public static Time operator + (Time me, int eights)
         {
-            Time n = new Time(me.perfectus);
-            n.Position = me.Position + eights;
+            var n = new Time(me.Perfectus) { Position = me.Position + eights };
             return n;
         }
 
@@ -115,7 +124,7 @@ namespace PitchBase
 
         public static Time operator +(Time me, Time aux)
         {
-            if (aux.perfectus != me.perfectus)
+            if (aux.Perfectus != me.Perfectus)
                 throw new Exception("Can't perform addition on differend-perfected times");
 
             return me + aux.Position;
@@ -123,7 +132,7 @@ namespace PitchBase
 
         public static Time operator -(Time me, Time aux)
         {
-            if (aux.perfectus != me.perfectus)
+            if (aux.Perfectus != me.Perfectus)
                 throw new Exception("Can't perform addition on differend-perfected times");
 
             return me - aux.Position;
@@ -131,17 +140,22 @@ namespace PitchBase
 
         public static bool operator ==(Time me, Time aux)
         {
-            return (me.perfectus == aux.perfectus) && (me.Position == aux.Position);
+            if (aux == null) return false;
+
+            return (me.Perfectus == aux.Perfectus) && (me.Position == aux.Position);
         }
 
-        public static bool operator !=(Time me, Time aux)
-        {
-            return !(me == aux);
-        }
+        public static bool operator !=(Time me, Time aux) { return !(me == aux); }
 
-        public bool Equals(Time aux)
+        public static bool operator >(Time me, Time aux) { return me.Position > aux.Position; }
+        public static bool operator <(Time me, Time aux) { return me.Position < aux.Position; }
+
+        public static bool operator >=(Time me, Time aux) { return me.Position >= aux.Position; }
+        public static bool operator <=(Time me, Time aux) { return me.Position <= aux.Position; }
+
+        protected bool Equals(Time aux)
         {
-            return (this == aux);
+            return Position == aux.Position && Perfectus.Equals(aux.Perfectus);
         }
 
         public override string ToString()

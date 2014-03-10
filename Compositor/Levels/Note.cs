@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using Compositor.Rules;
+using Compositor.Rules.Base;
+using Compositor.Rules.Melody;
 using PitchBase;
 using System.Text;
 
@@ -19,8 +19,8 @@ namespace Compositor.Levels
     {
         public Pitch Pitch;
 
-        public bool isHigher = false;
-        public bool isLower = false;
+        public bool IsHigher = false;
+        public bool IsLower = false;
 
         public double Strength = 0;
         
@@ -34,23 +34,22 @@ namespace Compositor.Levels
 
         public int Reserve, Uncomp;
 
-        public Rule DeniedRule { get; set; }
-        public bool isBanned { get; set; }
+        public IRule DeniedRule { get; set; }
+        public bool IsBanned { get; set; }
 
-        public Note(Pitch Pitch, Time TimeStart, int Duration, Note Previous = null)
-            : base()
+        public Note(Pitch pitch, Time timeStart, int duration, Note previous = null)
         {
-            this.Pitch = Pitch;
-            this.TimeStart = TimeStart;
-            this.Duration = Duration;
+            Pitch = pitch;
+            TimeStart = timeStart;
+            Duration = duration;
             
-            if (Previous != null)
+            if (previous != null)
             {
-                this.Leap = CalcState(Pitch, Previous.Pitch);
-                this.Diapason = Previous.Diapason;
+                Leap = CalcState(pitch, previous.Pitch);
+                Diapason = previous.Diapason;
             }
             else
-                this.Leap = new Interval(IntervalType.Prima);
+                Leap = new Interval(IntervalType.Prima);
         }
 
         protected static Interval CalcState(Pitch me, Pitch previous)
@@ -67,7 +66,7 @@ namespace Compositor.Levels
             double v;
 
             foreach (Pitch p in Diapason)
-                if ((v = this.allowPitchAfterAt(p, newPos)) > 0)
+                if ((v = this.AllowPitchAfterAt(p, newPos)) > 0)
                     foreach (Note n in this.GenerateDurations(p, newPos))
                         Freqs[n] = v * this.DurationCoeff(n.Duration);
 
@@ -76,7 +75,7 @@ namespace Compositor.Levels
                 var sb = new StringBuilder();
 
                 foreach (var kv in Freqs)
-                    sb.AppendFormat("{0}=>{1}\n", kv.Key.ToString(), kv.Value);
+                    sb.AppendFormat("{0}=>{1}\n", kv.Key, kv.Value);
 
                 Console.WriteLine(sb);
             }
@@ -100,9 +99,9 @@ namespace Compositor.Levels
             }
         }
 
-        internal void UpdateFreqs(Dictionary<Note, double> Freqs)
+        internal void UpdateFreqs(Dictionary<Note, double> freqs)
         {
-            this.Freqs = Freqs;
+            Freqs = freqs;
         }
 
         public int CompareTo(Note obj)

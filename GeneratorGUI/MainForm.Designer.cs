@@ -47,8 +47,9 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.playButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.settingsButton = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.generationProgressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxSteps)).BeginInit();
@@ -71,7 +72,7 @@
             this.outputArea.Multiline = true;
             this.outputArea.Name = "outputArea";
             this.outputArea.ReadOnly = true;
-            this.outputArea.Size = new System.Drawing.Size(310, 412);
+            this.outputArea.Size = new System.Drawing.Size(310, 367);
             this.outputArea.TabIndex = 1;
             // 
             // modiList
@@ -191,7 +192,7 @@
             // 
             this.engraveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.engraveButton.Enabled = false;
-            this.engraveButton.Location = new System.Drawing.Point(207, 419);
+            this.engraveButton.Location = new System.Drawing.Point(207, 374);
             this.engraveButton.Name = "engraveButton";
             this.engraveButton.Size = new System.Drawing.Size(106, 25);
             this.engraveButton.TabIndex = 12;
@@ -203,7 +204,7 @@
             // 
             this.drawGraphButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.drawGraphButton.Enabled = false;
-            this.drawGraphButton.Location = new System.Drawing.Point(213, 420);
+            this.drawGraphButton.Location = new System.Drawing.Point(213, 375);
             this.drawGraphButton.Name = "drawGraphButton";
             this.drawGraphButton.Size = new System.Drawing.Size(106, 23);
             this.drawGraphButton.TabIndex = 14;
@@ -279,7 +280,7 @@
             this.gvOut.Name = "gvOut";
             this.gvOut.ReadOnly = true;
             this.gvOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.gvOut.Size = new System.Drawing.Size(316, 412);
+            this.gvOut.Size = new System.Drawing.Size(316, 367);
             this.gvOut.TabIndex = 9;
             // 
             // splitContainer
@@ -301,7 +302,7 @@
             // 
             this.splitContainer.Panel2.Controls.Add(this.gvOut);
             this.splitContainer.Panel2.Controls.Add(this.drawGraphButton);
-            this.splitContainer.Size = new System.Drawing.Size(647, 447);
+            this.splitContainer.Size = new System.Drawing.Size(647, 402);
             this.splitContainer.SplitterDistance = 315;
             this.splitContainer.TabIndex = 18;
             // 
@@ -309,7 +310,7 @@
             // 
             this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.playButton.Enabled = false;
-            this.playButton.Location = new System.Drawing.Point(95, 418);
+            this.playButton.Location = new System.Drawing.Point(95, 373);
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(106, 25);
             this.playButton.TabIndex = 13;
@@ -334,6 +335,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Параметры мелодии";
             // 
+            // settingsButton
+            // 
+            this.settingsButton.Location = new System.Drawing.Point(301, 86);
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(107, 27);
+            this.settingsButton.TabIndex = 11;
+            this.settingsButton.Text = "Настройки...";
+            this.settingsButton.UseVisualStyleBackColor = true;
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.stepLimitLabel);
@@ -348,21 +359,21 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Параметры генерации";
             // 
-            // settingsButton
+            // generationProgressBar
             // 
-            this.settingsButton.Location = new System.Drawing.Point(301, 86);
-            this.settingsButton.Name = "settingsButton";
-            this.settingsButton.Size = new System.Drawing.Size(107, 27);
-            this.settingsButton.TabIndex = 11;
-            this.settingsButton.Text = "Настройки...";
-            this.settingsButton.UseVisualStyleBackColor = true;
-            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            this.generationProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.generationProgressBar.Location = new System.Drawing.Point(12, 546);
+            this.generationProgressBar.Name = "generationProgressBar";
+            this.generationProgressBar.Size = new System.Drawing.Size(647, 22);
+            this.generationProgressBar.TabIndex = 21;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(667, 588);
+            this.ClientSize = new System.Drawing.Size(667, 574);
+            this.Controls.Add(this.generationProgressBar);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.splitContainer);
@@ -409,6 +420,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button playButton;
         private System.Windows.Forms.Button settingsButton;
+        private System.Windows.Forms.ProgressBar generationProgressBar;
 
     }
 }

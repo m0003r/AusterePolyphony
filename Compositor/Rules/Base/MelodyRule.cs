@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using PitchBase;
 using Compositor.Levels;
+using PitchBase;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.Base
 {
-    abstract class MelodyRule : ParamRule<Melody, Note>
+    abstract class MelodyRule : ParamRule<Levels.Melody, Note>
     {
-        protected Melody Melody;
+        protected Levels.Melody Melody;
         
         protected List<Note> Notes { get { return Melody.notes; } }
         protected Note LastNote { get { return Notes.Last(); } }
@@ -19,7 +17,7 @@ namespace Compositor.Rules
         protected Pitch Lower { get { return Melody.Lower; } }
         protected List<LeapOrSmooth> LeapSmooth { get { return Melody.LeapSmooth; } }
 
-        public override void Init(Melody parent)
+        public override void Init(Levels.Melody parent)
         {
             Melody = parent;
         }
@@ -34,12 +32,12 @@ namespace Compositor.Rules
 
         public override bool IsApplicable()
         {
-            return (Notes.Count == 0) ? false : _IsApplicable();
+            return Notes.Count != 0 && _IsApplicable();
         }
 
         public abstract bool _IsApplicable();
 
-        public abstract override double Apply(Note n);
+        public abstract override double Apply(Note nextNotes);
     }
 }
 

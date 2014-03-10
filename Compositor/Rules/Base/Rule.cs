@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-using PitchBase;
-using Compositor.Levels;
-
-namespace Compositor.Rules
+namespace Compositor.Rules.Base
 {
-    interface Rule<T, N> : Rule
+    interface IRule<in T, in TN> : IRule
     {
         void Init(T me);
-        double Apply(N n);
+        double Apply(TN nextNotes);
     }
 
-    public interface Rule
+    public interface IRule
     {
         bool IsApplicable();
     }
 
-    public interface ParamRule
+    public interface IParamRule
     {
         ParamAttribute[] GetParams();
         string GetName();
@@ -27,50 +22,49 @@ namespace Compositor.Rules
         void SetParam(string n, object v);
     }
 
-    abstract class ParamRule<T, N> : Rule<T, N>, ParamRule
+    abstract class ParamRule<T, TN> : IRule<T, TN>, IParamRule
     {
         public abstract void Init(T me);
-        public abstract double Apply(N n);
+        public abstract double Apply(TN nextNotes);
         public abstract bool IsApplicable();
 
-        public bool enabled = true;
+        public bool Enabled = true;
 
-        protected Dictionary<string, object> settings;
-        private Dictionary<string, Type> types;
-        private Dictionary<string, object> defaults;
+        protected Dictionary<string, object> Settings;
+        private readonly Dictionary<string, Type> _types;
 
-        public ParamRule()
+        protected ParamRule()
         {
-            settings = new Dictionary<string, object>();
-            types = new Dictionary<string, Type>();
-            defaults = new Dictionary<string, object>();
+            Settings = new Dictionary<string, object>();
+            _types = new Dictionary<string, Type>();
+            var defaults = new Dictionary<string, object>();
 
             ParamAttribute[] attrs = GetParams();
 
             foreach (ParamAttribute t in attrs)
             {
                 defaults[t.ParamName] = t.Default;
-                types[t.ParamName] = t.Type;
-                settings[t.ParamName] = t.Default;
+                _types[t.ParamName] = t.Type;
+                Settings[t.ParamName] = t.Default;
             }
         }
 
         public ParamAttribute[] GetParams()
         {
-            return (ParamAttribute[])Attribute.GetCustomAttributes(this.GetType(), typeof(ParamAttribute));
+            return (ParamAttribute[])Attribute.GetCustomAttributes(GetType(), typeof(ParamAttribute));
         }    
     
         public void SetParam(string name, object value)
         {
-            if (!value.GetType().IsSubclassOf(types[name]))
+            if (!value.GetType().IsSubclassOf(_types[name]))
                 throw new ArgumentException();
 
-            settings[name] = value;
+            Settings[name] = value;
         }
 
         public string GetName()
         {
-            var rn = (RuleNameAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(RuleNameAttribute));
+            var rn = (RuleNameAttribute)Attribute.GetCustomAttribute(GetType(), typeof(RuleNameAttribute));
 
             if (rn == null)
                 return null;

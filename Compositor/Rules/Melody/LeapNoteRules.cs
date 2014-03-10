@@ -1,38 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Compositor.Levels;
+using Compositor.Rules.Base;
 
-using Compositor.Levels;
-
-namespace Compositor.Rules
+namespace Compositor.Rules.Melody
 {
     class AfterSmoothLeapRule : NoteRule
     {
         public override bool IsApplicable()
         {
-            return Me.Leap.isSmooth;
+            return Me.Leap.IsSmooth;
         }
 
-        public override double Apply(Note NextNote)
+        public override double Apply(Note nextNotes)
         {
-            bool coDir = (NextNote.Leap.Upwards == Me.Leap.Upwards);
+            bool coDir = (nextNotes.Leap.Upwards == Me.Leap.Upwards);
 
-            if (NextNote.Leap.AbsDeg == 1) //если дальше плавный ход
+            if (nextNotes.Leap.AbsDeg == 1) //если дальше плавный ход
                 //плавный ход предпочитаем туда же
                 return (coDir) ? 1 : 0.8;
             else
-                return coDir ? CoDirRule(NextNote) : OppDirRule(NextNote);
+                return coDir ? CoDirRule(nextNotes) : OppDirRule(nextNotes);
         }
 
-        private double OppDirRule(Note NextNote)
+        private double OppDirRule(Note nextNote)
         {
             if (Duration > 2)
             {
-                if (NextNote.Duration > 2)
-                    return 0.85; //от белой к белой также хорошо прыгать
-                else
-                    return 0.7;
+                return nextNote.Duration > 2 ? 0.85 : 0.7;
             }
 
             if (Duration == 2)
@@ -41,10 +34,10 @@ namespace Compositor.Rules
             return 0; //иначе не очень
         }
 
-        private double CoDirRule(Note NextNote)
+        private double CoDirRule(Note nextNote)
         {
             //не больше квинты — можно
-            return (NextNote.Leap.AbsDeg <= 4) ? 0.4 : 0;
+            return (nextNote.Leap.AbsDeg <= 4) ? 0.4 : 0;
         }        
     }
 
@@ -52,40 +45,38 @@ namespace Compositor.Rules
     {
         public override bool IsApplicable()
         {
-            return Me.Leap.isLeap;
+            return Me.Leap.IsLeap;
         }
-        public override double Apply(Note NextNote)
+        public override double Apply(Note nextNotes)
         {
-            bool coDir = (NextNote.Leap.Upwards == Me.Leap.Upwards);
+            bool coDir = (nextNotes.Leap.Upwards == Me.Leap.Upwards);
 
-            if (NextNote.Leap.AbsDeg == 1) //если дальше плавный ход
-            {
-                if (coDir) //в том же направлении после не-больше-чем-квинты можно
-                    return (Leap.AbsDeg <= 4) ? 0.6 : 0;
-                else
-                    return 1; //а в другую сторону очень даже хорошо
-            }
-            else
-                return coDir ? CoDirRule(NextNote) : OppDirRule(NextNote);
+            //а в другую сторону очень даже хорошо
+            if (nextNotes.Leap.AbsDeg != 1) return coDir ? CoDirRule(nextNotes) : OppDirRule(nextNotes);
+
+            if (coDir) //в том же направлении после не-больше-чем-квинты можно
+                return (Leap.AbsDeg <= 4) ? 0.6 : 0;
+
+            return 1;
         }
 
-        private double OppDirRule(Note NextNote)
+        private double OppDirRule(Note nextNote)
         {
             int prevLeap = Leap.AbsDeg;
-            int nextLeap = NextNote.Leap.AbsDeg;
+            int nextLeap = nextNote.Leap.AbsDeg;
 
             //в другую сторону можно сразу же скакать, если на меньшее расстояние
             return (prevLeap > nextLeap) ? 0.6 : 0; 
         }
 
-        private double CoDirRule(Note NextNote)
+        private double CoDirRule(Note nextNote)
         {
             //оба не больше квинты и в сумме консонанс!
             //и то редко
             return (
                     (Leap.AbsDeg <= 4) &&
-                    (NextNote.Leap.AbsDeg <= 4) &&
-                    ((NextNote.Leap + Leap).Consonance)
+                    (nextNote.Leap.AbsDeg <= 4) &&
+                    ((nextNote.Leap + Leap).Consonance)
                 ) ? 0.3 : 0;
         }
     }

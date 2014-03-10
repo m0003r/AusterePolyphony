@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using Compositor.Levels;
 using PitchBase;
-using Compositor.Levels;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.Base
 {
     abstract class NoteRule : ParamRule<Note, Note>
     {
@@ -23,6 +18,6 @@ namespace Compositor.Rules
         }
 
         public abstract override bool IsApplicable();
-        public abstract override double Apply(Note NextNote);
+        public abstract override double Apply(Note nextNotes);
     }
 }

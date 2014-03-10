@@ -1,32 +1,27 @@
-﻿using Compositor.Levels;
-using Compositor.Rules;
-using PitchBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Compositor.ChooseNextStrategy;
+using Compositor.Levels;
+using PitchBase;
 
-namespace Compositor
+namespace Compositor.Generators
 {
-    using NotesFreq = Dictionary<Note, double>;
-    using NotesList = List<Note>;
-
     public class TwoVoiceGenerator : IGenerator
     {
         public TwoVoices Melodies { get; private set; }
         public int Seed { get; private set; }
         public int StepLimit { get; private set; }
 
-        IChooseNextStrategy<TwoNotes> chooseStrategy;
+        readonly IChooseNextStrategy<TwoNotes> _chooseStrategy;
 
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
 
         public List<Melody> GetNotes()
         {
-            var res = new List<Melody>();
-            res.Add(Melodies.Voice1);
-            res.Add(Melodies.Voice2);
+            var res = new List<Melody> {Melodies.Voice1, Melodies.Voice2};
             return res;
         }
 
@@ -35,33 +30,38 @@ namespace Compositor
             return Seed;
         }        
 
-        public TwoVoiceGenerator(Clef Clef1, Clef Clef2, Modus Modus, Time Time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy<TwoNotes> Strategy = null)
+        public TwoVoiceGenerator(Clef clef1, Clef clef2, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy<TwoNotes> strategy = null)
         {
             StepLimit = stepLimit;
-            Melodies = new TwoVoices(Clef1, Clef2, Modus, Time);
-            if (Strategy == null)
+            Melodies = new TwoVoices(clef1, clef2, modus, time);
+            if (strategy == null)
             {
                 SetSeed(seed);
-                chooseStrategy = new DefaultNextStrategy<TwoNotes>(this.Seed);
+                _chooseStrategy = new DefaultNextStrategy<TwoNotes>(Seed);
             }
             else
-                chooseStrategy = Strategy;
+                _chooseStrategy = strategy;
         }
 
         private void SetSeed(int givenSeed)
         {
             if (givenSeed == 0)
-                this.Seed = (int)DateTime.Now.Ticks;
+                Seed = (int)DateTime.Now.Ticks;
             else
-                this.Seed = givenSeed;
+                Seed = givenSeed;
         }
 
-        public int Generate(uint Length)
+        public int Generate(uint length)
         {
-            uint lengthInBeats = Length * (uint)Melodies.Time.Beats * 4;
+            return Generate(length, null);
+        }
+
+        public int Generate(uint length, Func<int, bool> callback)
+        {
+            uint lengthInBeats = length * (uint)Melodies.Time.Beats * 4;
             int steps = 0;
 
-            Melodies.setLength(lengthInBeats);
+            Melodies.SetLength(lengthInBeats);
 
             try
             {
@@ -73,6 +73,9 @@ namespace Compositor
                     {
                         Step();
                         steps++;
+                        if (callback != null)
+                            callback(steps);
+
                     }
                 }
             }
@@ -89,8 +92,8 @@ namespace Compositor
             Melodies.Filter(dumpResult);
             double max = Melodies.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
-            if (max > TwoVoiceGenerator.MinimumAccumulatedFrequency) //должно быть что-то приличное!
-                chooseNextNote(dumpResult);
+            if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!
+                ChooseNextNote(dumpResult);
             else
             {
                 if (Melodies.NoteCount > 0)
@@ -100,7 +103,7 @@ namespace Compositor
             }
         }
 
-        private void chooseNextNote(bool dumpResult = false)
+        private void ChooseNextNote(bool dumpResult = false)
         {
             var possibleNext = Melodies.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
 
@@ -109,12 +112,12 @@ namespace Compositor
                 var sb = new StringBuilder();
                 foreach (var kv in Melodies.Freqs)
                 {
-                    sb.AppendFormat("{0} => {1}; ", kv.Key.ToString(), kv.Value);
+                    sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
                 }
                 Console.WriteLine(sb);
             }
 
-            TwoNotes next = chooseStrategy.ChooseNext(possibleNext);
+            TwoNotes next = _chooseStrategy.ChooseNext(possibleNext);
 
             Melodies.AddTwoNotes(next);
         }

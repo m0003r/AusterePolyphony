@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PitchBase
 {
     //ПЕРВАЯ СТУПЕНЬ В ЛЮБОМ СЛУЧАЕ В БОЛЬШОЙ ОКТАВЕ
     public class Modus
     {
-        private IntervalAlt[] alt;
+        private readonly IntervalAlt[] _alt;
         public int NoteStart { get; private set; }
-        private int KeysDelta;
+        private readonly int _keysDelta;
         public string Name { get; private set; }
 
         //Количество знаков в ладу
@@ -18,7 +16,7 @@ namespace PitchBase
         {
             get
             {
-                int k = (NoteStart * 7 + KeysDelta) % 12;
+                int k = (NoteStart * 7 + _keysDelta) % 12;
                 if (k > 6)
                     return k - 12;
                 if (k <= -6)
@@ -32,7 +30,7 @@ namespace PitchBase
         {
             get
             {
-                int r = (KeysDelta * -4) % 7;
+                int r = (_keysDelta * -4) % 7;
                 if (r < 0)
                     r += 7;
                 return r;
@@ -44,74 +42,74 @@ namespace PitchBase
         {
             get
             {
-                int ds = ((Keys - KeysDelta) * 4) % 7;
+                int ds = ((Keys - _keysDelta) * 4) % 7;
                 if (ds < 0)
                     ds += 7;
                 return ds;
             }
         }
 
-        private static int[] ionian = { 0, 1, 1, 0, 0, 1, 1 };
-        private static int[] dorian = { 0, 1, -1, 0, 0, 1, -1 };
-        private static int[] phrygian = { 0, -1, -1, 0, 0, -1, -1 };
-        private static int[] lydian = { 0, 1, 1, 2, 0, 1, 1 };
-        private static int[] mixolydian = { 0, 1, 1, 0, 0, 1, -1 };
-        private static int[] aeolian = { 0, 1, -1, 0, 0, -1, -1 };
+        private static readonly int[] IonianData = { 0, 1, 1, 0, 0, 1, 1 };
+        private static readonly int[] DorianData = { 0, 1, -1, 0, 0, 1, -1 };
+        private static readonly int[] PhrygianData = { 0, -1, -1, 0, 0, -1, -1 };
+        private static readonly int[] LydianData = {0, 1, 1, 2, 0, 1, 1};
+        private static readonly int[] MixolydianData = { 0, 1, 1, 0, 0, 1, -1 };
+        private static readonly int[] AeolianData = { 0, 1, -1, 0, 0, -1, -1 };
 
         private Modus(int[] alt, int n, int keysDelta, string name)
         {
             if (alt.Length != 7)
                 throw new ArgumentException();
 
-            this.alt = alt.Select<int, IntervalAlt>(x => (IntervalAlt)(x)).ToArray<IntervalAlt>();
+            _alt = alt.Select(x => (IntervalAlt)(x)).ToArray();
             NoteStart = n;
-            this.KeysDelta = keysDelta;
-            this.Name = name;
+            _keysDelta = keysDelta;
+            Name = name;
         }
 
         public static Modus Ionian(int start = 0)
         {
-            return new Modus(ionian, start, 0, "ionian");
+            return new Modus(IonianData, start, 0, "ionianData");
         }
 
         public static Modus Dorian(int start = 0) // -> -2
         {
-            return new Modus(dorian, start, -2, "dorian");
+            return new Modus(DorianData, start, -2, "DorianData");
         }
 
         public static Modus Phrygian(int start = 0) // -> -4
         {
-            return new Modus(phrygian, start, -4, "phrygian");
+            return new Modus(PhrygianData, start, -4, "PhrygianData");
         }
 
         public static Modus Lydian(int start = 0) // -> +1
         {
-            return new Modus(lydian, start, 1, "lydian");
+            return new Modus(LydianData, start, 1, "LydianData");
         }
 
         public static Modus Mixolydian(int start = 0) // -> -1
         {
-            return new Modus(mixolydian, start, -1, "mixolydian");
+            return new Modus(MixolydianData, start, -1, "MixolydianData");
         }
 
         public static Modus Aeolian(int start = 0) // -> -3
         {
-            return new Modus(aeolian, start, -3, "aeolian");
+            return new Modus(AeolianData, start, -3, "AeolianData");
         }
 
-        internal Interval baseToDegree(uint degree)
+        internal Interval BaseToDegree(uint degree)
         {
             switch (degree)
             {
-                case 0: return new Interval(IntervalType.Prima, alt[0]);
-                case 1: return new Interval(IntervalType.Secunda, alt[1]);
-                case 2: return new Interval(IntervalType.Tertia, alt[2]);
-                case 3: return new Interval(IntervalType.Quarta, alt[3]);
-                case 4: return new Interval(IntervalType.Quinta, alt[4]);
-                case 5: return new Interval(IntervalType.Sexta, alt[5]);
-                case 6: return new Interval(IntervalType.Septima, alt[6]);
-                case 7: return new Interval(IntervalType.Octava, alt[0]);
-                default: return new Interval(IntervalType.Prima, alt[0]);
+                case 0: return new Interval(IntervalType.Prima, _alt[0]);
+                case 1: return new Interval(IntervalType.Secunda, _alt[1]);
+                case 2: return new Interval(IntervalType.Tertia, _alt[2]);
+                case 3: return new Interval(IntervalType.Quarta, _alt[3]);
+                case 4: return new Interval(IntervalType.Quinta, _alt[4]);
+                case 5: return new Interval(IntervalType.Sexta, _alt[5]);
+                case 6: return new Interval(IntervalType.Septima, _alt[6]);
+                case 7: return new Interval(IntervalType.Octava, _alt[0]);
+                default: return new Interval(IntervalType.Prima, _alt[0]);
             }
         }
 

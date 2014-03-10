@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace PitchBase
 {
@@ -21,15 +18,15 @@ namespace PitchBase
         private Modus _modus;
         private Clef _clef;
 
-        public Modus Modus { get {return this._modus; } set { this._modus = value; Rebuild(); } }
-        public Clef Clef { get {return this._clef; } set { this._clef = value; Rebuild(); } }
+        public Modus Modus { get {return _modus; } set { _modus = value; Rebuild(); } }
+        public Clef Clef { get {return _clef; } set { _clef = value; Rebuild(); } }
 
         public List<Pitch> Pitches;
 
-        public PitchFactory(Modus Modus, Clef Clef)
+        public PitchFactory(Modus modus, Clef clef)
         {
-            this._modus = Modus;
-            this._clef = Clef;
+            _modus = modus;
+            _clef = clef;
 
             Rebuild();
         }
@@ -37,7 +34,7 @@ namespace PitchBase
         private void Rebuild()
         {
             Pitches = new List<Pitch>();
-            for (int i = Low; i < High; i++)
+            for (var i = Low; i < High; i++)
             {
                 Pitches.Add(new Pitch(i, _modus));
             }

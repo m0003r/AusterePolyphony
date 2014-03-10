@@ -1,36 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-using Compositor.Levels;
-
-namespace Compositor
+namespace Compositor.ChooseNextStrategy
 {
     class DefaultNextStrategy<T> : IChooseNextStrategy<T>
     {
-        Random rand;
+        readonly Random _rand;
 
         public DefaultNextStrategy(int seed = 0)
         {
-            rand = new Random(seed);
+            _rand = new Random(seed);
         }
 
-        private double getNextDouble(double freqSum)
+        private double GetNextDouble(double freqSum)
         {
-            double result = rand.NextDouble();
+            double result = _rand.NextDouble();
                         
             return result * freqSum;
         }
 
-        public T ChooseNext(IEnumerable<KeyValuePair<T, double>> allowed)
+        public T ChooseNext(IEnumerable<KeyValuePair<T, double>> freqs)
         {
-            double freqSum = allowed.Sum(kv => kv.Value);
-            double r = getNextDouble(freqSum);
+            double freqSum = freqs.Sum(kv => kv.Value);
+            double r = GetNextDouble(freqSum);
 
             double accumulator = 0;
 
-            foreach (KeyValuePair<T, double> kv in allowed)
+            foreach (KeyValuePair<T, double> kv in freqs)
             {
                 accumulator += kv.Value;
                 if (accumulator >= r)
@@ -43,20 +40,20 @@ namespace Compositor
 
     public class QuadraticNextStrategy<T> : IChooseNextStrategy<T>
     {
-        Random rand;
+        readonly Random _rand;
         
         public QuadraticNextStrategy(int seed = 0)
         {
-            rand = new Random(seed);
+            _rand = new Random(seed);
         }
 
-        public T ChooseNext(IEnumerable<KeyValuePair<T, double>> allowed)
+        public T ChooseNext(IEnumerable<KeyValuePair<T, double>> freqs)
         {
-            double freqS = allowed.Sum(kv => Math.Pow(kv.Value, 3));
-            double r = rand.NextDouble() * freqS;
+            double freqS = freqs.Sum(kv => Math.Pow(kv.Value, 3));
+            double r = _rand.NextDouble() * freqS;
             double accumulator = 0;
 
-            foreach (KeyValuePair<T, double> kv in allowed)
+            foreach (KeyValuePair<T, double> kv in freqs)
             {
                 accumulator += Math.Pow(kv.Value, 3);
                 if (accumulator > r)

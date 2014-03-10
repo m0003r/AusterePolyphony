@@ -162,4 +162,18 @@
       {4}
     }}</value>
   </data>
+  <data name="FilteringGenerationTime" xml:space="preserve">
+    <value>Total filtering time: {0}
+Total generation time: {1}</value>
+  </data>
+  <data name="TotalSteps" xml:space="preserve">
+    <value>Total steps: {0}
+</value>
+  </data>
+  <data name="CantFinish" xml:space="preserve">
+    <value>Не удалось завершить сочинение за указанное количество шагов!</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
 </root>

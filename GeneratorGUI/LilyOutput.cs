@@ -1,11 +1,6 @@
-﻿using GeneratorGUI.Properties;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Compositor.Generators;
+using GeneratorGUI.Properties;
 using System.Text;
-
-
-using Compositor;
 using Compositor.Levels;
 using PitchBase;
 
@@ -13,28 +8,28 @@ namespace GeneratorGUI
 {
     static class LilyOutput
     {
-        static string[] clefNamesList = { "treble", "soprano", "mezzosoprano", "alto", "tenor", "baritone", "bass" };
+        static readonly string[] ClefNamesList = { "treble", "soprano", "mezzosoprano", "alto", "tenor", "baritone", "bass" };
 
 
 
-        public static string Lily(IGenerator Generator)
+        public static string Lily(IGenerator generator)
         {
             var voices = new StringBuilder();
-            string ScoreFormat = Resources.ScoreTemplate;
-            string VoiceFormat = Resources.VoiceTemplate;
+            string scoreFormat = Resources.ScoreTemplate;
+            string voiceFormat = Resources.VoiceTemplate;
 
-            var Melodies = Generator.GetNotes();
-            foreach (var m in Melodies)
+            var melodies = generator.GetNotes();
+            foreach (var m in melodies)
             {
-                Pitch p = new Pitch(0, m.Modus);
+                var p = new Pitch(0, m.Modus);
 
                 string key = p.StringForm;
                 string modus, clef, time;
-                StringBuilder notes = new StringBuilder();
+                var notes = new StringBuilder();
 
                 modus = "\\" + m.Modus.Name;
-                clef = clefNamesList[(int)m.Clef + 1];
-                time = (m.Time.Beats.ToString()) + "/2";
+                clef = ClefNamesList[(int)m.Clef + 1];
+                time = (m.Time.Beats) + "/2";
 
                 foreach (Note n in m.Notes)
                 {
@@ -43,11 +38,11 @@ namespace GeneratorGUI
                     notes.Append(" ");
                 }
 
-                voices.AppendFormat(VoiceFormat, key, modus, clef, time, notes);
+                voices.AppendFormat(voiceFormat, key, modus, clef, time, notes);
             }
 
 
-            return string.Format(ScoreFormat, Generator.GetSeed(), voices);
+            return string.Format(scoreFormat, generator.GetSeed(), voices);
         }
     }
 }

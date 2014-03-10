@@ -1,16 +1,13 @@
-﻿using Compositor.Levels;
-using Compositor.Rules;
-using PitchBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Compositor.ChooseNextStrategy;
+using Compositor.Levels;
+using PitchBase;
 
-namespace Compositor
+namespace Compositor.Generators
 {
-    using NotesFreq = Dictionary<Note, double>;
-    using NotesList = List<Note>;
-
     public class StopGeneration : Exception
     {
 
@@ -22,15 +19,14 @@ namespace Compositor
         public int Seed { get; private set; }
         public int StepLimit { get; private set; }
 
-        IChooseNextStrategy<Note> chooseStrategy;
+        readonly IChooseNextStrategy<Note> _chooseStrategy;
 
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
 
         public List<Melody> GetNotes()
         {
-            var res = new List<Melody>();
-            res.Add(Melody);
+            var res = new List<Melody> {Melody};
             return res;
         }
 
@@ -39,33 +35,38 @@ namespace Compositor
             return Seed;
         }        
 
-        public MelodyGenerator(Clef Clef, Modus Modus, Time Time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy<Note> Strategy = null)
+        public MelodyGenerator(Clef clef, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy<Note> strategy = null)
         {
             StepLimit = stepLimit;
-            Melody = new Melody(Clef, Modus, Time);
-            if (Strategy == null)
+            Melody = new Melody(clef, modus, time);
+            if (strategy == null)
             {
                 SetSeed(seed);
-                chooseStrategy = new DefaultNextStrategy<Note>(this.Seed);
+                _chooseStrategy = new DefaultNextStrategy<Note>(Seed);
             }
             else
-                chooseStrategy = Strategy;
+                _chooseStrategy = strategy;
         }
 
         private void SetSeed(int givenSeed)
         {
             if (givenSeed == 0)
-                this.Seed = (int)DateTime.Now.Ticks;
+                Seed = (int)DateTime.Now.Ticks;
             else
-                this.Seed = givenSeed;
+                Seed = givenSeed;
         }
 
-        public int Generate(uint Length)
+        public int Generate(uint length)
         {
-            uint lengthInBeats = Length * (uint)Melody.Time.Beats * 4;
+            return Generate(length, null);
+        }
+
+        public int Generate(uint length, Func<int, bool> callback)
+        {
+            uint lengthInBeats = length * (uint)Melody.Time.Beats * 4;
             int steps = 0;
 
-            Melody.setLength(lengthInBeats);
+            Melody.SetLength(lengthInBeats);
 
             try
             {
@@ -73,6 +74,8 @@ namespace Compositor
                 {
                     Step();
                     steps++;
+                    if (callback != null)
+                        callback(steps);
                 }
             }
             catch (StopGeneration)
@@ -88,8 +91,8 @@ namespace Compositor
             Melody.Filter(dumpResult);
             double max = Melody.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
-            if (max > MelodyGenerator.MinimumAccumulatedFrequency) //должно быть что-то приличное!
-                chooseNextNote(dumpResult);
+            if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!
+                ChooseNextNote(dumpResult);
             else
             {
                 if (Melody.NoteCount > 0)
@@ -99,7 +102,7 @@ namespace Compositor
             }
         }
 
-        private void chooseNextNote(bool dumpResult = false)
+        private void ChooseNextNote(bool dumpResult = false)
         {
             var possibleNext = Melody.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
 
@@ -108,12 +111,12 @@ namespace Compositor
                 var sb = new StringBuilder();
                 foreach (var kv in Melody.Freqs)
                 {
-                    sb.AppendFormat("{0} => {1}; ", kv.Key.ToString(), kv.Value);
+                    sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
                 }
                 Console.WriteLine(sb);
             }
 
-            Note next = chooseStrategy.ChooseNext(possibleNext);
+            Note next = _chooseStrategy.ChooseNext(possibleNext);
 
             Melody.AddNote(next);
         }

@@ -1,57 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Compositor
 {
     public static class Timer
     {
-        private static Dictionary<string, double> accumulator = new Dictionary<string,double>();
-        private static Dictionary<string, DateTime> current = new Dictionary<string,DateTime>();
+        private static readonly Dictionary<string, double> Accumulator = new Dictionary<string,double>();
+        private static readonly Dictionary<string, DateTime> Current = new Dictionary<string,DateTime>();
 
-        public static void Start(string Name)
+        public static void Start(string name)
         {
-            if (current.ContainsKey(Name))
+            if (Current.ContainsKey(name))
                 throw new Exception("Timer already started");
 
-            current[Name] = DateTime.Now;
+            Current[name] = DateTime.Now;
         }
 
-        public static double Stop(string Name)
+        public static double Stop(string name)
         {
-            if (!current.ContainsKey(Name))
+            if (!Current.ContainsKey(name))
                 throw new Exception("Timer wasn't started");
 
             
-            double seconds = (DateTime.Now - current[Name]).TotalSeconds;
-            current.Remove(Name);
+            double seconds = (DateTime.Now - Current[name]).TotalSeconds;
+            Current.Remove(name);
 
-            if (accumulator.ContainsKey(Name))
-                accumulator[Name] += seconds;
+            if (Accumulator.ContainsKey(name))
+                Accumulator[name] += seconds;
             else
-                accumulator[Name] = seconds;
+                Accumulator[name] = seconds;
 
             return seconds;
         }
 
-        public static double Total(string Name)
+        public static double Total(string name)
         {
-            if (!accumulator.ContainsKey(Name))
+            if (!Accumulator.ContainsKey(name))
                 throw new Exception("Timer's name not found");
 
-            return accumulator[Name];
+            return Accumulator[name];
         }
 
-        public static bool Contains(string Name)
+        public static bool Contains(string name)
         {
-            return accumulator.ContainsKey(Name);
+            return Accumulator.ContainsKey(name);
         }
 
-        public static void Flush(string Name)
+        public static void Flush(string name)
         {
-            if (accumulator.ContainsKey(Name))
-                accumulator[Name] = 0;
+            if (Accumulator.ContainsKey(name))
+                Accumulator[name] = 0;
         }
     }
 }

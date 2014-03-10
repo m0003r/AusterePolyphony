@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Compositor.Levels;
+using Compositor.Rules.Base;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.TwoVoices
 {
     class ConsonantesSimult : TwoVoicesRule
     {
@@ -14,33 +12,63 @@ namespace Compositor.Rules
             return LastNote.EndSimult;
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            var i = NextNotes.Interval;
+            var i = nextNotes.Interval;
             return ((i.Degrees != 3) && i.Consonance) ? 1 : 0;
         }
     }
 
     class DenyParallelConsonantes : TwoVoicesRule
     {
-        private uint degrees;
+        private uint _degrees;
 
         public override bool _IsApplicable()
         {
             var i = LastNote.Interval;
-            if (i.PerfectConsonance || i.ModDeg == 4)
-            {
-                degrees = i.ModDeg;
-                return true;
-            }
-            else
-                return false;
+            if (!i.PerfectConsonance && i.ModDeg != 4) return false;
+
+            _degrees = i.ModDeg;
+            return true;
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            var i = NextNotes.Interval.ModDeg;
-            return (degrees == i) ? 0 : 1;
+            var i = nextNotes.Interval.ModDeg;
+            return (_degrees == i) ? 0 : 1;
+        }
+    }
+
+    class DenyHiddenParallelConsonantes : TwoVoicesRule
+    {
+        private uint _degrees;
+
+        public override bool _IsApplicable()
+        {
+            var stayedStart = LastNote.Stayed.TimeStart;
+            var takedAtEnumerator = Notes.Reverse<TwoNotes>().TakeWhile<TwoNotes>(n => n.TimeStart >= stayedStart);
+
+            try
+            {
+                var i = takedAtEnumerator.Last().Interval;
+                if (i.PerfectConsonance || i.ModDeg == 4)
+                {
+                    _degrees = i.ModDeg;
+                    return true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public override double Apply(TwoNotes nextNotes)
+        {
+            var i = nextNotes.Interval.ModDeg;
+            return (_degrees == i) ? 0 : 1;
         }
     }
 
@@ -52,11 +80,11 @@ namespace Compositor.Rules
             return LastNote.EndSimult;
         }
 
-        public override double Apply(TwoNotes NextNotes)
+        public override double Apply(TwoNotes nextNotes)
         {
-            return ((NextNotes.Interval.PerfectConsonance) &&
-                (NextNotes.Note1.Leap.Upwards == NextNotes.Note2.Leap.Upwards) &&
-                (NextNotes.Note1.Leap.isLeap)) ? 0 : 1;
+            return ((nextNotes.Interval.PerfectConsonance) &&
+                (nextNotes.Note1.Leap.Upwards == nextNotes.Note2.Leap.Upwards) &&
+                (nextNotes.Note1.Leap.IsLeap)) ? 0 : 1;
         }
     }
 

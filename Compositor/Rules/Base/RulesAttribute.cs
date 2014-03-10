@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Compositor.Rules
+namespace Compositor.Rules.Base
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class RuleAttribute : System.Attribute 
+    public class RuleAttribute : Attribute 
     {
-        private static List<Type> AppliedRules = new List<Type>();
+        private static readonly List<Type> AppliedRules = new List<Type>();
 
         public static List<Type> GetAllRules()
         {
@@ -19,10 +17,10 @@ namespace Compositor.Rules
 
         public RuleAttribute(Type value)
         {
-            if (typeof(Rule).IsAssignableFrom(value))
+            if (typeof(IRule).IsAssignableFrom(value))
                 AppliedRules.Add(value);
             
-            this.Value = value;
+            Value = value;
         }
     }
 }

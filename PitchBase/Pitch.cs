@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PitchBase
 {
@@ -10,9 +7,9 @@ namespace PitchBase
         public int Value { set; get; }
         public Modus Modus { protected set; get; }
 
-        private String _osh;
+        private readonly String _octaveShift;
 
-        private static String[,] StringForms =
+        private static readonly String[,] StringForms =
         {
             { "ceses", "deses", "eses", "feses", "geses", "ases", "beses" },
             { "ces", "des", "es", "fes", "ges", "as", "b" },
@@ -36,7 +33,7 @@ namespace PitchBase
         {
             get
             {
-                return (int)Math.Floor(((double)Value) / 7.0) - 1;
+                return (int)Math.Floor(Value / 7.0) - 1;
             }
         }
 
@@ -63,10 +60,7 @@ namespace PitchBase
                 if (Modus.Keys < 0)
                     minK = 8 - minK;
 
-                if (minK <= Math.Abs(Modus.Keys))
-                    return Math.Sign(Modus.Keys);
-                else
-                    return 0;
+                return minK <= Math.Abs(Modus.Keys) ? Math.Sign(Modus.Keys) : 0;
             }
         }
 
@@ -88,12 +82,12 @@ namespace PitchBase
         }
 
 
-        public Pitch(int PitchValue, Modus PitchModus)
+        public Pitch(int value, Modus modus)
         {
-            this.Value = PitchValue;
-            this.Modus = PitchModus;
+            Value = value;
+            Modus = modus;
 
-            _osh = OctaveShift(RealOctave);
+            _octaveShift = OctaveShift(RealOctave);
         }
 
         public static Interval operator -(Pitch a, Pitch b)
@@ -104,8 +98,8 @@ namespace PitchBase
             }
 
             int octaves = a.ModusOctave - b.ModusOctave;
-            Interval r = a.FromBase - b.FromBase;
-            Interval o = new Interval(IntervalType.Octava, IntervalAlt.Natural);
+            var r = a.FromBase - b.FromBase;
+            var o = new Interval(IntervalType.Octava);
             
             if (octaves < 0)
             {
@@ -141,7 +135,7 @@ namespace PitchBase
 
         public override String ToString()
         {
-            return StringForm + _osh;
+            return StringForm + _octaveShift;
         }
 
         public static bool operator <(Pitch a, Pitch b)
@@ -170,21 +164,21 @@ namespace PitchBase
             return (GetHashCode() == obj.GetHashCode());
         }
 
-        public static bool operator == (Pitch A, Pitch B)
+        public static bool operator == (Pitch a, Pitch b)
         {
-            return A.Equals(B);
+            return a.Equals(b);
         }
 
-        public static bool operator !=(Pitch A, Pitch B)
+        public static bool operator !=(Pitch a, Pitch b)
         {
-            return !(A == B);
+            return !(a == b);
         }
 
         private Interval FromBase
         {
             get
             {
-                return Modus.baseToDegree(Degree);
+                return Modus.BaseToDegree(Degree);
             }
         }
 
@@ -197,7 +191,7 @@ namespace PitchBase
             return "";
         }
 
-        public bool isTritoneHigh
+        public bool IsTritoneHigh
         {
             get
             {
@@ -205,7 +199,7 @@ namespace PitchBase
             }
         }
 
-        public bool isTritoneLow
+        public bool IsTritoneLow
         {
             get
             {
@@ -213,7 +207,7 @@ namespace PitchBase
             }
         }
 
-        public bool isTritone { get { return (isTritoneHigh || isTritoneLow); } }
+        public bool IsTritone { get { return (IsTritoneHigh || IsTritoneLow); } }
     
     }
 }
