@@ -13,6 +13,7 @@ namespace Compositor.Levels
     [Rule(typeof(ConsonantesSimult))]
     [Rule(typeof(LinearDiss))]
     [Rule(typeof(AfterDiss))]
+    [Rule(typeof(SecondaSeptimaResolution))]
     [Rule(typeof(DenyParallelConsonantes))]
     [Rule(typeof(DenyStraightToConsonans))]
     [Rule(typeof(ComplementRule))]
@@ -20,6 +21,7 @@ namespace Compositor.Levels
     [Rule(typeof(DenyCrossing))]
     [Rule(typeof(SusPassRule1))]
     [Rule(typeof(SusPassRule2))]
+
 
     public class TwoVoices : RuledLevel<TwoVoices, TwoNotes>
     {

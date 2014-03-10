@@ -13,9 +13,12 @@ namespace GeneratorGUI
         public string fname = "";
         private IGenerator Generator;
 
+        private SettingsForm settingsForm;
+
         public MainForm()
         {
             InitializeComponent();
+            settingsForm = new SettingsForm();
         }
 
         private void makeButton_Click(object sender, EventArgs e)
@@ -195,6 +198,11 @@ namespace GeneratorGUI
         private void playButton_Click(object sender, EventArgs e)
         {
             Process.Start("out\\" + fname + ".mid");
+        }
+
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            settingsForm.ShowDialog();
         }
     }
 }

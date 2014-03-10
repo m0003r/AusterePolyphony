@@ -16,9 +16,7 @@ namespace Compositor.Rules
     class LinearDiss : TwoVoicesRule
     {
         /*
-         * Вспомогательный звук
-         * Должен быть слабее предыдущего
-         * Предыдущий должен быть консонанс
+         * диссонансы берём только плавно
          */
         public override bool _IsApplicable()
         {
@@ -50,7 +48,19 @@ namespace Compositor.Rules
                 return 1;
 
             return (n.Changed.Leap.AbsDeg == 1) ? 1 : 0;
+        }
+    }
 
+    class SecondaSeptimaResolution : TwoVoicesRule
+    {
+        public override bool _IsApplicable()
+        {
+            return (LastNote.Interval.Degrees == 1 || LastNote.Interval.Degrees == 6);
+        }
+
+        public override double Apply(TwoNotes n)
+        {
+            return (n.Interval.ModDeg == 0) ? 0 : 1;
         }
     }
  

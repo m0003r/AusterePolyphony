@@ -45,9 +45,10 @@
             this.stepLimitLabel = new System.Windows.Forms.Label();
             this.gvOut = new System.Windows.Forms.TextBox();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.playButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.playButton = new System.Windows.Forms.Button();
+            this.settingsButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxSteps)).BeginInit();
@@ -70,7 +71,7 @@
             this.outputArea.Multiline = true;
             this.outputArea.Name = "outputArea";
             this.outputArea.ReadOnly = true;
-            this.outputArea.Size = new System.Drawing.Size(314, 447);
+            this.outputArea.Size = new System.Drawing.Size(310, 412);
             this.outputArea.TabIndex = 1;
             // 
             // modiList
@@ -123,7 +124,7 @@
             // 
             this.imperfectTime.AutoSize = true;
             this.imperfectTime.Checked = true;
-            this.imperfectTime.Location = new System.Drawing.Point(301, 42);
+            this.imperfectTime.Location = new System.Drawing.Point(367, 19);
             this.imperfectTime.Name = "imperfectTime";
             this.imperfectTime.Size = new System.Drawing.Size(42, 17);
             this.imperfectTime.TabIndex = 5;
@@ -133,7 +134,7 @@
             // 
             // barsCount
             // 
-            this.barsCount.Location = new System.Drawing.Point(301, 94);
+            this.barsCount.Location = new System.Drawing.Point(301, 60);
             this.barsCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -180,7 +181,7 @@
             // barCountLabel
             // 
             this.barCountLabel.AutoSize = true;
-            this.barCountLabel.Location = new System.Drawing.Point(298, 78);
+            this.barCountLabel.Location = new System.Drawing.Point(298, 44);
             this.barCountLabel.Name = "barCountLabel";
             this.barCountLabel.Size = new System.Drawing.Size(103, 13);
             this.barCountLabel.TabIndex = 10;
@@ -190,7 +191,7 @@
             // 
             this.engraveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.engraveButton.Enabled = false;
-            this.engraveButton.Location = new System.Drawing.Point(211, 454);
+            this.engraveButton.Location = new System.Drawing.Point(207, 419);
             this.engraveButton.Name = "engraveButton";
             this.engraveButton.Size = new System.Drawing.Size(106, 25);
             this.engraveButton.TabIndex = 12;
@@ -202,7 +203,7 @@
             // 
             this.drawGraphButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.drawGraphButton.Enabled = false;
-            this.drawGraphButton.Location = new System.Drawing.Point(210, 455);
+            this.drawGraphButton.Location = new System.Drawing.Point(213, 420);
             this.drawGraphButton.Name = "drawGraphButton";
             this.drawGraphButton.Size = new System.Drawing.Size(106, 23);
             this.drawGraphButton.TabIndex = 14;
@@ -278,7 +279,7 @@
             this.gvOut.Name = "gvOut";
             this.gvOut.ReadOnly = true;
             this.gvOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.gvOut.Size = new System.Drawing.Size(313, 447);
+            this.gvOut.Size = new System.Drawing.Size(316, 412);
             this.gvOut.TabIndex = 9;
             // 
             // splitContainer
@@ -300,12 +301,25 @@
             // 
             this.splitContainer.Panel2.Controls.Add(this.gvOut);
             this.splitContainer.Panel2.Controls.Add(this.drawGraphButton);
-            this.splitContainer.Size = new System.Drawing.Size(643, 482);
-            this.splitContainer.SplitterDistance = 320;
+            this.splitContainer.Size = new System.Drawing.Size(647, 447);
+            this.splitContainer.SplitterDistance = 315;
             this.splitContainer.TabIndex = 18;
+            // 
+            // playButton
+            // 
+            this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.playButton.Enabled = false;
+            this.playButton.Location = new System.Drawing.Point(95, 418);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(106, 25);
+            this.playButton.TabIndex = 13;
+            this.playButton.Text = "Послушать";
+            this.playButton.UseVisualStyleBackColor = true;
+            this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.settingsButton);
             this.groupBox1.Controls.Add(this.barCountLabel);
             this.groupBox1.Controls.Add(this.clefList);
             this.groupBox1.Controls.Add(this.barsCount);
@@ -334,23 +348,21 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Параметры генерации";
             // 
-            // playButton
+            // settingsButton
             // 
-            this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.playButton.Enabled = false;
-            this.playButton.Location = new System.Drawing.Point(99, 453);
-            this.playButton.Name = "playButton";
-            this.playButton.Size = new System.Drawing.Size(106, 25);
-            this.playButton.TabIndex = 13;
-            this.playButton.Text = "Послушать";
-            this.playButton.UseVisualStyleBackColor = true;
-            this.playButton.Click += new System.EventHandler(this.playButton_Click);
+            this.settingsButton.Location = new System.Drawing.Point(301, 86);
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(107, 27);
+            this.settingsButton.TabIndex = 11;
+            this.settingsButton.Text = "Настройки...";
+            this.settingsButton.UseVisualStyleBackColor = true;
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(663, 623);
+            this.ClientSize = new System.Drawing.Size(667, 588);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.splitContainer);
@@ -396,6 +408,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button playButton;
+        private System.Windows.Forms.Button settingsButton;
 
     }
 }

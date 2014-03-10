@@ -8,7 +8,7 @@ using Compositor.Levels;
 
 namespace Compositor.Rules
 {
-    abstract class NoteRule : Rule<Note, Note>
+    abstract class NoteRule : ParamRule<Note, Note>
     {
         protected Note Me;
 
@@ -17,12 +17,12 @@ namespace Compositor.Rules
         protected Pitch Pitch { get { return Me.Pitch; } }
         protected Interval Leap { get { return Me.Leap; } }
 
-        public void Init(Note me)
+        public override void Init(Note me)
         {
             Me = me;
         }
 
-        public abstract bool IsApplicable();
-        public abstract double Apply(Note NextNote);
+        public abstract override bool IsApplicable();
+        public abstract override double Apply(Note NextNote);
     }
 }

@@ -8,7 +8,7 @@ using Compositor.Levels;
 
 namespace Compositor.Rules
 {
-    abstract class TwoVoicesRule : Rule<TwoVoices, TwoNotes>
+    abstract class TwoVoicesRule : ParamRule<TwoVoices, TwoNotes>
     {
         protected TwoVoices Melody;
 
@@ -18,7 +18,7 @@ namespace Compositor.Rules
         protected TwoNotes LastNote { get { return Notes.Last(); } }
         protected Time Time { get { return Melody.Time; } }
 
-        public virtual void Init(TwoVoices parent)
+        public override void Init(TwoVoices parent)
         {
             Melody = parent;
         }
@@ -31,14 +31,14 @@ namespace Compositor.Rules
             return Notes.GetRange(Notes.Count - count, count);
         }
 
-        public bool IsApplicable()
+        public override bool IsApplicable()
         {
             return (Notes.Count == 0) ? false : _IsApplicable();
         }
 
         public abstract bool _IsApplicable();
 
-        public abstract double Apply(TwoNotes n);
+        public abstract override double Apply(TwoNotes n);
     }
 }
 

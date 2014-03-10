@@ -58,11 +58,13 @@ namespace Compositor.Rules
                 
                 return 1;
             }
-
-            if (n.TimeStart.Strongness < lastStrongness) // passing | neighbour
+            else
+            //if (n.TimeStart.Strongness < lastStrongness) // проходящий или вспомогательный
             {
-                return ((n.Changed.TimeEnd.Position > n.Stayed.TimeEnd.Position) ||
-                        (n.Changed.Duration > 4)) ? 0 : 1;
+                //не можно в том случае если:
+                return ((n.Changed.TimeEnd.Position > n.Stayed.TimeEnd.Position) || // проходящий уходит позже, чем стоячий
+                        (n.Changed.Duration > 4) ||
+                        (n.TimeStart - LastNote.Changed.TimeStart).Position > 4) ? 0 : 1; // проходит более чем четвертями
             }
 
             return 1;

@@ -28,7 +28,7 @@ namespace Compositor.Rules
         public override bool _IsApplicable()
         {
             var i = LastNote.Interval;
-            if (i.PerfectConsonance)
+            if (i.PerfectConsonance || i.ModDeg == 4)
             {
                 degrees = i.ModDeg;
                 return true;

@@ -45,6 +45,7 @@
     <Compile Include="Generators\IGenerator.cs" />
     <Compile Include="Levels\TwoNotes.cs" />
     <Compile Include="Levels\TwoVoices.cs" />
+    <Compile Include="Rules\Base\ParamAttribute.cs" />
     <Compile Include="Rules\Base\TwoVoicesRule.cs" />
     <Compile Include="Rules\Base\RulesAttribute.cs" />
     <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />

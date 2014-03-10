@@ -13,7 +13,7 @@ namespace GeneratorGUI
         static extern bool AttachConsole(int dwProcessId);
         private const int ATTACH_PARENT_PROCESS = -1;
         [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.Bool)]        
         static extern bool AllocConsole();
 
         /// <summary>

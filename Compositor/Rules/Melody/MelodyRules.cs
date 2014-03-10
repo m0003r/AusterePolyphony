@@ -11,10 +11,18 @@ namespace Compositor.Rules
     using NotesList = List<Note>;
     using PitchAtTime = KeyValuePair<int, Pitch>;
 
+    [Param("SoftLimit", typeof(int), 6, "Беспроблемное значение")]
+    [Param("HardLimit", typeof(int), 8, "Нельзя никогда так")]
     class DenyGamming : MelodyRule
     {
         private int GammingCount;
-        const int GammingSoftLimit = 6;
+        private int GammingSoftLimit;
+        private int GammingHardLimit;
+
+        public DenyGamming() : base()  {
+            GammingSoftLimit = (int)settings["SoftLimit"];
+            GammingSoftLimit = (int)settings["HardLimit"];
+        }
 
         public override bool _IsApplicable()
         {
