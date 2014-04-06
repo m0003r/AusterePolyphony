@@ -122,7 +122,7 @@ namespace PitchBase
         private static bool CheckAlterable(IntervalType type, IntervalAlt alteration)
         {
             double interval = type.ToSemitones() + alteration.ToSemitones();
-            return (Math.Truncate(interval) == interval);
+            return (Math.Abs(Math.Truncate(interval) - interval) < 0.1);
         }
 
         public static Interval operator +(Interval a, Interval b)

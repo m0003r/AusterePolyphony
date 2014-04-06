@@ -301,8 +301,6 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
-            int checkedInterval;
-
             _deniedPitch = null;
 
             if (Notes.Count < 3)
@@ -310,7 +308,7 @@ namespace Compositor.Rules.Melody
 
             var last = GetLast(3);
 
-            checkedInterval = (last[1].Pitch - last[0].Pitch).Degrees;
+            int checkedInterval = (last[1].Pitch - last[0].Pitch).Degrees;
             if ((last[2].Pitch - last[1].Pitch).Degrees != checkedInterval)
             {
                 _deniedPitch = last[2].Pitch + checkedInterval;
@@ -414,7 +412,7 @@ namespace Compositor.Rules.Melody
             private double Difference()
             {
                 int comparedLength = 0;
-                double average, diffAccumulator = 0;
+                double diffAccumulator = 0;
                 var diffs = new List<int>();
 
                 var myEnum = Tones.GetEnumerator();
@@ -426,7 +424,7 @@ namespace Compositor.Rules.Melody
                     comparedLength++;
                 } 
 
-                average = diffs.Average();
+                double average = diffs.Average();
 
                 diffAccumulator += diffs.Sum(diff => Math.Pow((diff - average), 2));
 

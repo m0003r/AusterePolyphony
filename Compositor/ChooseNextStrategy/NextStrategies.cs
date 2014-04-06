@@ -23,12 +23,13 @@ namespace Compositor.ChooseNextStrategy
 
         public IDeniable ChooseNext(IEnumerable<KeyValuePair<IDeniable, double>> freqs)
         {
-            double freqSum = freqs.Sum(kv => kv.Value);
+            var keyValuePairs = freqs as IList<KeyValuePair<IDeniable, double>> ?? freqs.ToList();
+            double freqSum = keyValuePairs.Sum(kv => kv.Value);
             double r = GetNextDouble(freqSum);
 
             double accumulator = 0;
 
-            foreach (var kv in freqs)
+            foreach (var kv in keyValuePairs)
             {
                 accumulator += kv.Value;
                 if (accumulator >= r)
@@ -50,11 +51,12 @@ namespace Compositor.ChooseNextStrategy
 
         public IDeniable ChooseNext(IEnumerable<KeyValuePair<IDeniable, double>> freqs)
         {
-            double freqS = freqs.Sum(kv => Math.Pow(kv.Value, 3));
+            var keyValuePairs = freqs as IList<KeyValuePair<IDeniable, double>> ?? freqs.ToList();
+            double freqS = keyValuePairs.Sum(kv => Math.Pow(kv.Value, 3));
             double r = _rand.NextDouble() * freqS;
             double accumulator = 0;
 
-            foreach (var kv in freqs)
+            foreach (var kv in keyValuePairs)
             {
                 accumulator += Math.Pow(kv.Value, 3);
                 if (accumulator > r)

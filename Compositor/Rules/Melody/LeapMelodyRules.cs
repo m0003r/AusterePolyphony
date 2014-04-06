@@ -118,10 +118,9 @@ namespace Compositor.Rules.Melody
             _lastCo = (PreLast.Leap.Upwards == LastNote.Leap.Upwards);
             _lastSm = PreLast.Leap.IsSmooth;
 
-            if (_lastCo)
-                return _lastSm ? _coSmooth.IsApplicable() : _coLeap.IsApplicable();
-            else
-                return _lastSm ? _oppSmooth.IsApplicable() : _oppLeap.IsApplicable();
+            return _lastCo
+                ? (_lastSm ? _coSmooth.IsApplicable() : _coLeap.IsApplicable())
+                : (_lastSm ? _oppSmooth.IsApplicable() : _oppLeap.IsApplicable());
         }
 
         public override double Apply(Note nextNotes)

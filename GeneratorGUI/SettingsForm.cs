@@ -8,7 +8,7 @@ namespace GeneratorGUI
         public SettingsForm()
         {
             InitializeComponent();
-
+            
             var rules = RuleAttribute.GetAllRules();
         }
     }

@@ -23,7 +23,11 @@ namespace Compositor.Rules.Base
 
         public override void Init(IDeniable me)
         {
-            Init((Levels.TwoVoices) me);
+            var voices = me as Levels.TwoVoices;
+            if (voices != null)
+                Init(voices);
+            else
+                throw new ArgumentException();
         }
 
         protected List<TwoNotes> GetLast(int count)
@@ -45,7 +49,11 @@ namespace Compositor.Rules.Base
 
         public override double Apply(IDeniable nextNotes)
         {
-            return Apply((TwoNotes) nextNotes);
+            var notes = nextNotes as TwoNotes;
+            if (notes != null)
+                return Apply(notes);
+
+            throw new ArgumentException();
         }
     }
 }

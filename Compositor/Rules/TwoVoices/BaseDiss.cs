@@ -24,10 +24,9 @@ namespace Compositor.Rules.TwoVoices
             if (nextNotes.Interval.Consonance)
                 return 1;
 
-            if (nextNotes.Simult)
-                return (nextNotes.Note1.Leap.IsSmooth && nextNotes.Note2.Leap.IsSmooth) ? 1 : 0;
-            else
-                return (nextNotes.Changed.Leap.IsSmooth) ? 1 : 0;
+            return nextNotes.Simult
+                ? ((nextNotes.Note1.Leap.IsSmooth && nextNotes.Note2.Leap.IsSmooth) ? 1 : 0)
+                : ((nextNotes.Changed.Leap.IsSmooth) ? 1 : 0);
         }
     }
 
@@ -46,10 +45,9 @@ namespace Compositor.Rules.TwoVoices
             if ((nextNotes.TimeStart.Beat % 4 == 2) && (nextNotes.Changed.Leap.Degrees == -2))
                 return 1;
 
-            if (nextNotes.Simult)
-                return (nextNotes.Note1.Leap.IsSmooth && nextNotes.Note2.Leap.IsSmooth) ? 1 : 0;
-            else
-                return (nextNotes.Changed.Leap.IsSmooth) ? 1 : 0;
+            return nextNotes.Simult
+                ? ((nextNotes.Note1.Leap.IsSmooth && nextNotes.Note2.Leap.IsSmooth) ? 1 : 0)
+                : (nextNotes.Changed.Leap.IsSmooth ? 1 : 0);
         }
     }
 

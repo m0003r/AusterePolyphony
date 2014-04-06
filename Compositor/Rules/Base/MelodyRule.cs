@@ -19,7 +19,11 @@ namespace Compositor.Rules.Base
 
         public override void Init(IDeniable parent)
         {
-            Init((Levels.Melody)parent);
+            var melody = parent as Levels.Melody;
+            if (melody != null)
+                Init(melody);
+            else
+                throw new ArgumentException();
         }
 
         public virtual void Init(Levels.Melody parent)
@@ -46,7 +50,11 @@ namespace Compositor.Rules.Base
 
         public override double Apply(IDeniable nextNotes)
         {
-            return Apply((Note) nextNotes);
+            var note = nextNotes as Note;
+            if (note != null)
+                return Apply(note);
+
+            throw new ArgumentException();
         }
     }
 }

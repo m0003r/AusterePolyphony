@@ -14,11 +14,9 @@ namespace Compositor.Rules.Melody
         {
             bool coDir = (nextNotes.Leap.Upwards == Me.Leap.Upwards);
 
-            if (nextNotes.Leap.AbsDeg == 1) //если дальше плавный ход
-                //плавный ход предпочитаем туда же
-                return (coDir) ? 1 : 0.8;
-            else
-                return coDir ? CoDirRule(nextNotes) : OppDirRule(nextNotes);
+            return nextNotes.Leap.AbsDeg == 1
+                ? ((coDir) ? 1 : 0.8)
+                : (coDir ? CoDirRule(nextNotes) : OppDirRule(nextNotes));
         }
 
         private double OppDirRule(Note nextNote)

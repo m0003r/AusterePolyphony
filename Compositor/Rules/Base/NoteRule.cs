@@ -23,18 +23,20 @@ namespace Compositor.Rules.Base
 
         public override double Apply(IDeniable nextNotes)
         {
-            if (nextNotes.GetType().IsAssignableFrom(typeof (Note)))
-                return Apply((Note) nextNotes);
+            var note = nextNotes as Note;
+            if (note != null)
+                return Apply(note);
 
             throw new ArgumentException();
         }
 
         public override void Init(IDeniable me)
         {
-            if (me.GetType().IsAssignableFrom(typeof(Note)))
-                Init((Note)me);
+            var note = me as Note;
+            if (note != null)
+                Init(note);
             else
-                throw new ArgumentException();            
+                throw new ArgumentException();
         }
     }
 }

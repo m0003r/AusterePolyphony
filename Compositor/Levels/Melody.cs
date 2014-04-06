@@ -501,11 +501,6 @@ namespace Compositor.Levels
                 _minNoteNumber = start;
                 _maxNoteNumber = end;
 
-                if (_minNoteNumber > melody.NoteCount)
-                    start = melody.NoteCount;
-                if (_maxNoteNumber < melody.NoteCount)
-                    end = melody.NoteCount;
-
                 Reset();
             }
             

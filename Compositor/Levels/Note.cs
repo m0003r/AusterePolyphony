@@ -98,8 +98,10 @@ namespace Compositor.Levels
 
         public int CompareTo(object obj)
         {
-            if (obj is Note)
-                return CompareTo((Note) obj);
+            var note = obj as Note;
+            if (note != null)
+                return CompareTo(note);
+
             throw new NotImplementedException();
         }
 

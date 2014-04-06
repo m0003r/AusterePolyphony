@@ -30,11 +30,6 @@ namespace Compositor.Levels
                 AddRules();
             }
 
-            InitFreqs();
-        }
-
-        protected virtual void InitFreqs()
-        {
             Freqs = new FreqsDict();
         }
 
