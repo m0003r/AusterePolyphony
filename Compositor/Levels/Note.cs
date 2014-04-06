@@ -15,7 +15,7 @@ namespace Compositor.Levels
     [Rule(typeof(AfterSmoothLeapRule))]
     [Rule(typeof(AfterLeapLeapRule))]
 
-    public class Note : RuledLevel<Note, Note>, IComparable<Note>, IDeniable//, IComparable
+    public class Note : RuledLevel, IComparable<Note>, IComparable
     {
         public Pitch Pitch;
 
@@ -33,9 +33,6 @@ namespace Compositor.Levels
         public List<Pitch> Diapason;
 
         public int Reserve, Uncomp;
-
-        public IRule DeniedRule { get; set; }
-        public bool IsBanned { get; set; }
 
         public Note(Pitch pitch, Time timeStart, int duration, Note previous = null)
         {
@@ -60,7 +57,7 @@ namespace Compositor.Levels
             return me - previous;
         }
 
-        protected override void AddVariants(bool dumpResult = false)
+        public override void AddVariants(bool dumpResult = false)
         {
             Time newPos = TimeStart + Duration;
             double v;
@@ -99,7 +96,14 @@ namespace Compositor.Levels
             }
         }
 
-        internal void UpdateFreqs(Dictionary<Note, double> freqs)
+        public int CompareTo(object obj)
+        {
+            if (obj is Note)
+                return CompareTo((Note) obj);
+            throw new NotImplementedException();
+        }
+
+        internal void UpdateFreqs(FreqsDict freqs)
         {
             Freqs = freqs;
         }

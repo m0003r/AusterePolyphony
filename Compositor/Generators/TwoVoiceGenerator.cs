@@ -14,7 +14,7 @@ namespace Compositor.Generators
         public int Seed { get; private set; }
         public int StepLimit { get; private set; }
 
-        readonly IChooseNextStrategy<TwoNotes> _chooseStrategy;
+        readonly IChooseNextStrategy _chooseStrategy;
 
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
@@ -30,14 +30,14 @@ namespace Compositor.Generators
             return Seed;
         }        
 
-        public TwoVoiceGenerator(Clef clef1, Clef clef2, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy<TwoNotes> strategy = null)
+        public TwoVoiceGenerator(Clef clef1, Clef clef2, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy strategy = null)
         {
             StepLimit = stepLimit;
             Melodies = new TwoVoices(clef1, clef2, modus, time);
             if (strategy == null)
             {
                 SetSeed(seed);
-                _chooseStrategy = new DefaultNextStrategy<TwoNotes>(Seed);
+                _chooseStrategy = new DefaultNextStrategy(Seed);
             }
             else
                 _chooseStrategy = strategy;
@@ -117,7 +117,7 @@ namespace Compositor.Generators
                 Console.WriteLine(sb);
             }
 
-            TwoNotes next = _chooseStrategy.ChooseNext(possibleNext);
+            var next = (TwoNotes)_chooseStrategy.ChooseNext(possibleNext);
 
             Melodies.AddTwoNotes(next);
         }

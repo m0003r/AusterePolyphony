@@ -23,13 +23,12 @@ namespace GeneratorGUI
             {
                 var p = new Pitch(0, m.Modus);
 
-                string key = p.StringForm;
-                string modus, clef, time;
+                var key = p.StringForm;
                 var notes = new StringBuilder();
 
-                modus = "\\" + m.Modus.Name;
-                clef = ClefNamesList[(int)m.Clef + 1];
-                time = (m.Time.Beats) + "/2";
+                var modus = "\\" + m.Modus.Name;
+                var clef = ClefNamesList[(int)m.Clef + 1];
+                var time = (m.Time.Beats) + "/2";
 
                 foreach (Note n in m.Notes)
                 {

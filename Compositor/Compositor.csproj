@@ -43,9 +43,12 @@
     <Compile Include="ChooseNextStrategy\NextStrategies.cs" />
     <Compile Include="Generators\TwoVoiceGenerator.cs" />
     <Compile Include="Generators\IGenerator.cs" />
+    <Compile Include="Levels\Filterable.cs" />
     <Compile Include="Levels\TwoNotes.cs" />
     <Compile Include="Levels\TwoVoices.cs" />
+    <Compile Include="Rules\Base\FreqsDict.cs" />
     <Compile Include="Rules\Base\ParamAttribute.cs" />
+    <Compile Include="Rules\Base\ParamRule.cs" />
     <Compile Include="Rules\Base\TwoVoicesRule.cs" />
     <Compile Include="Rules\Base\RulesAttribute.cs" />
     <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />

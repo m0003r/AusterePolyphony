@@ -72,13 +72,13 @@ namespace GeneratorGUI
 
             if (n.Freqs != null)
             {
-                foreach (KeyValuePair<Note, double> kv in
+                foreach (var kv in
                     n.Freqs.Where(kv => (kv.Value > 0.03) || (kv.Key.IsBanned))   
                     )
                     {
-                    res += (MakeNode(kv.Key, n, kv.Value) + "\r\n");
+                    res += (MakeNode((Note)kv.Key, n, kv.Value) + "\r\n");
                     if (kv.Key.IsBanned)
-                        MakeNote(kv.Key);
+                        MakeNote((Note)kv.Key);
                     }
             }
 

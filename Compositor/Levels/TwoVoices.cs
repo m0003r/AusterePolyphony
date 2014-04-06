@@ -25,12 +25,12 @@ namespace Compositor.Levels
     [Rule(typeof(SusPassRule2))]
 
 
-    public class TwoVoices : RuledLevel<TwoVoices, TwoNotes>
+    public class TwoVoices : RuledLevel
     {
         public Melody Voice1 { get; private set; }
         public Melody Voice2 { get; private set; }
 
-        public Dictionary<TwoNotes, double> FirstFreqs;
+        public FreqsDict FirstFreqs;
 
         internal List<TwoNotes> Twonotes;
 
@@ -46,15 +46,15 @@ namespace Compositor.Levels
             Twonotes = new List<TwoNotes>();
             FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
 
-            var keys = new List<TwoNotes>(FirstFreqs.Keys);
-            foreach (var key in keys.Where(key => key.Interval.ModDeg == 3))
+            var keys = new List<IDeniable>(FirstFreqs.Keys);
+            foreach (var key in keys.Where(key => ((TwoNotes)key).Interval.ModDeg == 3))
                 FirstFreqs[key] = 0;
 
             FirstNote();
             Filtered = true;
         }
 
-        protected override void AddVariants(bool dumpResult = false)
+        public override void AddVariants(bool dumpResult = false)
         {
             var filtered1 = Voice1.Filter(dumpResult);
             var filtered2 = Voice2.Filter(dumpResult);
@@ -79,21 +79,21 @@ namespace Compositor.Levels
 
         }
 
-        private void AddTwoNotesVariants(Dictionary<Note, double> filtered1, Dictionary<Note, double> filtered2)
+        private void AddTwoNotesVariants(FreqsDict filtered1, FreqsDict filtered2)
         {
             Freqs = CombineFreqs(filtered1, filtered2);
         }
 
-        private void AddToVoice1Variants(Dictionary<Note, double> filtered1, Note l2)
+        private void AddToVoice1Variants(FreqsDict filtered1, Note l2)
         {
-            var f2 = new Dictionary<Note, double>();
+            var f2 = new FreqsDict();
             f2[l2] = 1;
             Freqs = CombineFreqs(filtered1, f2);
         }
 
-        private void AddToVoice2Variants(Note l1, Dictionary<Note, double> filtered2)
+        private void AddToVoice2Variants(Note l1, FreqsDict filtered2)
         {
-            var f1 = new Dictionary<Note, double>();
+            var f1 = new FreqsDict();
             f1[l1] = 1;
             Freqs = CombineFreqs(f1, filtered2);
         }
@@ -103,12 +103,12 @@ namespace Compositor.Levels
             return Math.Sqrt(f1*f2);
         }
 
-        private Dictionary<TwoNotes, double> CombineFreqs(Dictionary<Note, double> f1, Dictionary<Note, double> f2)
+        private FreqsDict CombineFreqs(FreqsDict f1, FreqsDict f2)
         {
-            var result = new Dictionary<TwoNotes, double>();
+            var result = new FreqsDict();
             foreach (var n1 in f1)
                 foreach (var n2 in f2)
-                    result.Add(new TwoNotes(n1.Key, n2.Key), GetCombinedFreq(n1.Value, n2.Value));            
+                    result.Add(new TwoNotes((Note)n1.Key, (Note)n2.Key), GetCombinedFreq(n1.Value, n2.Value));            
             
 
             return result;

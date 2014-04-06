@@ -69,32 +69,32 @@ namespace PitchBase
 
         public static Modus Ionian(int start = 0)
         {
-            return new Modus(IonianData, start, 0, "ionianData");
+            return new Modus(IonianData, start, 0, "ionian");
         }
 
         public static Modus Dorian(int start = 0) // -> -2
         {
-            return new Modus(DorianData, start, -2, "DorianData");
+            return new Modus(DorianData, start, -2, "dorian");
         }
 
         public static Modus Phrygian(int start = 0) // -> -4
         {
-            return new Modus(PhrygianData, start, -4, "PhrygianData");
+            return new Modus(PhrygianData, start, -4, "phrygian");
         }
 
         public static Modus Lydian(int start = 0) // -> +1
         {
-            return new Modus(LydianData, start, 1, "LydianData");
+            return new Modus(LydianData, start, 1, "lydian");
         }
 
         public static Modus Mixolydian(int start = 0) // -> -1
         {
-            return new Modus(MixolydianData, start, -1, "MixolydianData");
+            return new Modus(MixolydianData, start, -1, "mixolydian");
         }
 
         public static Modus Aeolian(int start = 0) // -> -3
         {
-            return new Modus(AeolianData, start, -3, "AeolianData");
+            return new Modus(AeolianData, start, -3, "aeolian");
         }
 
         internal Interval BaseToDegree(uint degree)

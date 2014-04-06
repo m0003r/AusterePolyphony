@@ -6,7 +6,7 @@ using PitchBase;
 
 namespace Compositor.Rules.Base
 {
-    abstract class MelodyRule : ParamRule<Levels.Melody, Note>
+    abstract class MelodyRule : ParamRule
     {
         protected Levels.Melody Melody;
         
@@ -17,7 +17,12 @@ namespace Compositor.Rules.Base
         protected Pitch Lower { get { return Melody.Lower; } }
         protected List<LeapOrSmooth> LeapSmooth { get { return Melody.LeapSmooth; } }
 
-        public override void Init(Levels.Melody parent)
+        public override void Init(IDeniable parent)
+        {
+            Init((Levels.Melody)parent);
+        }
+
+        public virtual void Init(Levels.Melody parent)
         {
             Melody = parent;
         }
@@ -37,7 +42,12 @@ namespace Compositor.Rules.Base
 
         public abstract bool _IsApplicable();
 
-        public abstract override double Apply(Note nextNotes);
+        public abstract double Apply(Note nextNotes);
+
+        public override double Apply(IDeniable nextNotes)
+        {
+            return Apply((Note) nextNotes);
+        }
     }
 }
 

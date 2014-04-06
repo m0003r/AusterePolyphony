@@ -140,9 +140,14 @@ namespace PitchBase
 
         public static bool operator ==(Time me, Time aux)
         {
-            if (aux == null) return false;
-
-            return (me.Perfectus == aux.Perfectus) && (me.Position == aux.Position);
+            try
+            {
+                return (me.Perfectus == aux.Perfectus) && (me.Position == aux.Position);
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
         }
 
         public static bool operator !=(Time me, Time aux) { return !(me == aux); }

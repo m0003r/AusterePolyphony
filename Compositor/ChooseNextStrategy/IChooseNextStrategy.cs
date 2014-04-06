@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Compositor.Levels;
 
 namespace Compositor.ChooseNextStrategy
 {
-    public interface IChooseNextStrategy<T>
+    public interface IChooseNextStrategy
     {
-        T ChooseNext(IEnumerable<KeyValuePair<T, double>> freqs);
+        IDeniable ChooseNext(IEnumerable<KeyValuePair<IDeniable, double>> freqs);
     }
 }

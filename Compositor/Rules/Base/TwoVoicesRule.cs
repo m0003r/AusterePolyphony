@@ -6,7 +6,7 @@ using PitchBase;
 
 namespace Compositor.Rules.Base
 {
-    abstract class TwoVoicesRule : ParamRule<Levels.TwoVoices, TwoNotes>
+    abstract class TwoVoicesRule : ParamRule
     {
         protected Levels.TwoVoices Melody;
 
@@ -16,9 +16,14 @@ namespace Compositor.Rules.Base
         protected TwoNotes LastNote { get { return Notes.Last(); } }
         protected Time Time { get { return Melody.Time; } }
 
-        public override void Init(Levels.TwoVoices parent)
+        public void Init(Levels.TwoVoices parent)
         {
             Melody = parent;
+        }
+
+        public override void Init(IDeniable me)
+        {
+            Init((Levels.TwoVoices) me);
         }
 
         protected List<TwoNotes> GetLast(int count)
@@ -36,7 +41,12 @@ namespace Compositor.Rules.Base
 
         public abstract bool _IsApplicable();
 
-        public abstract override double Apply(TwoNotes nextNotes);
+        public abstract double Apply(TwoNotes nextNotes);
+
+        public override double Apply(IDeniable nextNotes)
+        {
+            return Apply((TwoNotes) nextNotes);
+        }
     }
 }
 

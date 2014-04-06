@@ -6,7 +6,7 @@ using PitchBase;
 
 namespace Compositor.Levels
 {
-    public class TwoNotes : IDeniable, IComparable<TwoNotes>
+    public class TwoNotes : IDeniable, IComparable<TwoNotes>, IComparable
     {
         public Note Note1;
         public Note Note2;
@@ -52,6 +52,16 @@ namespace Compositor.Levels
             return Note1 + "@" + Note1.TimeStart + "; " + Note2 + "@" + Note2.TimeStart;
         }
 
-        public Dictionary<TwoNotes, double> Freqs;
+        public FreqsDict Freqs;
+
+        public int CompareTo(object obj)
+        {
+            var notes = obj as TwoNotes;
+
+            if (notes != null)
+                return CompareTo(notes);
+
+            throw new NotImplementedException();
+        }
     }
 }

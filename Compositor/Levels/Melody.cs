@@ -101,7 +101,7 @@ namespace Compositor.Levels
     [Rule(typeof(AfterQuarterNewRule))]
     [Rule(typeof(TooManyEightsRule))]
 
-    public class Melody : RuledLevel<Melody, Note>, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>>
+    public class Melody : RuledLevel, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>>
     {
         public Clef Clef { get; private set; }
         public Modus Modus { get; private set; }
@@ -115,7 +115,7 @@ namespace Compositor.Levels
         internal LSList Leapsmooth;
         internal List<Pitch> Diapason { get; private set; }
 
-        Dictionary<Note, double> _firstNoteFreqs;
+        FreqsDict _firstNoteFreqs;
 
         internal uint DesiredLength;
 
@@ -156,7 +156,7 @@ namespace Compositor.Levels
 
         private void InitFirstNote()
         {
-            _firstNoteFreqs = new Dictionary<Note, double>();
+            _firstNoteFreqs = new FreqsDict();
 
             var pi = Diapason.FindAll(p => ((p.Degree == 4) || (p.Degree == 0)));
 
@@ -173,7 +173,7 @@ namespace Compositor.Levels
 
         internal void FirstNote()
         {
-            Freqs = new Dictionary<Note, double>(_firstNoteFreqs);
+            Freqs = new FreqsDict(_firstNoteFreqs);
         }
 
         internal void RemoveLast(bool ban = true)
@@ -200,7 +200,7 @@ namespace Compositor.Levels
         }
 
 
-        protected override void AddVariants(bool dumpResult = false)
+        public override void AddVariants(bool dumpResult = false)
         {
             if (Notes.Count == 0)
                 FirstNote();

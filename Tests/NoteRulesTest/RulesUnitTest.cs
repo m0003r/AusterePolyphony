@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compositor.Levels;
+using Compositor.Rules.Base;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PitchBase;
 
@@ -12,11 +13,11 @@ namespace NoteRulesTest
     {
         internal void Satisfy(Predicate<Note> expectedNote,
             Predicate<double> expectedFreq,
-            Dictionary<Note, double> freqs)
+            FreqsDict freqs)
         {
             foreach (var freq in
                         from kv in freqs
-                        where expectedNote(kv.Key)
+                        where expectedNote((Note)kv.Key)
                         select kv.Value)
             {
                 Assert.IsTrue(expectedFreq(freq));
@@ -24,21 +25,21 @@ namespace NoteRulesTest
         }
 
         internal void AreAllowed(Note expectedNote,
-            Dictionary<Note, double> freqs)
+            FreqsDict freqs)
         {
             AreAllowed(n => n.Equals(expectedNote), freqs);
         }
 
         internal void AreAllowed(Predicate<Note> expectedNote,
-            Dictionary<Note, double> freqs)
+            FreqsDict freqs)
         {
-            int count = freqs.Count(kv => expectedNote(kv.Key));
+            int count = freqs.Count(kv => expectedNote((Note)kv.Key));
             Assert.IsTrue(count > 0);
             Satisfy(expectedNote, x => x > 0.03, freqs);
         }
 
         internal void AreDenied(Predicate<Note> expectedNote,
-            Dictionary<Note, double> freqs)
+            FreqsDict freqs)
         {
             Satisfy(expectedNote, x => x < 0.03, freqs);
         }
@@ -112,7 +113,7 @@ namespace NoteRulesTest
             List<Pitch> diapason;
             Melody m = CreateMelody(500, Modus.Aeolian(9), Clef.Treble, false, out diapason, 5, 8, 1, 2, 2, 2);
 
-            Dictionary<Note, double> freqs = m.Filter();
+            FreqsDict freqs = m.Filter();
 
             AreDenied(n => n.Duration == 4, freqs);
         }
@@ -123,7 +124,7 @@ namespace NoteRulesTest
             List<Pitch> diapason;
             Melody m = CreateMelody(500, Modus.Phrygian(4), Clef.Treble, false, out diapason, 2, 8, 3, 8, 4, 8, 3, 8);
 
-            Dictionary<Note, double> freqs = m.Filter();
+            FreqsDict freqs = m.Filter();
 
             AreDenied(n => n.Pitch == diapason[10], freqs);
         }
@@ -134,7 +135,7 @@ namespace NoteRulesTest
             List<Pitch> diapason;
             Melody m = CreateMelody(36, Modus.Dorian(2), Clef.Treble, true, out diapason, 5, 12, 4, 4, 3, 4, 2, 4);
 
-            Dictionary<Note, double> freqs = m.Filter();
+            FreqsDict freqs = m.Filter();
 
             AreAllowed(n => (n.Pitch == diapason[1]) && (n.Duration == 12), freqs);
         }
@@ -145,7 +146,7 @@ namespace NoteRulesTest
             List<Pitch> diapason;
             Melody m = CreateMelody(24, Modus.Dorian(2), Clef.Treble, true, out diapason, 5, 4, 8, 6, 7, 2);
 
-            Dictionary<Note, double> freqs = m.Filter();
+            FreqsDict freqs = m.Filter();
 
             AreAllowed(n => (n.Pitch == diapason[8]) && (n.Duration == 12), freqs);
         }
