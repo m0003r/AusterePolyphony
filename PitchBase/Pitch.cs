@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Remoting.Messaging;
 
 namespace PitchBase
 {
@@ -92,6 +93,9 @@ namespace PitchBase
 
         public static Interval operator -(Pitch a, Pitch b)
         {
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+                return new Interval(IntervalType.Prima);
+
             if (a.Modus != b.Modus)
             {
                 throw new Exception("Different modi in substraction!");
@@ -125,7 +129,7 @@ namespace PitchBase
 
         public static Pitch operator +(Pitch a, int b)
         {
-            return new Pitch(a.Value + b, a.Modus);
+            return ReferenceEquals(a, null) ? null : new Pitch(a.Value + b, a.Modus);
         }
 
         public static Pitch operator -(Pitch a, int b)
@@ -166,7 +170,7 @@ namespace PitchBase
 
         public static bool operator == (Pitch a, Pitch b)
         {
-            return a.Equals(b);
+            return ReferenceEquals(a, null) ? ReferenceEquals(b, null) : a.Equals(b);
         }
 
         public static bool operator !=(Pitch a, Pitch b)

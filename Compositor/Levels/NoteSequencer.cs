@@ -31,6 +31,9 @@ namespace Compositor.Levels
             if (me.Pitch == p2)
                 return 0; //не бывает никада!
 
+            if (null == p2)
+                return (t.Beat%2 == 0) ? 1 : 0;
+
             var diff = p2 - me.Pitch;
 
             if ((t.Beat % 4 != 0) || (me.Duration == 1)) // нельзя неплавные ходы внутри метрической доли или после восьмых

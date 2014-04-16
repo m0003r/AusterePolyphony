@@ -51,7 +51,7 @@ namespace Compositor.Levels
 
         protected static Interval CalcState(Pitch me, Pitch previous)
         {
-            if (previous == null)
+            if ((previous == null) || (me == null))
                 return new Interval(IntervalType.Prima);
 
             return me - previous;
@@ -63,6 +63,8 @@ namespace Compositor.Levels
 
             foreach (var p in Diapason)
                 GenerateAtPitch(p, newPos);
+
+            GenerateAtPitch(null, newPos);
 
 #if TRACE
             var sb = new StringBuilder();
@@ -129,6 +131,9 @@ namespace Compositor.Levels
 
         public int CompareTo(Note obj)
         {
+            if (ReferenceEquals(Pitch, null) || ReferenceEquals(obj.Pitch, null))
+                return Duration.CompareTo(obj.Duration);
+            
             if (Pitch.Value > obj.Pitch.Value)
                 return 1;
             if (Pitch.Value < obj.Pitch.Value)

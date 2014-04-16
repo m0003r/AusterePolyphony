@@ -90,6 +90,7 @@ namespace Compositor.Generators
         private void Step()
         {
             Voice.Filter();
+
             double max = Voice.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
             if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!

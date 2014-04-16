@@ -20,6 +20,9 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
+            if (LastNote.Pitch == null)
+                return false;
+
             //double actualCenter = Voice.NotesList.Sum(n => n.Pitch.Value * n.Duration) / (double)Voice.Time.Position;
             //double diff = desiredCenter - actualCenter;
             _gravityPoint = LastNote.Pitch.Value + LastNote.Uncomp;

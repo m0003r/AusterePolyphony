@@ -188,7 +188,8 @@ namespace Compositor.Rules.Melody
         public override bool _IsApplicable()
         {
             _lastPitch = LastNote.Pitch;
-
+            if (_lastPitch == null)
+                return false;
             //запрещаем вниз, если мы на текущей верхней мелодической вершине            
             _denyDown = (_lastPitch == Higher);
             // или если нижняя — звук тритона, а мы на другом
@@ -397,7 +398,9 @@ namespace Compositor.Rules.Melody
                 Length = 0;
                 foreach (var subNote in (IEnumerable<KeyValuePair<int, Pitch>>)m)
                 {
-                    _tones.Add(subNote.Value.Value);
+                    var subPitch = subNote.Value;
+                    _tones.Add(subPitch != null ? subPitch.Value : _tones.Last());
+
                     if (subNote.Key > _startedAt)
                         Length++;
                 }

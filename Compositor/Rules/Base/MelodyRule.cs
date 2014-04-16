@@ -52,7 +52,7 @@ namespace Compositor.Rules.Base
         {
             var note = nextNotes as Note;
             if (note != null)
-                return Apply(note);
+                return note.Pitch == null ? 1 : Apply(note);
 
             throw new ArgumentException();
         }
