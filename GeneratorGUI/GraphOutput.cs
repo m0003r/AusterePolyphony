@@ -91,7 +91,7 @@ namespace GeneratorGUI
 
             _drawed = new Dictionary<string, bool>();
 
-            foreach (Note n in me.Melody.Notes)
+            foreach (Note n in me.Voice.Notes)
             {
                 _graph += MakeNote(n);
                 _graph += "\r\n";

@@ -21,9 +21,9 @@ namespace Compositor.Rules.Base
             _types = new Dictionary<string, Type>();
             var defaults = new Dictionary<string, object>();
 
-            ParamAttribute[] attrs = GetParams();
+            var attrs = GetParams();
 
-            foreach (ParamAttribute t in attrs)
+            foreach (var t in attrs)
             {
                 defaults[t.ParamName] = t.Default;
                 _types[t.ParamName] = t.Type;
@@ -48,10 +48,7 @@ namespace Compositor.Rules.Base
         {
             var rn = (RuleNameAttribute)Attribute.GetCustomAttribute(GetType(), typeof(RuleNameAttribute));
 
-            if (rn == null)
-                return null;
-
-            return rn.ParamName;
+            return rn == null ? null : rn.ParamName;
         }
     }
 }

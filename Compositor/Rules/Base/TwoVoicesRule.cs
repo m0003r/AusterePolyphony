@@ -33,7 +33,7 @@ namespace Compositor.Rules.Base
         protected List<TwoNotes> GetLast(int count)
         {
             if (Notes.Count < count)
-                throw new ArgumentOutOfRangeException("count", "Requested last-notes count is greater than notes count");
+                throw new ArgumentOutOfRangeException("count", "Requested last-notesList count is greater than notesList count");
 
             return Notes.GetRange(Notes.Count - count, count);
         }

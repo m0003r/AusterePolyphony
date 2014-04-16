@@ -44,6 +44,7 @@
     <Compile Include="Generators\TwoVoiceGenerator.cs" />
     <Compile Include="Generators\IGenerator.cs" />
     <Compile Include="Levels\Filterable.cs" />
+    <Compile Include="Levels\LeapOrSmooth.cs" />
     <Compile Include="Levels\TwoNotes.cs" />
     <Compile Include="Levels\TwoVoices.cs" />
     <Compile Include="Rules\Base\FreqsDict.cs" />
@@ -52,7 +53,7 @@
     <Compile Include="Rules\Base\TwoVoicesRule.cs" />
     <Compile Include="Rules\Base\RulesAttribute.cs" />
     <Compile Include="ChooseNextStrategy\IChooseNextStrategy.cs" />
-    <Compile Include="Levels\Melody.cs" />
+    <Compile Include="Levels\Voice.cs" />
     <Compile Include="Levels\NoteSequencer.cs" />
     <Compile Include="Levels\RuledLevel.cs" />
     <Compile Include="Rules\Base\Rule.cs" />

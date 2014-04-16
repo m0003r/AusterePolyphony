@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Compositor.Rules.Base;
 using Compositor.Rules.Melody;
 using PitchBase;
@@ -13,72 +12,6 @@ namespace Compositor.Levels
 {
     using NotesList = List<Note>;
     using LSList = List<LeapOrSmooth>;
-
-    public class LeapOrSmooth
-    {
-        public bool IsLeap;
-        public bool IsSmooth { get { return !IsLeap; } }
-        public Time TimeStart;
-        public int Duration;
-        public Time TimeEnd { get { return TimeStart + Duration; } }
-        public int NotesCount { get { return _notes.Count; } }
-        public Interval Interval;
-
-        public bool Upwards { get { return Interval.Upwards; } }
-
-        private readonly NotesList _notes;
-
-        public LeapOrSmooth(Note a, Note b)
-        {
-            TimeStart = a.TimeStart;
-            Duration = (b.TimeEnd - TimeStart).Beats;
-            IsLeap = b.Leap.IsLeap;
-            Interval = b.Pitch - a.Pitch;
-
-            _notes = new NotesList {a, b};
-        }
-
-        public bool CanAdd(Note n)
-        {
-            return ((n.Leap.IsLeap == IsLeap) && (n.Leap.Upwards == Upwards));
-        }
-
-        public void Add(Note n)
-        {
-            if (!CanAdd(n))
-                throw new Exception("Invalid adding to LeapOrSmooth");
-
-            Interval = Interval + n.Leap;
-            Duration += n.Duration;
-            _notes.Add(n);
-        }
-
-        public void Delete()
-        {
-            if (NotesCount <= 2)
-                throw new Exception("Cannot delete from two-note LeapOrSmooth");
-
-            Note n = _notes.Last();
-            Interval = Interval - n.Leap;
-            Duration -= n.Duration;
-
-            _notes.RemoveAt(NotesCount - 1);
-        }
-
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-
-            sb.Append(IsLeap ? "Leap(" : "Smooth(");
-            sb.Append(NotesCount);
-            sb.Append("/");
-            sb.Append(Duration);
-            sb.Append(") ");
-            sb.Append(Interval);
-
-            return sb.ToString();
-        }
-    }
 
     [Rule(typeof(CadenzaRule))]
     [Rule(typeof(DenyGamming))]
@@ -101,7 +34,7 @@ namespace Compositor.Levels
     [Rule(typeof(AfterQuarterNewRule))]
     [Rule(typeof(TooManyEightsRule))]
 
-    public class Melody : RuledLevel, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>>
+    public class Voice : RuledLevel, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>>
     {
         public Clef Clef { get; private set; }
         public Modus Modus { get; private set; }
@@ -110,8 +43,7 @@ namespace Compositor.Levels
         public int Reserve { get; private set; }
         public int Uncomp { get; private set; }
 
-        // ReSharper disable once InconsistentNaming
-        internal NotesList notes;
+        internal NotesList NotesList;
         internal LSList Leapsmooth;
         internal List<Pitch> Diapason { get; private set; }
 
@@ -119,19 +51,19 @@ namespace Compositor.Levels
 
         internal uint DesiredLength;
 
-        public NotesList Notes { get { return new NotesList(notes); } }
+        public NotesList Notes { get { return new NotesList(NotesList); } }
         public LSList LeapSmooth { get { return new LSList(Leapsmooth); } }
 
         internal Pitch Higher;
         internal Pitch Lower;
 
-        public Melody(Clef clef, Modus modus, Time time)
+        public Voice(Clef clef, Modus modus, Time time)
         {
             Clef = clef;
             Modus = modus;
             Time = time;
 
-            notes = new NotesList();
+            NotesList = new NotesList();
             Leapsmooth = new LSList();
             Reserve = Uncomp = 0;
 
@@ -178,16 +110,16 @@ namespace Compositor.Levels
 
         internal void RemoveLast(bool ban = true)
         {
-            var n = notes.Last();
+            var n = NotesList.Last();
             Time -= n.Duration;
-            notes.RemoveAt(notes.Count - 1);
+            NotesList.RemoveAt(NotesList.Count - 1);
             
-            if (notes.Count > 0)
+            if (NotesList.Count > 0)
             {
                 if (ban)
-                    notes.Last().Ban(n);
+                    NotesList.Last().Ban(n);
 
-                Freqs = notes.Last().Freqs;
+                Freqs = NotesList.Last().Freqs;
             }
             else
             {
@@ -216,36 +148,36 @@ namespace Compositor.Levels
 
         private void UpdateFreqs()
         {
-            if (notes.Count > 0)
-                notes.Last().UpdateFreqs(Freqs);
+            if (NotesList.Count > 0)
+                NotesList.Last().UpdateFreqs(Freqs);
             else
                 _firstNoteFreqs = Freqs;
         }
 
         private void UpdateStrenghts()
         {
-            if (notes.Count < 3)
+            if (NotesList.Count < 3)
             {
-                notes[0].Strength = 2;
+                NotesList[0].Strength = 2;
                 return;
             }
 
             int currNumber = 1;
 
-            var prev = notes[0];
-            var curr = notes[1];
-            var next = notes[2];
-            while (currNumber < notes.Count - 1)
+            var prev = NotesList[0];
+            var curr = NotesList[1];
+            var next = NotesList[2];
+            while (currNumber < NotesList.Count - 1)
             {
                 curr.Strength = CalculateStrength(prev, curr, next);
 
                 currNumber++;
                 prev = curr;
                 curr = next;
-                next = notes[currNumber];
+                next = NotesList[currNumber];
             }
 
-            notes[currNumber].Strength = CalculateStrength(curr, next, null);
+            NotesList[currNumber].Strength = CalculateStrength(curr, next, null);
         }
 
         private static double AdjustStrength(double strength, double adjust)
@@ -261,7 +193,7 @@ namespace Compositor.Levels
 
         internal double GetStrengthIf(Note next)
         {
-            return CalculateStrength(notes[notes.Count - 2], notes[notes.Count - 1], next);
+            return CalculateStrength(NotesList[NotesList.Count - 2], NotesList[NotesList.Count - 1], next);
         }
 
         private static double RhytmicStopStrength(int prevDur, int currDur)
@@ -319,7 +251,7 @@ namespace Compositor.Levels
         public void AddNote(Note n)
         {
             UpdateFreqs();
-            notes.Add(n);            
+            NotesList.Add(n);            
             Filtered = false;
             Time += n.Duration;
 
@@ -399,7 +331,7 @@ namespace Compositor.Levels
 
         private void UpdateLeapsSmooth(bool delete = false)
         {
-            if ((notes.Count < 2) && (!delete))
+            if ((NotesList.Count < 2) && (!delete))
                 return;
 
             LeapOrSmooth ls;
@@ -421,32 +353,32 @@ namespace Compositor.Levels
                 return;
             }
 
-            if (notes.Count == 2)
+            if (NotesList.Count == 2)
             {
-                ls = new LeapOrSmooth(notes[0], notes[1]);
+                ls = new LeapOrSmooth(NotesList[0], NotesList[1]);
                 Leapsmooth.Add(ls);
                 return;
             }
 
             ls = Leapsmooth.Last();
-            var lastNote = notes.Last();
+            var lastNote = NotesList.Last();
 
             if (ls.CanAdd(lastNote))
                 ls.Add(lastNote);
             else
             {
-                ls = new LeapOrSmooth(notes[notes.Count - 2], lastNote);
+                ls = new LeapOrSmooth(NotesList[NotesList.Count - 2], lastNote);
                 Leapsmooth.Add(ls);
             }
         }
 
-        public Note this[int i] { get { return notes[i]; } }
+        public Note this[int i] { get { return NotesList[i]; } }
 
-        public int NoteCount { get { return notes.Count; } }
+        public int NoteCount { get { return NotesList.Count; } }
 
         public bool EndsWith(Note n)
         {
-            return notes.Count != 0 && notes.Last() == n;
+            return NotesList.Count != 0 && NotesList.Last() == n;
         }
 
         IEnumerator<Note> IEnumerable<Note>.GetEnumerator()
@@ -480,7 +412,7 @@ namespace Compositor.Levels
 
         class SubNoteIterator : IEnumerator<KeyValuePair<int, Pitch>>
         {
-            private readonly Melody _melody;
+            private readonly Voice _voice;
 
             private int _noteNumber;
             private int _subPosition;
@@ -489,15 +421,15 @@ namespace Compositor.Levels
             private readonly int _minNoteNumber;
             private readonly int _maxNoteNumber;
 
-            public SubNoteIterator(Melody melody)
-                : this(melody, 0, melody.NoteCount) { }
+            public SubNoteIterator(Voice voice)
+                : this(voice, 0, voice.NoteCount) { }
 
-            public SubNoteIterator(Melody melody, int start)
-                : this(melody, start, melody.NoteCount) { }
+            public SubNoteIterator(Voice voice, int start)
+                : this(voice, start, voice.NoteCount) { }
 
-            private SubNoteIterator(Melody melody, int start, int end)
+            private SubNoteIterator(Voice voice, int start, int end)
             {
-                _melody = melody;
+                _voice = voice;
                 _minNoteNumber = start;
                 _maxNoteNumber = end;
 
@@ -508,7 +440,7 @@ namespace Compositor.Levels
             {
                 _noteNumber = _minNoteNumber;
                 _subPosition = -1;
-                _position = (_maxNoteNumber > _minNoteNumber) ? _melody[_minNoteNumber].TimeStart.Position : 0;
+                _position = (_maxNoteNumber > _minNoteNumber) ? _voice[_minNoteNumber].TimeStart.Position : 0;
             }
 
             public bool MoveNext()
@@ -516,20 +448,20 @@ namespace Compositor.Levels
 
                 _subPosition++;
                 _position++;
-                if (_subPosition < _melody[_noteNumber].Duration)
+                if (_subPosition < _voice[_noteNumber].Duration)
                     return true;
 
                 _noteNumber++;
                 _subPosition = 0;
 
-                return _noteNumber < _melody.NoteCount;
+                return _noteNumber < _voice.NoteCount;
             }
 
             public void Dispose() { }
 
             object IEnumerator.Current { get { return Current; } }
 
-            public KeyValuePair<int, Pitch> Current { get { return new KeyValuePair<int, Pitch>(_position, _melody[_noteNumber].Pitch); } }
+            public KeyValuePair<int, Pitch> Current { get { return new KeyValuePair<int, Pitch>(_position, _voice[_noteNumber].Pitch); } }
         }
 
         internal bool Finished()
@@ -539,7 +471,7 @@ namespace Compositor.Levels
 
         public IEnumerator GetEnumerator()
         {
-            return notes.GetEnumerator();
+            return NotesList.GetEnumerator();
         }
     }
 }

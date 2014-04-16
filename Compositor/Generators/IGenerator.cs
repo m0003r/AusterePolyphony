@@ -11,6 +11,6 @@ namespace Compositor.Generators
 
         int GetSeed();
 
-        List<Melody> GetNotes();
+        List<Voice> GetNotes();
     }
 }

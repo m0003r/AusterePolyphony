@@ -20,7 +20,7 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
-            //double actualCenter = Melody.notes.Sum(n => n.Pitch.Value * n.Duration) / (double)Melody.Time.Position;
+            //double actualCenter = Voice.NotesList.Sum(n => n.Pitch.Value * n.Duration) / (double)Voice.Time.Position;
             //double diff = desiredCenter - actualCenter;
             _gravityPoint = LastNote.Pitch.Value + LastNote.Uncomp;
             _gravityForce = LastNote.Uncomp;
@@ -91,7 +91,7 @@ namespace Compositor.Rules.Melody
         private bool _lastCo;
         private bool _lastSm;
 
-        public override void Init(Levels.Melody parent)
+        public override void Init(Voice parent)
         {
             base.Init(parent);
 
@@ -100,10 +100,10 @@ namespace Compositor.Rules.Melody
             _oppSmooth = new LeapAfterOppSmooth();
             _oppLeap = new LeapAfterOppLeap();
 
-            _coSmooth.Init(Melody);
-            _coLeap.Init(Melody);
-            _oppSmooth.Init(Melody);
-            _oppLeap.Init(Melody);
+            _coSmooth.Init(Voice);
+            _coLeap.Init(Voice);
+            _oppSmooth.Init(Voice);
+            _oppLeap.Init(Voice);
         }
 
         public override bool _IsApplicable()

@@ -27,8 +27,8 @@ namespace Compositor.Levels
 
     public class TwoVoices : RuledLevel
     {
-        public Melody Voice1 { get; private set; }
-        public Melody Voice2 { get; private set; }
+        public Voice Voice1 { get; private set; }
+        public Voice Voice2 { get; private set; }
 
         public FreqsDict FirstFreqs;
 
@@ -40,8 +40,8 @@ namespace Compositor.Levels
         {
             Time = time;
 
-            Voice1 = new Melody(clef1, modus, time);
-            Voice2 = new Melody(clef2, modus, time);
+            Voice1 = new Voice(clef1, modus, time);
+            Voice2 = new Voice(clef2, modus, time);
 
             Twonotes = new List<TwoNotes>();
             FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
@@ -122,9 +122,9 @@ namespace Compositor.Levels
 
             Twonotes.Add(next);
 
-            if ((Voice1.notes.Count == 0) || !(Voice1.EndsWith(next.Note1)))
+            if ((Voice1.NotesList.Count == 0) || !(Voice1.EndsWith(next.Note1)))
                 Voice1.AddNote(next.Note1);
-            if ((Voice2.notes.Count == 0) || !(Voice2.EndsWith(next.Note2)))
+            if ((Voice2.NotesList.Count == 0) || !(Voice2.EndsWith(next.Note2)))
                 Voice2.AddNote(next.Note2);
 
             Filtered = false;

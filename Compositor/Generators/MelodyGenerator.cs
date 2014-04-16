@@ -15,7 +15,7 @@ namespace Compositor.Generators
 
     public class MelodyGenerator : IGenerator
     {
-        public Melody Melody { get; private set; }
+        public Voice Voice { get; private set; }
         public int Seed { get; private set; }
         public int StepLimit { get; private set; }
 
@@ -24,9 +24,9 @@ namespace Compositor.Generators
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
 
-        public List<Melody> GetNotes()
+        public List<Voice> GetNotes()
         {
-            var res = new List<Melody> {Melody};
+            var res = new List<Voice> {Voice};
             return res;
         }
 
@@ -38,7 +38,7 @@ namespace Compositor.Generators
         public MelodyGenerator(Clef clef, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy strategy = null)
         {
             StepLimit = stepLimit;
-            Melody = new Melody(clef, modus, time);
+            Voice = new Voice(clef, modus, time);
             if (strategy == null)
             {
                 SetSeed(seed);
@@ -63,14 +63,14 @@ namespace Compositor.Generators
 
         public int Generate(uint length, Func<int, bool> callback)
         {
-            uint lengthInBeats = length * (uint)Melody.Time.Beats * 4;
+            uint lengthInBeats = length * (uint)Voice.Time.Beats * 4;
             int steps = 0;
 
-            Melody.SetLength(lengthInBeats);
+            Voice.SetLength(lengthInBeats);
 
             try
             {
-                while ((Melody.Time.Position < lengthInBeats) && (steps < StepLimit))
+                while ((Voice.Time.Position < lengthInBeats) && (steps < StepLimit))
                 {
                     Step();
                     steps++;
@@ -88,28 +88,28 @@ namespace Compositor.Generators
 
         private void Step(bool dumpResult = false)
         {
-            Melody.Filter(dumpResult);
-            double max = Melody.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
+            Voice.Filter(dumpResult);
+            double max = Voice.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
             if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!
                 ChooseNextNote(dumpResult);
             else
             {
-                if (Melody.NoteCount > 0)
-                    Melody.RemoveLast();
+                if (Voice.NoteCount > 0)
+                    Voice.RemoveLast();
                 else
-                    Melody.FirstNote();
+                    Voice.FirstNote();
             }
         }
 
         private void ChooseNextNote(bool dumpResult = false)
         {
-            var possibleNext = Melody.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
+            var possibleNext = Voice.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
 
             if (dumpResult)
             {
                 var sb = new StringBuilder();
-                foreach (var kv in Melody.Freqs)
+                foreach (var kv in Voice.Freqs)
                 {
                     sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
                 }
@@ -118,7 +118,7 @@ namespace Compositor.Generators
 
             var next = (Note) _chooseStrategy.ChooseNext(possibleNext);
 
-            Melody.AddNote(next);
+            Voice.AddNote(next);
         }
     }
 }

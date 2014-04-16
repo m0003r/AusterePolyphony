@@ -38,10 +38,10 @@ namespace Compositor.Rules.Melody
     {
         private int _lastBarStart;
 
-        public override void Init(Levels.Melody parent)
+        public override void Init(Voice parent)
         {
             base.Init(parent);
-            _lastBarStart = (int)Melody.DesiredLength - Time.Beats * 4;
+            _lastBarStart = (int)Voice.DesiredLength - Time.Beats * 4;
         }
 
         public override bool _IsApplicable()
@@ -74,10 +74,10 @@ namespace Compositor.Rules.Melody
     {
         private int _lastBar;
 
-        public override void Init(Levels.Melody parent)
+        public override void Init(Voice parent)
         {
             base.Init(parent);
-            _lastBar = (int)Melody.DesiredLength - Time.Beats * 4;
+            _lastBar = (int)Voice.DesiredLength - Time.Beats * 4;
         }
 
         public override bool _IsApplicable()
@@ -379,7 +379,7 @@ namespace Compositor.Rules.Melody
             readonly int _startedAt;
             readonly int _previousStartedAt;
 
-            public SequencePattern(Levels.Melody m, int notes)
+            public SequencePattern(Voice m, int notes)
             {
                 if (notes > m.NoteCount - 3)
                     throw new IndexOutOfRangeException();
@@ -457,7 +457,7 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
-            if (Melody.NoteCount < 5)
+            if (Voice.NoteCount < 5)
                 return false;
 
             int currGrabbedNotes = 2;
@@ -469,7 +469,7 @@ namespace Compositor.Rules.Melody
             {
                 try
                 {
-                    var pattern = new SequencePattern(Melody, currGrabbedNotes);
+                    var pattern = new SequencePattern(Voice, currGrabbedNotes);
                     if (pattern.Length > MaxSequenceLength)
                         tooLong = true;
                     else
@@ -528,7 +528,7 @@ namespace Compositor.Rules.Melody
 
         public override double Apply(Note nextNotes)
         {
-            double lastStrength = Melody.GetStrengthIf(nextNotes);
+            double lastStrength = Voice.GetStrengthIf(nextNotes);
             if (lastStrength < MinimumRequiredForApply)
                 return 1;
 
@@ -590,7 +590,7 @@ namespace Compositor.Rules.Melody
 
         private IEnumerable<Note> FindLastTritone()
         {
-            /*if (Notes.Count == 6)
+            /*if (NotesList.Count == 6)
             {
                 double f = 1;
             }*/
@@ -609,7 +609,7 @@ namespace Compositor.Rules.Melody
             if (!LastNote.Pitch.IsTritone)
                 return 1;
 
-            double lastStrength = Melody.GetStrengthIf(nextNotes);
+            double lastStrength = Voice.GetStrengthIf(nextNotes);
             if (lastStrength < MinimumRequiredForApply)
                 return 1;
 
@@ -649,11 +649,11 @@ namespace Compositor.Rules.Melody
             if (LastNote.Duration != 2)
                 return false;
 
-            if (Melody.NoteCount == 1)
+            if (Voice.NoteCount == 1)
                 _allowLeap = false;
             else
             {
-                var prelast = Notes[Melody.NoteCount - 2];
+                var prelast = Notes[Voice.NoteCount - 2];
                 _allowLeap = ((prelast.Duration == 6) && (LastNote.Leap.Degrees == -1));
             }
 

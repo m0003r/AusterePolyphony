@@ -19,9 +19,9 @@ namespace Compositor.Generators
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
 
-        public List<Melody> GetNotes()
+        public List<Voice> GetNotes()
         {
-            var res = new List<Melody> {Melodies.Voice1, Melodies.Voice2};
+            var res = new List<Voice> {Melodies.Voice1, Melodies.Voice2};
             return res;
         }
 

@@ -77,11 +77,11 @@ namespace NoteRulesTest
             return result;
         }
 
-        internal Melody CreateMelody(uint length, Modus m, Clef c, bool perfectTime, out List<Pitch> diapason, params int[] infoList)
+        internal Voice CreateMelody(uint length, Modus m, Clef c, bool perfectTime, out List<Pitch> diapason, params int[] infoList)
         {
             var notes = CreateNotes(m, c, perfectTime, out diapason, infoList);
 
-            var mel = new Melody(c, m, Time.Create(perfectTime));
+            var mel = new Voice(c, m, Time.Create(perfectTime));
             mel.SetLength(length);
 
             foreach (var n in notes)
@@ -111,7 +111,7 @@ namespace NoteRulesTest
         public void TestSyncopa()
         {
             List<Pitch> diapason;
-            Melody m = CreateMelody(500, Modus.Aeolian(9), Clef.Treble, false, out diapason, 5, 8, 1, 2, 2, 2);
+            Voice m = CreateMelody(500, Modus.Aeolian(9), Clef.Treble, false, out diapason, 5, 8, 1, 2, 2, 2);
 
             FreqsDict freqs = m.Filter();
 
@@ -122,7 +122,7 @@ namespace NoteRulesTest
         public void TestMultiLeaps()
         {
             List<Pitch> diapason;
-            Melody m = CreateMelody(500, Modus.Phrygian(4), Clef.Treble, false, out diapason, 2, 8, 3, 8, 4, 8, 3, 8);
+            Voice m = CreateMelody(500, Modus.Phrygian(4), Clef.Treble, false, out diapason, 2, 8, 3, 8, 4, 8, 3, 8);
 
             FreqsDict freqs = m.Filter();
 
@@ -133,7 +133,7 @@ namespace NoteRulesTest
         public void TestCadenza()
         {
             List<Pitch> diapason;
-            Melody m = CreateMelody(36, Modus.Dorian(2), Clef.Treble, true, out diapason, 5, 12, 4, 4, 3, 4, 2, 4);
+            Voice m = CreateMelody(36, Modus.Dorian(2), Clef.Treble, true, out diapason, 5, 12, 4, 4, 3, 4, 2, 4);
 
             FreqsDict freqs = m.Filter();
 
@@ -144,7 +144,7 @@ namespace NoteRulesTest
         public void TestCadenza2()
         {
             List<Pitch> diapason;
-            Melody m = CreateMelody(24, Modus.Dorian(2), Clef.Treble, true, out diapason, 5, 4, 8, 6, 7, 2);
+            Voice m = CreateMelody(24, Modus.Dorian(2), Clef.Treble, true, out diapason, 5, 4, 8, 6, 7, 2);
 
             FreqsDict freqs = m.Filter();
 
