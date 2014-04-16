@@ -87,13 +87,13 @@ namespace Compositor.Generators
             return steps;
         }
 
-        private void Step(bool dumpResult = false)
+        private void Step()
         {
-            Melodies.Filter(dumpResult);
+            Melodies.Filter();
             double max = Melodies.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
             if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!
-                ChooseNextNote(dumpResult);
+                ChooseNextNote();
             else
             {
                 if (Melodies.NoteCount > 0)
@@ -103,20 +103,21 @@ namespace Compositor.Generators
             }
         }
 
-        private void ChooseNextNote(bool dumpResult = false)
+        private void ChooseNextNote()
         {
             var possibleNext = Melodies.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
 
-            if (dumpResult)
-            {
-                var sb = new StringBuilder();
-                foreach (var kv in Melodies.Freqs)
-                {
-                    sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
-                }
-                Console.WriteLine(sb);
-            }
 
+#if TRACE
+            var sb = new StringBuilder();
+            foreach (var kv in Melodies.Freqs)
+            {
+                sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
+            }
+            Console.WriteLine(sb);
+#endif
+
+            
             var next = (TwoNotes)_chooseStrategy.ChooseNext(possibleNext);
 
             Melodies.AddTwoNotes(next);

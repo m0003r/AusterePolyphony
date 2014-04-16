@@ -57,42 +57,59 @@ namespace Compositor.Levels
             return me - previous;
         }
 
-        public override void AddVariants(bool dumpResult = false)
+        public override void AddVariants()
         {
-            Time newPos = TimeStart + Duration;
-            double v;
+            var newPos = TimeStart + Duration;
 
-            foreach (Pitch p in Diapason)
-                if ((v = this.AllowPitchAfterAt(p, newPos)) > 0)
-                    foreach (Note n in this.GenerateDurations(p, newPos))
-                        Freqs[n] = v * this.DurationCoeff(n.Duration);
+            foreach (var p in Diapason)
+                GenerateAtPitch(p, newPos);
 
-            if (dumpResult)
-            {
-                var sb = new StringBuilder();
+#if TRACE
+            var sb = new StringBuilder();
 
-                foreach (var kv in Freqs)
-                    sb.AppendFormat("{0}=>{1}\n", kv.Key, kv.Value);
+            foreach (var kv in Freqs)
+                sb.AppendFormat("{0}=>{1}\n", kv.Key, kv.Value);
 
-                Console.WriteLine(sb);
-            }
+            Console.WriteLine(sb);
+
+#endif
         }
-         
+
+        private void GenerateAtPitch(Pitch p, Time newPos)
+        {
+            var pitchFreq = this.GetPitchFreqAfter(p, newPos);
+            if (pitchFreq <= 0) return;
+
+            var generatedNotes = this.GenerateNotes(p, newPos);
+
+            foreach (var note in generatedNotes)
+                Freqs[note] = pitchFreq * this.DurationCoeff(note.Duration);
+        }
+
 
         public override string ToString()
         {
-            string ps = Pitch.ToString();
+            var ps = (Pitch == null) ? "r" : Pitch.ToString();
+            var sb = new StringBuilder(ps);
             switch (Duration)
             {
-                case 1: return ps + "8";
-                case 2: return ps + "4";
-                case 4: return ps + "2";
-                case 6: return ps + "2.";
-                case 8: return ps + "1";
-                case 10: return ps + "2. ~ " + ps + "2";
-                case 12: return ps + "1.";
-                case 16: return ps + "\\breve";
-                default: return ps + "16";
+                case 1: return sb.Append("8").ToString();
+                case 2:
+                    return sb.Append("4").ToString();
+                case 4:
+                    return sb.Append("2").ToString();
+                case 6:
+                    return sb.Append("2.").ToString();
+                case 8:
+                    return sb.Append("1").ToString();
+                case 10:
+                    return sb.Append("2. ~ ").Append(ps).Append(2).ToString();
+                case 12:
+                    return sb.Append("1.").ToString();
+                case 16:
+                    return sb.Append("\\breve").ToString();
+                default:
+                    return sb.Append("16").ToString();
             }
         }
 

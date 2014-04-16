@@ -51,14 +51,14 @@ namespace Compositor.Levels
             }
         }
 
-        public abstract void AddVariants(bool dumpResult = false);
+        public abstract void AddVariants();
 
-        public FreqsDict Filter(bool dumpResult = false)
+        public FreqsDict Filter()
         {
             if (Filtered)
                 return Freqs;
 
-            AddVariants(dumpResult);
+            AddVariants();
 
             var toFilter =
                 from kv in Freqs.ToList()
@@ -81,11 +81,11 @@ namespace Compositor.Levels
                     {
                         if (!(Freqs[n] >= MinimumFrequency)) return;
 
-                        double freq = r.Apply(n);
-                        /*if (dumpResult)
-                                Console.WriteLine("Rule {0} to note {1} (@ {2}) = {3:F}",
-                                    r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);*/
-
+                        var freq = r.Apply(n);
+#if TRACE_RULES
+                        Console.WriteLine("Rule {0} to note {1} (@ {2}) = {3:F}",
+                            r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);*/
+#endif 
                         Freqs[n] *= freq;
 
                         if (Math.Abs(freq) < MinimumFrequency)

@@ -26,12 +26,12 @@ namespace Compositor.Levels
             return 1;
         }
 
-        public static double AllowPitchAfterAt(this Note me, Pitch p2, Time t)
+        public static double GetPitchFreqAfter(this Note me, Pitch p2, Time t)
         {
             if (me.Pitch == p2)
                 return 0; //не бывает никада!
 
-            Interval diff = p2 - me.Pitch;
+            var diff = p2 - me.Pitch;
 
             if ((t.Beat % 4 != 0) || (me.Duration == 1)) // нельзя неплавные ходы внутри метрической доли или после восьмых
                 return (diff.Type == IntervalType.Secunda) ? 1 : 0;
@@ -51,52 +51,65 @@ namespace Compositor.Levels
             return 0;
         }
 
-        public static Note[] GenerateDurations(this Note me, Pitch p, Time t)
+        public static Note[] GenerateNotes(this Note me, Pitch p, Time t)
         {
             var durVar = new List<int>();
 
-            if (t.Beat % 2 == 1)
+            if (t.Beat % 2 == 1) // только восьмые
                 durVar.Add(1);
             else
             {
-                if (t.AllowEight)
-                    durVar.Add(1);
-                durVar.Add(2); //четверти можно везде
-
-                if (t.Beat % 4 == 0) //каждую половину
-                {
-                    durVar.Add(4); // половины
-                    durVar.Add(6); // половины с точкой
-                    if (me.Duration > 1) //если не восьмая
-                        durVar.Add(8); // и целые
-                }
-
-                if (me.Duration > 1) //после восьмушек всю это белоту нельзя
-                {
-                    if (t.Beat == 0) // на первую долю
-                    {
-                        durVar.Add(12); // целые с точкой
-                        durVar.Add(16); // и бревисы
-                    }
-                    if (t.Beats == 3) // в трёхдольном размере
-                    {
-                        if (t.Beat == 0)
-                            durVar.Add(10); // половинку с точкой + половинку на сильную долю
-                        if (t.Beat == 4)
-                            durVar.Add(12); // целую с точкой на вторую долю
-                    }
-                    else
-                    {
-                        if (t.Beat == 8) // в четырёхдольном в середине такта
-                        {
-                            durVar.Add(12); // целую с точкой
-                            durVar.Add(16); // и бревис
-                        }
-                    }
-                }
+                GenerateOnQuarter(me, t, durVar);
             }
 
             return durVar.Select(dur => new Note(p, t, dur, me)).ToArray();
+        }
+
+        private static void GenerateOnQuarter(Note me, Time t, List<int> durVar)
+        {
+            if (t.AllowEight)
+                durVar.Add(1);
+
+            durVar.Add(2); //четверти можно везде
+
+            if (t.Beat % 4 == 0) //каждую половину
+                GenerateOnHalf(me, durVar);
+
+            if (t.Beat == 0) // на первую долю
+            {
+                durVar.Add(12); // целые с точкой
+                durVar.Add(16); // и бревисы
+            }
+
+            //Imperfectus
+            if (t.Beats != 3)
+            {
+                if (t.Beat != 8) return;
+
+                durVar.Add(12); // целую с точкой
+                durVar.Add(16); // и бревис
+
+                return;
+            }
+
+            //Perfectus
+            switch (t.Beat)
+            {
+                case 0:
+                    durVar.Add(10); // половинку с точкой + половинку на сильную долю
+                    break;
+                case 4:
+                    durVar.Add(12); // целую с точкой на вторую долю
+                    break;
+            }
+        }
+
+        private static void GenerateOnHalf(Note me, List<int> durVar)
+        {
+            durVar.Add(4); // половины
+            durVar.Add(6); // половины с точкой
+            if (me.Duration > 1) //если не восьмая
+                durVar.Add(8); // и целые
         }
     }
 }

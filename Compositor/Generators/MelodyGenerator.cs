@@ -8,6 +8,7 @@ using PitchBase;
 
 namespace Compositor.Generators
 {
+    [Serializable]
     public class StopGeneration : Exception
     {
 
@@ -86,13 +87,13 @@ namespace Compositor.Generators
             return steps;
         }
 
-        private void Step(bool dumpResult = false)
+        private void Step()
         {
-            Voice.Filter(dumpResult);
+            Voice.Filter();
             double max = Voice.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
             if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!
-                ChooseNextNote(dumpResult);
+                ChooseNextNote();
             else
             {
                 if (Voice.NoteCount > 0)
@@ -102,19 +103,18 @@ namespace Compositor.Generators
             }
         }
 
-        private void ChooseNextNote(bool dumpResult = false)
+        private void ChooseNextNote()
         {
             var possibleNext = Voice.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
 
-            if (dumpResult)
+#if TRACE
+            var sb = new StringBuilder();
+            foreach (var kv in Voice.Freqs)
             {
-                var sb = new StringBuilder();
-                foreach (var kv in Voice.Freqs)
-                {
-                    sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
-                }
-                Console.WriteLine(sb);
+                sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
             }
+            Console.WriteLine(sb);
+#endif
 
             var next = (Note) _chooseStrategy.ChooseNext(possibleNext);
 

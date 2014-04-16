@@ -13,6 +13,14 @@ namespace Compositor.Levels
     using NotesList = List<Note>;
     using LSList = List<LeapOrSmooth>;
 
+    public enum VoiceType
+    {
+        Single,
+        Top,
+        Middle,
+        Bass
+    }
+
     [Rule(typeof(CadenzaRule))]
     [Rule(typeof(DenyGamming))]
     [Rule(typeof(TrillRule))]
@@ -39,6 +47,7 @@ namespace Compositor.Levels
         public Clef Clef { get; private set; }
         public Modus Modus { get; private set; }
         public Time Time { get; private set; }
+        public VoiceType Type { get; private set; }
 
         public int Reserve { get; private set; }
         public int Uncomp { get; private set; }
@@ -57,11 +66,12 @@ namespace Compositor.Levels
         internal Pitch Higher;
         internal Pitch Lower;
 
-        public Voice(Clef clef, Modus modus, Time time)
+        public Voice(Clef clef, Modus modus, Time time, VoiceType type = VoiceType.Single)
         {
             Clef = clef;
             Modus = modus;
             Time = time;
+            Type = type;
 
             NotesList = new NotesList();
             Leapsmooth = new LSList();
@@ -132,7 +142,7 @@ namespace Compositor.Levels
         }
 
 
-        public override void AddVariants(bool dumpResult = false)
+        public override void AddVariants()
         {
             if (Notes.Count == 0)
                 FirstNote();
@@ -142,7 +152,7 @@ namespace Compositor.Levels
                 if (Notes.Last().Diapason == null)
                     Notes.Last().Diapason = Diapason;
 
-                Freqs = Notes.Last().Filter(dumpResult);
+                Freqs = Notes.Last().Filter();
             }
         }
 

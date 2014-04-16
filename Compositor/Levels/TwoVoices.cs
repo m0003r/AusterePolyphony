@@ -54,10 +54,10 @@ namespace Compositor.Levels
             Filtered = true;
         }
 
-        public override void AddVariants(bool dumpResult = false)
+        public override void AddVariants()
         {
-            var filtered1 = Voice1.Filter(dumpResult);
-            var filtered2 = Voice2.Filter(dumpResult);
+            var filtered1 = Voice1.Filter();
+            var filtered2 = Voice2.Filter();
 
             if (Voice1.NoteCount == 0)
             {
