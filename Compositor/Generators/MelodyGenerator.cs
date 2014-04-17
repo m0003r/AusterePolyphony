@@ -64,8 +64,8 @@ namespace Compositor.Generators
 
         public int Generate(uint length, Func<int, bool> callback)
         {
-            uint lengthInBeats = length * (uint)Voice.Time.Beats * 4;
-            int steps = 0;
+            var lengthInBeats = length * (uint)Voice.Time.Beats * 4;
+            var steps = 0;
 
             Voice.SetLength(lengthInBeats);
 
@@ -91,9 +91,9 @@ namespace Compositor.Generators
         {
             Voice.Filter();
 
-            double max = Voice.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
+            var max = Voice.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
 
-            if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!
+            if (max > MinimumAccumulatedFrequency)
                 ChooseNextNote();
             else
             {

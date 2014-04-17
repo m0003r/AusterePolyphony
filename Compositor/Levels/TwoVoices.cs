@@ -98,7 +98,7 @@ namespace Compositor.Levels
             Freqs = CombineFreqs(f1, filtered2);
         }
 
-        private double GetCombinedFreq(double f1, double f2)
+        private static double GetCombinedFreq(double f1, double f2)
         {
             return Math.Sqrt(f1*f2);
         }

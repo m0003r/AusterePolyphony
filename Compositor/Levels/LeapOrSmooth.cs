@@ -8,13 +8,13 @@ namespace Compositor.Levels
 {
     public class LeapOrSmooth
     {
-        public bool IsLeap;
+        public bool IsLeap { get; private set; }
         public bool IsSmooth { get { return !IsLeap; } }
-        public Time TimeStart;
-        public int Duration;
+        public Time TimeStart { get; private set; }
+        public int Duration { get; private set; }
         public Time TimeEnd { get { return TimeStart + Duration; } }
         public int NotesCount { get { return _notes.Count; } }
-        public Interval Interval;
+        public Interval Interval { get; private set; }
 
         public bool Upwards { get { return Interval.Upwards; } }
 
@@ -50,7 +50,7 @@ namespace Compositor.Levels
             if (NotesCount <= 2)
                 throw new Exception("Cannot delete from two-note LeapOrSmooth");
 
-            Note n = _notes.Last();
+            var n = _notes.Last();
             Interval = Interval - n.Leap;
             Duration -= n.Duration;
 

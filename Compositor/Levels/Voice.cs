@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Compositor.Rules.Base;
 using Compositor.Rules.Melody;
@@ -11,7 +12,6 @@ using System.Runtime.CompilerServices;
 namespace Compositor.Levels
 {
     using NotesList = List<Note>;
-    using LSList = List<LeapOrSmooth>;
 
     public enum VoiceType
     {
@@ -49,11 +49,8 @@ namespace Compositor.Levels
         public Time Time { get; private set; }
         public VoiceType Type { get; private set; }
 
-        public int Reserve { get; private set; }
-        public int Uncomp { get; private set; }
-
         internal NotesList NotesList;
-        internal LSList Leapsmooth;
+        internal LeapSmoothList LeapSmooths;
         internal List<Pitch> Diapason { get; private set; }
 
         FreqsDict _firstNoteFreqs;
@@ -61,7 +58,7 @@ namespace Compositor.Levels
         internal uint DesiredLength;
 
         public NotesList Notes { get { return new NotesList(NotesList); } }
-        public LSList LeapSmooth { get { return new LSList(Leapsmooth); } }
+        public LeapSmoothList LeapSmooth { get { return new LeapSmoothList(LeapSmooths); } }
 
         internal Pitch Higher;
         internal Pitch Lower;
@@ -74,8 +71,7 @@ namespace Compositor.Levels
             Type = type;
 
             NotesList = new NotesList();
-            Leapsmooth = new LSList();
-            Reserve = Uncomp = 0;
+            LeapSmooths = new LeapSmoothList();
 
             time.Position = 0;
             SetupDiapason(clef, modus);
@@ -137,8 +133,8 @@ namespace Compositor.Levels
                 FirstNote();
             }
 
-            UpdateLeapsSmooth(true);
-            UpdateUncomp();
+            LeapSmooths.DeleteLast();
+            UpdateLastNoteIndices();
         }
 
 
@@ -213,7 +209,7 @@ namespace Compositor.Levels
 
         }
 
-        private double CalculateStrength(Note prev, Note curr, Note next)
+        private static double CalculateStrength(Note prev, Note curr, Note next)
         {
             const double basicStrength = 1;
             const double changeDirectionAdjust = 1.5;
@@ -267,119 +263,24 @@ namespace Compositor.Levels
 
             UpdateStrenghts();
             UpdateLeapsSmooth();
-            UpdateUncomp();
-        }
-
-        private bool CoSign(int a, int b)
-        {
-            return (Math.Sign(a) == Math.Sign(b));
         }
 
 
-        private void UpdateUncomp()
+        private void UpdateLeapsSmooth()
         {
-            Reserve = 0;
-            Uncomp = 0;
-
-            foreach (var ls in LeapSmooth)
-            {
-                int deg = ls.Interval.Degrees;
-
-                if (ls.IsSmooth)
-                    UpdateUncompIfSmooth(deg);
-                else
-                    UpdateUncompIfLeap(deg);
-
-            }
-
-            if (Notes.Count > 0)
-            {
-                Notes.Last().Uncomp = Uncomp;
-                Notes.Last().Reserve = Reserve;
-            }
-
-        }
-
-        private void UpdateUncompIfLeap(int deg)
-        {
-            if (Reserve != 0)
-                if (CoSign(Reserve, deg))
-                    Uncomp += Reserve;
-                else
-                {
-                    if (Math.Abs(Reserve) >= Math.Abs(deg * 2))
-                        Reserve += deg * 2;
-                    else
-                        Reserve = 0;
-                }
-
-            Uncomp += deg;
-        }
-
-        private void UpdateUncompIfSmooth(int deg)
-        {
-            if ((Reserve == 0) || (CoSign(Reserve, deg)))
-                Reserve += deg;
-            else
-                if (Math.Abs(Reserve) >= Math.Abs(deg * 2))
-                    Reserve += deg * 2;
-                else
-                    Reserve = deg + Reserve / 2;
-
-            if (Uncomp != 0)
-            {
-                if (CoSign(Uncomp, deg))
-                    Uncomp += deg / 2;
-                else
-                    if (Math.Abs(Uncomp) <= Math.Abs(deg * 2))
-                        Uncomp = 0;
-                    else
-                        Uncomp += deg * 2;
-
-            }
-        }
-
-        private void UpdateLeapsSmooth(bool delete = false)
-        {
-            if ((NotesList.Count < 2) && (!delete))
+            if (NotesList.Count < 2)
                 return;
 
-            LeapOrSmooth ls;
+            LeapSmooths.Add(NotesList[NotesList.Count - 2], NotesList.Last());
+            UpdateLastNoteIndices();
+        }
 
+        private void UpdateLastNoteIndices()
+        {
+            if (Notes.Count <= 0) return;
 
-            if (delete)
-            {
-                if (Leapsmooth.Count == 0)
-                    return;
-
-                if (Leapsmooth.Last().NotesCount == 2)
-                {
-                    Leapsmooth.RemoveAt(Leapsmooth.Count - 1);
-                    return;
-                }
-
-                Leapsmooth.Last().Delete();
-
-                return;
-            }
-
-            if (NotesList.Count == 2)
-            {
-                ls = new LeapOrSmooth(NotesList[0], NotesList[1]);
-                Leapsmooth.Add(ls);
-                return;
-            }
-
-            ls = Leapsmooth.Last();
-            var lastNote = NotesList.Last();
-
-            if (ls.CanAdd(lastNote))
-                ls.Add(lastNote);
-            else
-            {
-                ls = new LeapOrSmooth(NotesList[NotesList.Count - 2], lastNote);
-                Leapsmooth.Add(ls);
-            }
+            Notes.Last().Uncomp = LeapSmooths.Uncomp;
+            Notes.Last().Reserve = LeapSmooths.Reserve;
         }
 
         public Note this[int i] { get { return NotesList[i]; } }

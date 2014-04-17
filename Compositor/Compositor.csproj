@@ -48,6 +48,7 @@
     <Compile Include="Generators\IGenerator.cs" />
     <Compile Include="Levels\Filterable.cs" />
     <Compile Include="Levels\LeapOrSmooth.cs" />
+    <Compile Include="Levels\LeapSmoothList.cs" />
     <Compile Include="Levels\TwoNotes.cs" />
     <Compile Include="Levels\TwoVoices.cs" />
     <Compile Include="Rules\Base\FreqsDict.cs" />
