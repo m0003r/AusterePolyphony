@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -63,7 +63,7 @@
     <Compile Include="Rules\Base\Rule.cs" />
     <Compile Include="Rules\Melody\DenySequence.cs" />
     <Compile Include="Rules\Melody\LeapMelodyRules.cs" />
-    <Compile Include="Generators\MelodyGenerator.cs" />
+    <Compile Include="Generators\VoiceGenerator.cs" />
     <Compile Include="Rules\Base\MelodyRule.cs" />
     <Compile Include="Rules\Melody\LeapNoteRules.cs" />
     <Compile Include="Rules\Melody\MelodyRules.cs" />

@@ -91,7 +91,10 @@ namespace Compositor.Levels
 
         public override string ToString()
         {
-            var ps = (Pitch == null) ? "r" : Pitch.ToString();
+            var ps = (Pitch == null) ? 
+                (TimeStart.Beat == 0 && Duration == TimeStart.BarLength ? "R" : "r") :
+                Pitch.ToString();
+
             var sb = new StringBuilder(ps);
             switch (Duration)
             {

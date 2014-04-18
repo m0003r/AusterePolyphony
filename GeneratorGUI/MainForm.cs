@@ -96,18 +96,29 @@ namespace GeneratorGUI
             }
 
             _generator = null;
+            GC.Collect();
 
+            var time = Time.Create(perfect);
             if (clefIndices.Count == 1)
             {
                 var clef = (Clef)clefIndices[0];
 
-                GC.Collect();
-                _generator = new MelodyGenerator(clef, modus, Time.Create(perfect), seed, stepLimit);
+                _generator = new VoiceGenerator(clef, modus, time, seed, stepLimit);
             }
+
             if (clefIndices.Count == 2)
             {
                 Clef c1 = (Clef)clefIndices[0], c2 = (Clef)clefIndices[1];
-                _generator = new TwoVoiceGenerator(c1, c2, modus, Time.Create(perfect), seed, stepLimit);
+                _generator = new TwoVoiceGenerator(c1, c2, modus, time, seed, stepLimit);
+
+                if (!imitationSettingsBox.Enabled) return;
+
+                ((TwoVoiceGenerator)_generator).SetMirroring(
+                    ImitationTopFirst.Checked,
+                    new ImitationSettings(
+                        (int) imitationDelay.Value * 4,
+                        new Interval((IntervalType)imitationInterval.SelectedIndex),
+                        (int) imitationRange.Value*time.BarLength));
             }
 
         }
@@ -123,7 +134,7 @@ namespace GeneratorGUI
 /*
         private void GenerateGraph()
         {
-            var generator = _generator as MelodyGenerator;
+            var generator = _generator as VoiceGenerator;
             if (generator != null)
             {
                 gvOut.Text = generator.GenerationGraph();
@@ -219,15 +230,11 @@ namespace GeneratorGUI
             using (var outfile = new StreamWriter("out\\" + FName + ".gv"))
                 outfile.Write(gvOut.Text);
         }
-*/
-
-/*
         private void drawGraphButton_Click(object sender, EventArgs e)
         {
             SaveGraph();
             DrawGraph();
         }
-*/
 
         private void DrawGraph()
         {
@@ -242,6 +249,7 @@ namespace GeneratorGUI
             p.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory() + "\\out";
             p.Start();
         }
+*/
 
         private void playButton_Click(object sender, EventArgs e)
         {

@@ -14,7 +14,7 @@ namespace Compositor.Generators
 
     }
 
-    public class MelodyGenerator : IGenerator
+    public class VoiceGenerator : IGenerator
     {
         public Voice Voice { get; private set; }
         public int Seed { get; private set; }
@@ -36,7 +36,7 @@ namespace Compositor.Generators
             return Seed;
         }        
 
-        public MelodyGenerator(Clef clef, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy strategy = null)
+        public VoiceGenerator(Clef clef, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy strategy = null)
         {
             StepLimit = stepLimit;
             Voice = new Voice(clef, modus, time, VoiceType.Single);
@@ -100,7 +100,7 @@ namespace Compositor.Generators
                 if (Voice.NoteCount > 0)
                     Voice.RemoveLast();
                 else
-                    Voice.FirstNote();
+                    Voice.SetFreqsToFirst();
             }
         }
 

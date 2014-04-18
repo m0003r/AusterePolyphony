@@ -36,15 +36,8 @@ namespace Compositor.Rules.Melody
 
     class CadenzaRule : MelodyRule
     {
-        private int _lastBarStart;
-
         protected override bool ApplyToRests { get { return true; } }
-
-        public override void Init(Voice parent)
-        {
-            base.Init(parent);
-            _lastBarStart = (int)Voice.DesiredLength - Time.Beats * 4;
-        }
+        protected override bool ApplyToCadenza { get { return true; } }
 
         public override bool _IsApplicable()
         {

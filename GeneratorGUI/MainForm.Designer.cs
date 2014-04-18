@@ -49,15 +49,18 @@
             this.generationProgressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.imitationSettingsBox = new System.Windows.Forms.GroupBox();
-            this.imitationEnabled = new System.Windows.Forms.CheckBox();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.ImitationTopFirst = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.imitationDelay = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.imitationInterval = new System.Windows.Forms.ListBox();
+            this.imitationEnabled = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.imitationRange = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxSteps)).BeginInit();
@@ -65,7 +68,8 @@
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.imitationSettingsBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imitationDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imitationRange)).BeginInit();
             this.SuspendLayout();
             // 
             // outputArea
@@ -331,11 +335,14 @@
             // 
             // imitationSettingsBox
             // 
+            this.imitationSettingsBox.Controls.Add(this.label5);
+            this.imitationSettingsBox.Controls.Add(this.imitationRange);
+            this.imitationSettingsBox.Controls.Add(this.label6);
             this.imitationSettingsBox.Controls.Add(this.radioButton2);
             this.imitationSettingsBox.Controls.Add(this.ImitationTopFirst);
             this.imitationSettingsBox.Controls.Add(this.label4);
             this.imitationSettingsBox.Controls.Add(this.label3);
-            this.imitationSettingsBox.Controls.Add(this.numericUpDown1);
+            this.imitationSettingsBox.Controls.Add(this.imitationDelay);
             this.imitationSettingsBox.Controls.Add(this.label2);
             this.imitationSettingsBox.Controls.Add(this.label1);
             this.imitationSettingsBox.Controls.Add(this.imitationInterval);
@@ -347,22 +354,11 @@
             this.imitationSettingsBox.TabStop = false;
             this.imitationSettingsBox.Text = "Параметры имитации";
             // 
-            // imitationEnabled
-            // 
-            this.imitationEnabled.AutoSize = true;
-            this.imitationEnabled.Location = new System.Drawing.Point(18, 223);
-            this.imitationEnabled.Name = "imitationEnabled";
-            this.imitationEnabled.Size = new System.Drawing.Size(77, 17);
-            this.imitationEnabled.TabIndex = 8;
-            this.imitationEnabled.Text = "Имитация";
-            this.imitationEnabled.UseVisualStyleBackColor = true;
-            this.imitationEnabled.CheckedChanged += new System.EventHandler(this.UpdateImitationSettingsEnabled);
-            // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
             this.radioButton2.Checked = true;
-            this.radioButton2.Location = new System.Drawing.Point(9, 71);
+            this.radioButton2.Location = new System.Drawing.Point(79, 32);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(65, 17);
             this.radioButton2.TabIndex = 7;
@@ -373,7 +369,7 @@
             // ImitationTopFirst
             // 
             this.ImitationTopFirst.AutoSize = true;
-            this.ImitationTopFirst.Location = new System.Drawing.Point(9, 48);
+            this.ImitationTopFirst.Location = new System.Drawing.Point(10, 32);
             this.ImitationTopFirst.Name = "ImitationTopFirst";
             this.ImitationTopFirst.Size = new System.Drawing.Size(67, 17);
             this.ImitationTopFirst.TabIndex = 6;
@@ -383,7 +379,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(5, 32);
+            this.label4.Location = new System.Drawing.Point(6, 16);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 5;
@@ -392,23 +388,28 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(81, 124);
+            this.label3.Location = new System.Drawing.Point(84, 85);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 13);
             this.label3.TabIndex = 4;
             this.label3.Text = "половиных";
             // 
-            // numericUpDown1
+            // imitationDelay
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(10, 122);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(65, 20);
-            this.numericUpDown1.TabIndex = 3;
+            this.imitationDelay.Location = new System.Drawing.Point(13, 83);
+            this.imitationDelay.Name = "imitationDelay";
+            this.imitationDelay.Size = new System.Drawing.Size(65, 20);
+            this.imitationDelay.TabIndex = 3;
+            this.imitationDelay.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 106);
+            this.label2.Location = new System.Drawing.Point(9, 67);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(67, 13);
             this.label2.TabIndex = 2;
@@ -442,6 +443,47 @@
             this.imitationInterval.Size = new System.Drawing.Size(94, 108);
             this.imitationInterval.TabIndex = 0;
             // 
+            // imitationEnabled
+            // 
+            this.imitationEnabled.AutoSize = true;
+            this.imitationEnabled.Location = new System.Drawing.Point(18, 223);
+            this.imitationEnabled.Name = "imitationEnabled";
+            this.imitationEnabled.Size = new System.Drawing.Size(116, 17);
+            this.imitationEnabled.TabIndex = 8;
+            this.imitationEnabled.Text = "Имитация (канон)";
+            this.imitationEnabled.UseVisualStyleBackColor = true;
+            this.imitationEnabled.CheckedChanged += new System.EventHandler(this.UpdateImitationSettingsEnabled);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(83, 131);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(41, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "тактов";
+            // 
+            // imitationRange
+            // 
+            this.imitationRange.Location = new System.Drawing.Point(12, 129);
+            this.imitationRange.Name = "imitationRange";
+            this.imitationRange.Size = new System.Drawing.Size(65, 20);
+            this.imitationRange.TabIndex = 9;
+            this.imitationRange.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 113);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(111, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "Продолжительность";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -470,7 +512,8 @@
             this.groupBox3.PerformLayout();
             this.imitationSettingsBox.ResumeLayout(false);
             this.imitationSettingsBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imitationDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imitationRange)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -503,11 +546,14 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown imitationDelay;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton ImitationTopFirst;
         private System.Windows.Forms.CheckBox imitationEnabled;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown imitationRange;
+        private System.Windows.Forms.Label label6;
 
     }
 }

@@ -9,7 +9,8 @@ namespace Compositor.Rules.Base
     abstract class MelodyRule : ParamRule
     {
         protected Voice Voice;
-        
+        protected int _lastBarStart;
+
         protected List<Note> Notes { get { return Voice.NotesList; } }
         protected Note LastNote { get { return Notes.Last(); } }
         protected Time Time { get { return Voice.Time; } }
@@ -18,6 +19,8 @@ namespace Compositor.Rules.Base
         protected List<LeapOrSmooth> LeapSmooth { get { return Voice.LeapSmooth; } }
 
         protected virtual bool ApplyToRests { get { return false; } }
+        protected virtual bool ApplyToCadenza { get { return false; } }
+
 
         public override void Init(IDeniable parent)
         {
@@ -35,6 +38,7 @@ namespace Compositor.Rules.Base
         public virtual void Init(Voice parent)
         {
             Voice = parent;
+            _lastBarStart = (int)Voice.DesiredLength - Time.Beats * 4;
         }
 
         protected List<Note> GetLast(int count)
@@ -59,10 +63,18 @@ namespace Compositor.Rules.Base
         {
             var note = nextNotes as Note;
             if (note != null)
-                return (note.Pitch == null && !ApplyToRests) ? 1 : Apply(note);
+            {
+                if (note.Pitch == null && !ApplyToRests)
+                    return 1;
+                if (note.TimeStart.Position == _lastBarStart && !ApplyToCadenza)
+                    return 1;
+                
+                return Apply(note);
+            }
 
             throw new ArgumentException();
         }
+
     }
 }
 

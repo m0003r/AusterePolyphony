@@ -85,7 +85,7 @@ namespace GeneratorGUI
             return res;
         }
 
-        public static string GenerationGraph(this MelodyGenerator me)
+        public static string GenerationGraph(this VoiceGenerator me)
         {
             _graph = string.Format(Prelude, me.Seed);
 

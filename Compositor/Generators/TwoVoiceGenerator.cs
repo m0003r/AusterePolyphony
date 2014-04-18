@@ -72,14 +72,20 @@ namespace Compositor.Generators
             return Generate(length, null);
         }
 
+        public void SetMirroring(bool topFirst, ImitationSettings settings)
+        {
+            if (topFirst)
+                Melodies.SetMirroring(Melodies.Voice1, Melodies.Voice2, settings);
+            else
+                Melodies.SetMirroring(Melodies.Voice2, Melodies.Voice1, settings);
+        }
+
         public int Generate(uint length, Func<int, bool> callback)
         {
             var lengthInBeats = length * (uint)Melodies.Time.Beats * 4;
             var steps = 0;
 
             Melodies.SetLength(lengthInBeats);
-            //-359072423 works
-            Melodies.SetMirroring(Melodies.Voice2, Melodies.Voice1, new ImitationSettings(16, new Interval(IntervalType.Quinta), 16*4));
 
             try
             {
@@ -96,10 +102,7 @@ namespace Compositor.Generators
 
                 }
             }
-            catch (StopGeneration)
-            {
-
-            }
+            catch (StopGeneration) { }
 
             return steps;
         }
@@ -107,7 +110,8 @@ namespace Compositor.Generators
         private void Step()
         {
             Melodies.Filter();
-            double max = Melodies.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
+            //double max = Melodies.Freqs.Max(kv => (kv.Value > MinimumNoteFrequencyAllowed) ? kv.Value : 0);
+            var max = Melodies.Freqs.Max(kv => kv.Value);
 
             if (max > MinimumAccumulatedFrequency) //должно быть что-то приличное!
                 ChooseNextNote();
@@ -116,15 +120,13 @@ namespace Compositor.Generators
                 if (Melodies.NoteCount > 0)
                     Melodies.RemoveLast();
                 else
-                    Melodies.FirstNote();
+                    Melodies.SetFirstNoteFreqs();
             }
         }
 
         private void ChooseNextNote()
         {
-            var possibleNext = Melodies.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed).OrderBy(kv => kv.Key);
-
-
+            var possibleNext = Melodies.Freqs.Where(kv => kv.Value > MinimumNoteFrequencyAllowed);//.OrderBy(kv => kv.Key);
 #if TRACE
             var sb = new StringBuilder();
             foreach (var kv in Melodies.Freqs)
@@ -132,9 +134,8 @@ namespace Compositor.Generators
                 sb.AppendFormat("{0} => {1}; ", kv.Key, kv.Value);
             }
             Console.WriteLine(sb);
+            Console.WriteLine();
 #endif
-
-            
             var next = (TwoNotes)_chooseStrategy.ChooseNext(possibleNext);
 
             Melodies.AddTwoNotes(next);

@@ -30,7 +30,7 @@ namespace GeneratorGUI
                 var clef = ClefNamesList[(int)m.Clef + 1];
                 var time = (m.Time.Beats) + "/2";
 
-                foreach (Note n in m.Notes)
+                foreach (var n in m.Notes)
                 {
                     notes.Append(n);
                         

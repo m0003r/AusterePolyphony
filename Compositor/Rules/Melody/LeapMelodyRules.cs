@@ -91,6 +91,11 @@ namespace Compositor.Rules.Melody
 
         protected Note PreLast;
 
+        protected override bool ApplyToCadenza
+        {
+            get { return true; }
+        }
+
         private bool _lastCo;
         private bool _lastSm;
 

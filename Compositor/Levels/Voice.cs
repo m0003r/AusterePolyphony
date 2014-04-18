@@ -81,8 +81,8 @@ namespace Compositor.Levels
 
             time.Position = 0;
             SetupDiapason(clef, modus);
-            InitFirstNote();
-            FirstNote();
+            InitFirstNoteFreqs();
+            SetFreqsToFirst();
         }
 
         public void SetLength(uint desiredLength)
@@ -98,7 +98,7 @@ namespace Compositor.Levels
             Higher = Diapason.First();
         }
 
-        private void InitFirstNote()
+        private void InitFirstNoteFreqs()
         {
             _firstNoteFreqs = new FreqsDict();
 
@@ -115,7 +115,7 @@ namespace Compositor.Levels
             }
         }
 
-        internal void FirstNote()
+        internal void SetFreqsToFirst()
         {
             Freqs = new FreqsDict(_firstNoteFreqs);
         }
@@ -124,8 +124,8 @@ namespace Compositor.Levels
         {
             if (settings == null)
             {
-                InitFirstNote();
-                FirstNote();
+                InitFirstNoteFreqs();
+                SetFreqsToFirst();
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace Compositor.Levels
             _startPause = new Note(null, Time, settings.Delay);
             _firstNoteFreqs[_startPause] = 1;
 
-            FirstNote();
+            SetFreqsToFirst();
         }
 
         internal void RemoveLast(bool ban = true)
@@ -143,6 +143,9 @@ namespace Compositor.Levels
             var n = NotesList.Last();
             Time -= n.Duration;
             NotesList.RemoveAt(NotesList.Count - 1);
+
+            if (_imitationSettings != null)
+                Filtered = false;
             
             if (NotesList.Count > 0)
             {
@@ -154,7 +157,7 @@ namespace Compositor.Levels
             else
             {
                 _firstNoteFreqs[n] = 0;
-                FirstNote();
+                SetFreqsToFirst();
             }
 
             LeapSmooths.DeleteLast();
@@ -165,7 +168,7 @@ namespace Compositor.Levels
         public override void AddVariants()
         {
             if (NoteCount == 0)
-                FirstNote();
+                SetFreqsToFirst();
             else
             {
                 var lastNote = Notes.Last();
@@ -178,6 +181,7 @@ namespace Compositor.Levels
                 if (_imitationSettings == null || Time.Position >= _imitationSettings.Range)
                     return;
 
+                //TODO: it must be RULE!
                 var sourceNote = _imitationSource[NoteCount - 1];
 
                 foreach (var key in Freqs.Keys.ToList())
@@ -212,7 +216,7 @@ namespace Compositor.Levels
                 return;
             }
 
-            int currNumber = 1;
+            var currNumber = 1;
 
             var prev = NotesList[0];
             var curr = NotesList[1];

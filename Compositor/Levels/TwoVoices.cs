@@ -31,7 +31,7 @@ namespace Compositor.Levels
         public Voice Voice1 { get; private set; }
         public Voice Voice2 { get; private set; }
 
-        public FreqsDict FirstFreqs;
+        private FreqsDict _firstFreqs;
 
         internal List<TwoNotes> Twonotes;
 
@@ -48,17 +48,17 @@ namespace Compositor.Levels
             Twonotes = new List<TwoNotes>();
             GenerateFirstFreqs();
 
-            var keys = new List<IDeniable>(FirstFreqs.Keys);
+            var keys = new List<IDeniable>(_firstFreqs.Keys);
             foreach (var key in keys.Where(key => ((TwoNotes)key).Interval.ModDeg == 3))
-                FirstFreqs[key] = 0;
+                _firstFreqs[key] = 0;
 
-            FirstNote();
+            SetFirstNoteFreqs();
             Filtered = true;
         }
 
         private void GenerateFirstFreqs()
         {
-            FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
+            _firstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
         }
 
         public override void AddVariants()
@@ -181,21 +181,22 @@ namespace Compositor.Levels
                 Voice2.RemoveLast(false);
                 var removed = Twonotes.Last(); 
                 Twonotes.RemoveAt(0);
-                FirstFreqs[removed] = 0;
+                _firstFreqs[removed] = 0;
 
                 if (ban)
                     removed.IsBanned = true;
 
-                FirstNote();
+                SetFirstNoteFreqs();
 
                 Time.Position = 0;
             }
 
         }
 
-        internal void FirstNote()
+        internal void SetFirstNoteFreqs()
         {
-            Freqs = FirstFreqs;
+            Freqs = _firstFreqs;
+            Filtered = true;
         }
 
         internal bool Finished()
@@ -207,6 +208,7 @@ namespace Compositor.Levels
         {
             dest.SetMirroring(imitationSettings, source);
             GenerateFirstFreqs();
+            SetFirstNoteFreqs();
         }
     }
 }
