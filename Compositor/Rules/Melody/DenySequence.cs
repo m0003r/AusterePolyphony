@@ -14,15 +14,15 @@ namespace Compositor.Rules.Melody
             private List<int> Tones { get { return _tones.GetRange(_startedAt, Length); } }
             public int Length { get; private set; }
 
-            private readonly List<int> _tones;
+            private List<int> _tones;
 
-            readonly int _startedAt;
-            readonly int _previousStartedAt;
+            int _startedAt;
+            int _previousStartedAt;
 
-            public SequencePattern(Voice voice, int lengthInNotes)
+            public bool Init(Voice voice, int lengthInNotes)
             {
                 if (lengthInNotes > voice.NoteCount - 3)
-                    throw new IndexOutOfRangeException();
+                    return false;
 
                 _tones = new List<int>();
 
@@ -32,10 +32,10 @@ namespace Compositor.Rules.Melody
                 var baseShift = melodyLength - _previousStartedAt;
 
                 if (_startedAt < baseShift)
-                    throw new IndexOutOfRangeException();
+                    return false;
 
                 Length = 0;
-                foreach (var subNote in (IEnumerable<KeyValuePair<int, Pitch>>)voice)
+                foreach (var subNote in (IEnumerable<KeyValuePair<int, Pitch>>) voice)
                 {
                     var subPitch = subNote.Value;
                     _tones.Add(subPitch != null ? subPitch.Value : _tones.Count > 0 ? _tones.Last() : 0);
@@ -43,6 +43,8 @@ namespace Compositor.Rules.Melody
                     if (subNote.Key > _startedAt)
                         Length++;
                 }
+
+                return true;
             }
 
             /*public void Extend()
@@ -109,25 +111,21 @@ namespace Compositor.Rules.Melody
 
             do
             {
-                try
-                {
-                    var pattern = new SequencePattern(Voice, currGrabbedNotes);
-                    if (pattern.Length > MaxSequenceLength)
-                        tooLong = true;
+                var pattern = new SequencePattern();
+                tooLong = !pattern.Init(Voice, currGrabbedNotes);
+
+                if (pattern.Length > MaxSequenceLength || tooLong)
+                    break;
+
+                foreach (var kv in pattern.UndesiredNotes())
+                    if (_undesiredPitches.ContainsKey(kv.Key))
+                        _undesiredPitches[kv.Key] = Math.Min(_undesiredPitches[kv.Key], kv.Value);
                     else
-                        foreach (KeyValuePair<int, double> kv in pattern.UndesiredNotes())
-                            if (_undesiredPitches.ContainsKey(kv.Key))
-                                _undesiredPitches[kv.Key] = Math.Min(_undesiredPitches[kv.Key], kv.Value);
-                            else
-                                _undesiredPitches[kv.Key] = kv.Value;
-                    currGrabbedNotes++;
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    tooLong = true;
-                }
+                        _undesiredPitches[kv.Key] = kv.Value;
+
+                currGrabbedNotes++;
             }
-            while (!tooLong);
+            while (true);
 
             return (_undesiredPitches.Count > 0);
         }

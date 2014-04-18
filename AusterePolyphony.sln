@@ -16,6 +16,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RulesTest", "Tests\NoteRulesTest\RulesTest.csproj", "{1B6781BC-1229-4523-ADFB-A9916CF6A70D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C0F9BC78-8703-4773-9631-643441EB9643}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+		Performance2.psess = Performance2.psess
+		Performance3.psess = Performance3.psess
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +90,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{873EA44D-CC61-4C88-AD28-B0ECEC0E053D} = {C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}
 		{1B6781BC-1229-4523-ADFB-A9916CF6A70D} = {C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = AusterePolyphony.vsmdi

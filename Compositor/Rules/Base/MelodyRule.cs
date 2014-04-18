@@ -21,11 +21,15 @@ namespace Compositor.Rules.Base
 
         public override void Init(IDeniable parent)
         {
-            var melody = parent as Voice;
-            if (melody != null)
-                Init(melody);
-            else
+            if (!Initiable(parent))
                 throw new ArgumentException();
+            
+            Init((Voice) parent);
+        }
+
+        public override bool Initiable(IDeniable level)
+        {
+            return (level is Voice);
         }
 
         public virtual void Init(Voice parent)
@@ -45,6 +49,7 @@ namespace Compositor.Rules.Base
         {
             return Notes.Count != 0 && _IsApplicable();
         }
+
 
         public abstract bool _IsApplicable();
 

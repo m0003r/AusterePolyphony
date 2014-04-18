@@ -7,6 +7,7 @@ namespace Compositor.Rules.Base
         bool IsApplicable();
         void Init(IDeniable me);
         double Apply(IDeniable nextNotes);
+        bool Initiable(IDeniable level);
     }
 
     public interface IParamRule

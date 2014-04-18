@@ -58,15 +58,6 @@ namespace Compositor.Levels
 
         private void GenerateFirstFreqs()
         {
-/*            if (ImitationSettings != null)
-            {
-                var pause = new Note(null, Time, ImitationSettings.Delay);
-                if (ImitationSettings.TopFirst)
-                    Voice2.SetDelay(pause);
-                else
-                    Voice1.SetDelay(pause);
-            }*/
-
             FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
         }
 
@@ -180,7 +171,7 @@ namespace Compositor.Levels
                 Freqs = newLast.Freqs;
 
                 Time = newLast.Note1.TimeEnd;
-                if (Time.Position < newLast.Note2.TimeEnd.Position)
+                if (Time < newLast.Note2.TimeEnd)
                     Time = newLast.Note2.TimeEnd;
 
             }

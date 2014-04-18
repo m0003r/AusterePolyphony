@@ -13,7 +13,8 @@ namespace Compositor.Levels
 
     public abstract class RuledLevel : IFilterable
     {
-        internal List<IRule> Rules;
+        internal static List<IRule> Rules;
+        internal static HashSet<Type> RulesAdded;
 
         protected bool Filtered;
         public FreqsDict Freqs { get; protected set; }
@@ -27,8 +28,14 @@ namespace Compositor.Levels
             if (Rules == null)
             {
                 Rules = new List<IRule>();
+                RulesAdded = new HashSet<Type>();
+            }
+            if (!RulesAdded.Contains(GetType()))
+            {
+                RulesAdded.Add(GetType());
                 AddRules();
             }
+
 
             Freqs = new FreqsDict();
         }
@@ -67,32 +74,35 @@ namespace Compositor.Levels
 
             Timer.Start("filter");
 
+
             Rules
                 //cause strage problems
                 //.AsParallel().ForAll(r =>
                 .ForEach(r =>
             {
+                if (!r.Initiable(this)) return;
+
                 r.Init(this);
                 if (r.IsApplicable())
                     toFilter
                         //cause strage problems
                         //.AsParallel().ForAll(n =>
                         .ToList().ForEach(n =>
-                    {
-                        if (!(Freqs[n] >= MinimumFrequency)) return;
-
-                        var freq = r.Apply(n);
-#if TRACE_RULES
-                        Console.WriteLine("Rule {0} to note {1} (@ {2}) = {3:F}",
-                            r.GetType().Name, n.ToString(), n.TimeStart.Position, freq);*/
-#endif 
-                        Freqs[n] *= freq;
-
-                        if (Math.Abs(freq) < MinimumFrequency)
                         {
-                            n.DeniedRule = r;
-                        }
-                    });
+                            if (!(Freqs[n] >= MinimumFrequency)) return;
+
+                            var freq = r.Apply(n);
+#if TRACE_RULES
+                        Console.WriteLine("Rule {0} to note {1} = {2:F}",
+                            r.GetType().Name, n.ToString(), freq);
+#endif
+                            Freqs[n] *= freq;
+
+                            if (Math.Abs(freq) < MinimumFrequency)
+                            {
+                                n.DeniedRule = r;
+                            }
+                        });
             });
 
             Timer.Stop("filter");

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using Compositor.Generators;
 using GeneratorGUI.Properties;
 using PitchBase;
@@ -17,6 +18,8 @@ namespace GeneratorGUI
         private IGenerator _generator;
 
         private readonly SettingsForm _settingsForm;
+        private int _steps;
+        private Thread _generatorThread;
 
         public MainForm()
         {
@@ -26,33 +29,54 @@ namespace GeneratorGUI
 
         private void makeButton_Click(object sender, EventArgs e)
         {
+            FName = "";
+            RunGenerator();
+        }
+
+        private void RunGenerator()
+        {
             var clefs = (from int index in clefList.SelectedIndices select index - 1).ToList();
 
-            Timer.Flush("filter");
-            Timer.Start("generator");
 
-            InitGenerator(clefs, startNotes.SelectedIndex, perfectTime.Checked, (int)randSeedDD.Value, (int)maxSteps.Value);
-            generationProgressBar.Maximum = (int)maxSteps.Value;
+            InitGenerator(clefs, startNotes.SelectedIndex, perfectTime.Checked, (int) randSeedDD.Value, (int) maxSteps.Value);
+            generationProgressBar.Maximum = (int) maxSteps.Value;
             generationProgressBar.Minimum = 0;
             generationProgressBar.Value = 0;
 
-            int steps = _generator.Generate((uint)barsCount.Value, s => { if (s % 50 == 0) generationProgressBar.Value = s; return true; });
-            Console.WriteLine(Resources.FilteringGenerationTime, Timer.Total("filter"), Timer.Stop("generator"));
-            Console.WriteLine(Resources.TotalSteps, steps);
 
-            if (steps == maxSteps.Value)
+            _generatorThread = new Thread(Generate);
+            _generatorThread.Start();
+        }
+
+        private void Generate()
+        {
+            Timer.Flush("filter");
+            Timer.Start("generator");
+
+            Invoke(new Action<bool>(b => makeButton.Enabled = b), false);
+            _steps = _generator.Generate((uint) barsCount.Value, s =>
+            {
+                if (s%50 == 0)
+                    Invoke(new Action<int>(i => generationProgressBar.Value = i), s);
+                return true;
+            });
+            Console.WriteLine(Resources.FilteringGenerationTime, Timer.Total("filter"), Timer.Stop("generator"));
+            Console.WriteLine(Resources.TotalSteps, _steps);
+
+            if (_steps == maxSteps.Value)
             {
                 var dr = MessageBox.Show(Resources.CantFinish, Resources.Error, MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation);
                 if (dr == DialogResult.Retry)
-                    makeButton_Click(sender, e);
+                    Invoke(new Action(RunGenerator));
                 if (dr == DialogResult.Cancel)
-                    PrepareOutput();
+                    Invoke(new Action(PrepareOutput));
             }
             else
             {
-                generationProgressBar.Value = (int)maxSteps.Value;
-                PrepareOutput();
+                Invoke(new Action<int>(i => generationProgressBar.Value = i), (int)maxSteps.Value);
+                Invoke(new Action(PrepareOutput));
             }
+            Invoke(new Action<bool>(b => makeButton.Enabled = b), true);
         }
 
 

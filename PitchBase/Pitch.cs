@@ -5,6 +5,22 @@ namespace PitchBase
 {
     public class Pitch
     {
+        protected bool Equals(Pitch other)
+        {
+            if (ReferenceEquals(other, null))
+                return false;
+
+            return Value == other.Value && Equals(Modus, other.Modus);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Value*397) ^ (Modus != null ? Modus.GetHashCode() : 0);
+            }
+        }
+
         public int Value { set; get; }
         public Modus Modus { protected set; get; }
 
@@ -152,20 +168,11 @@ namespace PitchBase
             return (a - b).Degrees > 0;
         }
 
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
-
         public override bool Equals(object obj)
         {
-            if (obj == null)
-                return false;
-
-            if (obj.GetType() != typeof(Pitch))
-                return false;
-
-            return (GetHashCode() == obj.GetHashCode());
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((Pitch) obj);
         }
 
         public static bool operator == (Pitch a, Pitch b)

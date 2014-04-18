@@ -79,7 +79,7 @@ namespace Compositor.Generators
 
             Melodies.SetLength(lengthInBeats);
             //-359072423 works
-            //Melodies.SetMirroring(Melodies.Voice2, Melodies.Voice1, new ImitationSettings(16, new Interval(IntervalType.Octava), 16*3));
+            Melodies.SetMirroring(Melodies.Voice2, Melodies.Voice1, new ImitationSettings(16, new Interval(IntervalType.Quinta), 16*4));
 
             try
             {
@@ -88,9 +88,8 @@ namespace Compositor.Generators
                     if (Melodies.Time.Position > lengthInBeats)
                         Melodies.RemoveLast();
                     else
-                    {
                         Step();
-                    }
+
                     steps++;
                     if (callback != null)
                         callback(steps);

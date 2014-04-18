@@ -21,13 +21,17 @@ namespace Compositor.Rules.Base
             Melody = parent;
         }
 
-        public override void Init(IDeniable me)
+        public override void Init(IDeniable parent)
         {
-            var voices = me as Levels.TwoVoices;
-            if (voices != null)
-                Init(voices);
-            else
+            if (!Initiable(parent))
                 throw new ArgumentException();
+
+            Melody = (Levels.TwoVoices)parent;
+        }
+
+        public override bool Initiable(IDeniable level)
+        {
+            return level is Levels.TwoVoices;
         }
 
         protected List<TwoNotes> GetLast(int count)

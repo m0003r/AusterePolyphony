@@ -30,13 +30,17 @@ namespace Compositor.Rules.Base
             throw new ArgumentException();
         }
 
-        public override void Init(IDeniable me)
+        public override void Init(IDeniable parent)
         {
-            var note = me as Note;
-            if (note != null)
-                Init(note);
-            else
+            if (!Initiable(parent))
                 throw new ArgumentException();
+
+            Init((Note)parent);
+        }
+
+        public override bool Initiable(IDeniable level)
+        {
+            return (level is Note);
         }
     }
 }

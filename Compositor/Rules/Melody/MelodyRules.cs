@@ -17,8 +17,8 @@ namespace Compositor.Rules.Melody
 
         public DenyGamming()
         {
-            _gammingSoftLimit = (int)Settings["SoftLimit"];
-            _gammingHardLimit = (int)Settings["HardLimit"];
+            _gammingSoftLimit = 6;//(int)Settings["SoftLimit"];
+            _gammingHardLimit = 8;//(int)Settings["HardLimit"];
         }
 
         public override bool _IsApplicable()

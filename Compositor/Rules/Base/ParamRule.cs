@@ -9,6 +9,7 @@ namespace Compositor.Rules.Base
         public abstract void Init(IDeniable me);
         public abstract double Apply(IDeniable nextNotes);
         public abstract bool IsApplicable();
+        public abstract bool Initiable(IDeniable level);
 
         public bool Enabled = true;
 
@@ -17,7 +18,7 @@ namespace Compositor.Rules.Base
 
         protected ParamRule()
         {
-            Settings = new Dictionary<string, object>();
+            /*Settings = new Dictionary<string, object>();
             _types = new Dictionary<string, Type>();
             var defaults = new Dictionary<string, object>();
 
@@ -28,7 +29,7 @@ namespace Compositor.Rules.Base
                 defaults[t.ParamName] = t.Default;
                 _types[t.ParamName] = t.Type;
                 Settings[t.ParamName] = t.Default;
-            }
+            }*/
         }
 
         public ParamAttribute[] GetParams()
