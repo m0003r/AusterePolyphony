@@ -23,7 +23,7 @@ namespace GeneratorGUI
 
         private static string MakeNoteName(Note n)
         {
-            return n.Pitch.Degree.ToString(CultureInfo.InvariantCulture) + n.Pitch.ModusOctave + n.Duration + n.TimeStart.Position;
+            return (n.Pitch == null ? "r" : (n.Pitch.StringForm + n.Pitch.ModusOctave)) + n.Duration + n.TimeStart.Position;
         }
 
         private static string ChanceToColor(double chance)

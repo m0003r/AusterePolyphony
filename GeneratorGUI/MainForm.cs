@@ -182,10 +182,9 @@ namespace GeneratorGUI
             CheckOutDirectory();
             if (FName == "")
                 FName = "gen_" + DateTime.Now.Ticks;
+
             using (var outfile = new StreamWriter("out\\" + FName + ".gv"))
-            {
                 outfile.Write(gvOut.Text);
-            }
         }
 
         private void drawGraphButton_Click(object sender, EventArgs e)
@@ -196,7 +195,7 @@ namespace GeneratorGUI
 
         private void DrawGraph()
         {
-            string cmdline = "-Tpdf " + FName + ".gv -o" + FName + "_graph.pdf";
+            var cmdline = "-Tpdf " + FName + ".gv -o" + FName + "_graph.pdf";
             var p = new Process
             {
                 StartInfo = {UseShellExecute = true, FileName = "dot", Arguments = cmdline},

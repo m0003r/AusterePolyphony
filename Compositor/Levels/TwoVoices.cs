@@ -40,8 +40,8 @@ namespace Compositor.Levels
         {
             Time = time;
 
-            Voice1 = new Voice(clef1, modus, time);
-            Voice2 = new Voice(clef2, modus, time);
+            Voice1 = new Voice(clef1, modus, time, VoiceType.Top);
+            Voice2 = new Voice(clef2, modus, time, VoiceType.Bass);
 
             Twonotes = new List<TwoNotes>();
             FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);

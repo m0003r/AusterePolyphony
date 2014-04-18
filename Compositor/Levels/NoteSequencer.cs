@@ -34,6 +34,9 @@ namespace Compositor.Levels
             if (null == p2)
                 return (t.Beat%2 == 0) ? 1 : 0;
 
+            if (me.Pitch == null)
+                return 1;
+
             var diff = p2 - me.Pitch;
 
             if ((t.Beat % 4 != 0) || (me.Duration == 1)) // нельзя неплавные ходы внутри метрической доли или после восьмых

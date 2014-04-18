@@ -41,6 +41,7 @@ namespace Compositor.Levels
     [Rule(typeof(DenyStrongNotesRepeat))]
     [Rule(typeof(AfterQuarterNewRule))]
     [Rule(typeof(TooManyEightsRule))]
+    [Rule(typeof(DenyRestsRule))]
 
     public class Voice : RuledLevel, IEnumerable<Note>, IEnumerable<KeyValuePair<int, Pitch>>
     {
@@ -63,7 +64,7 @@ namespace Compositor.Levels
         internal Pitch Higher;
         internal Pitch Lower;
 
-        public Voice(Clef clef, Modus modus, Time time, VoiceType type = VoiceType.Single)
+        public Voice(Clef clef, Modus modus, Time time, VoiceType type)
         {
             Clef = clef;
             Modus = modus;
@@ -385,4 +386,5 @@ namespace Compositor.Levels
             return NotesList.GetEnumerator();
         }
     }
+
 }

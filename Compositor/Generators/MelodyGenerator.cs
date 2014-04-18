@@ -39,7 +39,7 @@ namespace Compositor.Generators
         public MelodyGenerator(Clef clef, Modus modus, Time time, int seed = 0, int stepLimit = 50000, IChooseNextStrategy strategy = null)
         {
             StepLimit = stepLimit;
-            Voice = new Voice(clef, modus, time);
+            Voice = new Voice(clef, modus, time, VoiceType.Single);
             if (strategy == null)
             {
                 SetSeed(seed);

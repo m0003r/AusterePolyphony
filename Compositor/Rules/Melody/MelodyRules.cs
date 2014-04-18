@@ -28,15 +28,17 @@ namespace Compositor.Rules.Melody
             return (_gammingCount > _gammingSoftLimit);
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            return (_gammingHardLimit - Math.Abs(_gammingCount - nextNotes.Leap.AbsDeg)) / (double)_gammingHardLimit;
+            return (_gammingHardLimit - Math.Abs(_gammingCount - nextNote.Leap.AbsDeg)) / (double)_gammingHardLimit;
         }
     }
 
     class CadenzaRule : MelodyRule
     {
         private int _lastBarStart;
+
+        protected override bool ApplyToRests { get { return true; } }
 
         public override void Init(Voice parent)
         {
@@ -49,24 +51,26 @@ namespace Compositor.Rules.Melody
             return (Time.Position >= _lastBarStart - Time.Beats * 4); //если мы не в предпоследнем такте
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            if (nextNotes.TimeEnd.Position < _lastBarStart)
+            if (nextNote.TimeEnd.Position < _lastBarStart)
                 return 1;
-            if (nextNotes.TimeEnd.Position == _lastBarStart)
-            {
-                return ((nextNotes.Pitch.Degree == 1) || (nextNotes.Pitch.Degree == 6)) ? 1 : 0;
-                    
-            }
-            if (nextNotes.TimeStart.Position == _lastBarStart)
+
+            if (nextNote.Pitch == null)
+                return 0;
+
+            if (nextNote.TimeEnd.Position == _lastBarStart)
+                return (nextNote.Pitch.Degree == 1 || nextNote.Pitch.Degree == 6) ? 1 : 0;
+
+            if (nextNote.TimeStart.Position == _lastBarStart)
                 //нельзя ничего в последнем такте кроме долгой тоники
-                return ((nextNotes.Duration == Time.Beats * 4) && (nextNotes.Pitch.Degree == 0) &&
-                          (nextNotes.Leap.AbsDeg == 1)) ? 1 : 0;  //достигаемой плавным ходом 
+                return (nextNote.Duration == Time.Beats * 4 &&
+                        nextNote.Pitch.Degree == 0 &&
+                        nextNote.Leap.AbsDeg == 1)
+                        ? 1 : 0;  //достигаемой плавным ходом 
                     
 
-            if (nextNotes.TimeEnd.Position > _lastBarStart) //нельзя залиговку к последнему такту
-                return 0;
-            return 1;
+            return nextNote.TimeEnd.Position > _lastBarStart ? 0 : 1;
         }
     }
 
@@ -85,9 +89,9 @@ namespace Compositor.Rules.Melody
             return (Time.Position < _lastBar); //если мы не в предпоследнем такте
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            return (nextNotes.Duration == 16) ? 0 : 1;
+            return (nextNote.Duration == 16) ? 0 : 1;
         }
     }
     /*********************************************************************/
@@ -106,9 +110,9 @@ namespace Compositor.Rules.Melody
             return (_last[0].Pitch == _last[2].Pitch);
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            return (nextNotes.Pitch == _last[1].Pitch) ? 0 : 1;
+            return (nextNote.Pitch == _last[1].Pitch) ? 0 : 1;
         }
     }
 
@@ -140,13 +144,13 @@ namespace Compositor.Rules.Melody
                 (_last[0].Duration != 2));
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            if (nextNotes.Duration > 3)
+            if (nextNote.Duration > 3)
                 return 0;
 
-            if (nextNotes.Duration == 8)
-                return (nextNotes.TimeStart.Beat == 4) ? 0 : 1;
+            if (nextNote.Duration == 8)
+                return (nextNote.TimeStart.Beat == 4) ? 0 : 1;
 
             return 1;
         }
@@ -202,20 +206,19 @@ namespace Compositor.Rules.Melody
             return true; //мы всегда можем запретить стоять на прошлой вершине долго
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            if (_denyDown && (nextNotes.Pitch < _lastPitch))
+            if (_denyDown && (nextNote.Pitch < _lastPitch))
                 return 0;
-            if (_denyUp && (nextNotes.Pitch > _lastPitch))
+            if (_denyUp && (nextNote.Pitch > _lastPitch))
                 return 0;
-            if ((nextNotes.Pitch == Lower) || (nextNotes.Pitch == Higher))
-            {
-                double k = (nextNotes.Duration > 4) ? Math.Max(0.2, 1 - (Math.Log(nextNotes.Duration, 2) - 2) * 0.5) : 1;
-                if (nextNotes.TimeStart.Beat % 8 == 0)
-                    k *= 0.7;
-                return k;
-            }
-            return 1;
+            if ((nextNote.Pitch != Lower) && (nextNote.Pitch != Higher)) return 1;
+
+            var k = (nextNote.Duration > 4) ? Math.Max(0.2, 1 - (Math.Log(nextNote.Duration, 2) - 2) * 0.5) : 1;
+            if (nextNote.TimeStart.Beat % 8 == 0)
+                k *= 0.7;
+
+            return k;
         }
     }
 
@@ -234,9 +237,9 @@ namespace Compositor.Rules.Melody
             return (LeapSmooth[LeapSmooth.Count - 2].Interval.AbsDeg == _last.Interval.AbsDeg);
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            return _last.CanAdd(nextNotes) ? 1 : 0;
+            return _last.CanAdd(nextNote) ? 1 : 0;
         }
 
     }
@@ -260,9 +263,9 @@ namespace Compositor.Rules.Melody
             return (_quarterCount >= 6);
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            if (nextNotes.Duration > 2)
+            if (nextNote.Duration > 2)
                 return 1;
 
             switch (_quarterCount)
@@ -286,12 +289,12 @@ namespace Compositor.Rules.Melody
             return ((last[0].Duration == 6) && (last[1].Duration == 2));
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            if (nextNotes.Duration == 2)
+            if (nextNote.Duration == 2)
                 return 2; //неслыханная рекомендация!
 
-            return (nextNotes.Duration == 6) ? 0.5 : 0.7;
+            return (nextNote.Duration == 6) ? 0.5 : 0.7;
         }
     }
 
@@ -320,14 +323,14 @@ namespace Compositor.Rules.Melody
             return false;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
             double frq = 1;
 
-            if (nextNotes.Duration == _deniedDuration)
+            if (nextNote.Duration == _deniedDuration)
                 frq *= 0.5;
 
-            if (_deniedPitch == nextNotes.Pitch)
+            if (_deniedPitch == nextNote.Pitch)
                 frq *= 0.1;
 
             return frq;
@@ -344,22 +347,19 @@ namespace Compositor.Rules.Melody
             if (Notes.Count < 3)
                 return false;
 
-            List<Note> last = GetLast(3);
+            var last = GetLast(3);
 
-            if ((last[0].Duration) == (last[2].Duration))
-            {
-                _deniedDuration = last[1].Duration;
-                _patternDuration = last[0].Duration + _deniedDuration;
+            if ((last[0].Duration) != (last[2].Duration)) return false;
 
-                return true;
-            }
+            _deniedDuration = last[1].Duration;
+            _patternDuration = last[0].Duration + _deniedDuration;
 
-            return false;
+            return true;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            if (nextNotes.Duration == _deniedDuration)
+            if (nextNote.Duration == _deniedDuration)
                 return ((_patternDuration % 8) == 0) ? 0.1 : 0.9;
 
             return 1;
@@ -368,180 +368,40 @@ namespace Compositor.Rules.Melody
 
     //TODO: seed = -967466835, -450168169
 
-    class DenySequence : MelodyRule
-    {
-        class SequencePattern
-        {
-            private List<int> Tones { get { return _tones.GetRange(_startedAt, Length); } }
-            public int Length { get; private set; }
-
-            private readonly List<int> _tones;
-
-            readonly int _startedAt;
-            readonly int _previousStartedAt;
-
-            public SequencePattern(Voice m, int notes)
-            {
-                if (notes > m.NoteCount - 3)
-                    throw new IndexOutOfRangeException();
-
-                _tones = new List<int>();
-
-                int melodyLength = m.Time.Position;
-                _startedAt = m[m.NoteCount - notes].TimeStart.Position;
-                _previousStartedAt = m[m.NoteCount - notes - 1].TimeStart.Position;
-                int baseShift = melodyLength - _previousStartedAt;
-
-                if (_startedAt < baseShift)
-                    throw new IndexOutOfRangeException();
-
-                Length = 0;
-                foreach (var subNote in (IEnumerable<KeyValuePair<int, Pitch>>)m)
-                {
-                    var subPitch = subNote.Value;
-                    _tones.Add(subPitch != null ? subPitch.Value : _tones.Last());
-
-                    if (subNote.Key > _startedAt)
-                        Length++;
-                }
-            }
-
-            /*public void Extend()
-            {
-                startedAt -= ShiftStep;
-                Length += ShiftStep;
-            }*/
-
-            private double Difference()
-            {
-                int comparedLength = 0;
-                double diffAccumulator = 0;
-                var diffs = new List<int>();
-
-                var myEnum = Tones.GetEnumerator();
-                var otherEnum = _tones.GetRange(_previousStartedAt - Length, Length).GetEnumerator();
-
-                while (myEnum.MoveNext() && otherEnum.MoveNext())
-                {
-                    diffs.Add(Math.Abs(myEnum.Current - otherEnum.Current));
-                    comparedLength++;
-                } 
-
-                double average = diffs.Average();
-
-                diffAccumulator += diffs.Sum(diff => Math.Pow((diff - average), 2));
-
-                double rawSpread = Math.Sqrt(diffAccumulator / comparedLength);
-                double spread = rawSpread;
-
-                if (average > 5) //это уже линеарная имитация...
-                    spread *= 1.5;
-
-                return spread;
-            }
-
-            public Dictionary<int, double> UndesiredNotes()
-            {
-                var result = new Dictionary<int, double>();
-
-                /*for (int shift = 1; baseShift + shift < startedAt - 1; shift++)
-                {*/
-                    int nextPitch = _tones[_startedAt - 1];
-                    result[nextPitch] = Difference();
-                //}
-
-                return result;
-            }
-        }
-
-        Dictionary<int, double> _undesiredPitches;
-
-        const int MaxSequenceLength = 24;
-
-        public override bool _IsApplicable()
-        {
-            if (Voice.NoteCount < 5)
-                return false;
-
-            int currGrabbedNotes = 2;
-            bool tooLong = false;
-
-            _undesiredPitches = new Dictionary<int,double>();
-
-            do
-            {
-                try
-                {
-                    var pattern = new SequencePattern(Voice, currGrabbedNotes);
-                    if (pattern.Length > MaxSequenceLength)
-                        tooLong = true;
-                    else
-                        foreach (KeyValuePair<int, double> kv in pattern.UndesiredNotes())
-                            if (_undesiredPitches.ContainsKey(kv.Key))
-                                _undesiredPitches[kv.Key] = Math.Min(_undesiredPitches[kv.Key], kv.Value);
-                            else
-                                _undesiredPitches[kv.Key] = kv.Value;
-                    currGrabbedNotes++;
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    tooLong = true;
-                }
-            }
-            while (!tooLong);
-
-            return (_undesiredPitches.Count > 0);
-        }
-
-
-
-        public override double Apply(Note nextNotes)
-        {
-            int tone = nextNotes.Pitch.Value;
-
-            if (!_undesiredPitches.ContainsKey(tone)) return 1;
-
-            var calculated = _undesiredPitches[tone];
-            return Math.Min(1, calculated);
-        }
-    }
-
     // 1245604329
     class DenyStrongNotesRepeat : MelodyRule
     {
-        const double MinimumRequiredForApply = 1.5;
+        const double MinimumStrengthForApply = 1.5;
 
         public override bool _IsApplicable()
         {
-            if (Notes.Count < 3)
-                return false;
-
-            return true;
+            return Notes.Count >= 3;
         }
 
         private IEnumerable<Note> FindLastEquiv(Note n)
         {
-            return Notes.Where(f => (
-                (f.Pitch.Degree == n.Pitch.Degree) && 
-                ((n.TimeStart - f.TimeStart).Bar <= 3) &&
-                ((n.TimeStart - f.TimeStart).Position > 6) &&
-                (f.Strength >= MinimumRequiredForApply)
+            return Notes.Where(found => (
+                found.Pitch != null &&
+                found.Pitch.Degree == n.Pitch.Degree && 
+                (n.TimeStart - found.TimeStart).Bar <= 3 &&
+                (n.TimeStart - found.TimeStart).Position > 6 &&
+                found.Strength >= MinimumStrengthForApply
               ));
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            double lastStrength = Voice.GetStrengthIf(nextNotes);
-            if (lastStrength < MinimumRequiredForApply)
+            var lastStrength = Voice.GetStrengthIf(nextNote);
+            if (lastStrength < MinimumStrengthForApply)
                 return 1;
 
             double freq = 1;
-            foreach (Note f in FindLastEquiv(nextNotes))
+            foreach (var f in FindLastEquiv(nextNote))
             {
-                int distance = (nextNotes.TimeStart - f.TimeStart).Position;
-                if (f.TimeStart.Beat == nextNotes.TimeStart.Beat)
+                var distance = (nextNote.TimeStart - f.TimeStart).Position;
+                if (f.TimeStart.Beat == nextNote.TimeStart.Beat)
                     freq *= 0.7;
-                if (f.Strength + lastStrength > MinimumRequiredForApply + distance / 8.0)
+                if (f.Strength + lastStrength > MinimumStrengthForApply + distance / 8.0)
                     freq *= 0.2;
             }
             
@@ -562,14 +422,14 @@ namespace Compositor.Rules.Melody
             return true;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
             const double safeDistance = 4 * 16;
 
-            if (nextNotes.Duration != 1)
+            if (nextNote.Duration != 1)
                 return 1;
 
-            var distance = nextNotes.TimeStart - _lastEightPosition;
+            var distance = nextNote.TimeStart - _lastEightPosition;
 
             return distance.Beats > safeDistance ? 1 : Math.Pow(distance.Beats/safeDistance, 3);
         }
@@ -577,18 +437,16 @@ namespace Compositor.Rules.Melody
 
     class TritoneRule : MelodyRule
     {
-        const double MinimumRequiredForApply = 1.1;
+        const double MinimumStrengthForApply = 1.1;
 
         IEnumerable<Note> _lastTritones;
 
         public override bool _IsApplicable()
         {
-            if (Notes.Count > 1)
-            {
-                _lastTritones = FindLastTritone();
-                return true;
-            }
-            return false;
+            if (Notes.Count <= 1) return false;
+
+            _lastTritones = FindLastTritone();
+            return true;
         }
 
         private IEnumerable<Note> FindLastTritone()
@@ -598,31 +456,32 @@ namespace Compositor.Rules.Melody
                 double f = 1;
             }*/
 
-            return Notes.Where(f => (
-                f.Pitch.IsTritone &&
+            return Notes.Where(found => (
+                found.Pitch != null &&
+                found.Pitch.IsTritone &&
                 //(f.Pitch.isTritoneLow ^ n.Pitch.isTritoneLow) &&
-                ((LastNote.TimeEnd - f.TimeStart).Bar <= 3) &&
-                ((LastNote.TimeEnd - f.TimeStart).Position > 6)
+                ((LastNote.TimeEnd - found.TimeStart).Bar <= 3) &&
+                ((LastNote.TimeEnd - found.TimeStart).Position > 6)
                 // (f.Strength >= minimumRequiredForApply)
               ));
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            if (!LastNote.Pitch.IsTritone)
-                return 1;
+            /*if (!LastNote.Pitch.IsTritone)
+                return 1;*/
 
-            double lastStrength = Voice.GetStrengthIf(nextNotes);
-            if (lastStrength < MinimumRequiredForApply)
+            var lastStrength = Voice.GetStrengthIf(nextNote);
+            if (lastStrength < MinimumStrengthForApply)
                 return 1;
 
             double freq = 1;
-            foreach (Note f in _lastTritones)
+            foreach (var f in _lastTritones)
             {
-                int distance = (nextNotes.TimeStart - f.TimeStart).Position;
-                if (f.TimeStart.Beat == nextNotes.TimeStart.Beat)
+                var distance = (nextNote.TimeStart - f.TimeStart).Position;
+                if (f.TimeStart.Beat == nextNote.TimeStart.Beat)
                     freq *= 0.7;
-                if (f.Strength + lastStrength > MinimumRequiredForApply + distance / 16.0)
+                if (f.Strength + lastStrength > MinimumStrengthForApply + distance / 16.0)
                     freq *= 0.2;
             }
             
@@ -637,9 +496,9 @@ namespace Compositor.Rules.Melody
             return LeapSmooth.Count >= 1 && LeapSmooth.Last().Interval.IsTritone;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            return LeapSmooth.Last().CanAdd(nextNotes) ? 1 : 0;
+            return LeapSmooth.Last().CanAdd(nextNote) ? 1 : 0;
         }
     }
 
@@ -663,9 +522,27 @@ namespace Compositor.Rules.Melody
             return true;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            return (_allowLeap || (nextNotes.Leap.IsSmooth)) ? 1 : 0;
+            return (_allowLeap || (nextNote.Leap.IsSmooth)) ? 1 : 0;
+        }
+    }
+
+    class DenyRestsRule : MelodyRule
+    {
+        protected override bool ApplyToRests
+        {
+            get { return true; }
+        }
+
+        public override bool _IsApplicable()
+        {
+            return Voice.Type == VoiceType.Single;
+        }
+
+        public override double Apply(Note nextNote)
+        {
+            return nextNote.Pitch == null ? 0 : 1;
         }
     }
 }

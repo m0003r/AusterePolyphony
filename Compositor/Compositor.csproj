@@ -61,6 +61,7 @@
     <Compile Include="Levels\NoteSequencer.cs" />
     <Compile Include="Levels\RuledLevel.cs" />
     <Compile Include="Rules\Base\Rule.cs" />
+    <Compile Include="Rules\Melody\DenySequence.cs" />
     <Compile Include="Rules\Melody\LeapMelodyRules.cs" />
     <Compile Include="Generators\MelodyGenerator.cs" />
     <Compile Include="Rules\Base\MelodyRule.cs" />

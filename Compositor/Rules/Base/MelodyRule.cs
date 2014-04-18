@@ -17,6 +17,8 @@ namespace Compositor.Rules.Base
         protected Pitch Lower { get { return Voice.Lower; } }
         protected List<LeapOrSmooth> LeapSmooth { get { return Voice.LeapSmooth; } }
 
+        protected virtual bool ApplyToRests { get { return false; } }
+
         public override void Init(IDeniable parent)
         {
             var melody = parent as Voice;
@@ -46,13 +48,13 @@ namespace Compositor.Rules.Base
 
         public abstract bool _IsApplicable();
 
-        public abstract double Apply(Note nextNotes);
+        public abstract double Apply(Note nextNote);
 
         public override double Apply(IDeniable nextNotes)
         {
             var note = nextNotes as Note;
             if (note != null)
-                return note.Pitch == null ? 1 : Apply(note);
+                return (note.Pitch == null && !ApplyToRests) ? 1 : Apply(note);
 
             throw new ArgumentException();
         }

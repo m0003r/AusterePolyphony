@@ -31,10 +31,10 @@ namespace Compositor.Rules.Melody
             return Math.Abs(_gravityForce) > 2;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
-            double distance = nextNotes.Pitch.Value - _gravityPoint;
-            double force = distance * _gravityForce;
+            var distance = nextNote.Pitch.Value - _gravityPoint;
+            var force = distance * _gravityForce;
             // Console.WriteLine(" >>>>> Gravity to {0}: {1}", n.Pitch.Value, force);
             if (force < 0)
                 return 1;
@@ -58,27 +58,27 @@ namespace Compositor.Rules.Melody
 
         //255167827
         //1679803255
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
 
             // ход в сторону нескомпенсированности
             if (LastNote.Uncomp != 0)
-                if (Math.Sign(nextNotes.Leap.Degrees) == Math.Sign(LastNote.Uncomp))
+                if (Math.Sign(nextNote.Leap.Degrees) == Math.Sign(LastNote.Uncomp))
                 {
                     if (Math.Abs(LastNote.Uncomp) >= UncompDenyLeap)
-                        return nextNotes.Leap.IsLeap ? 0 : 1;
+                        return nextNote.Leap.IsLeap ? 0 : 1;
                     if (Math.Abs(LastNote.Uncomp) >= UncompDenySmooth)
                         return 0;
                 }
 
             // ход против запаса или если запас 0
-            if (Math.Sign(LastNote.Reserve) == Math.Sign(nextNotes.Leap.Degrees))
-                return Math.Abs(nextNotes.Leap.Degrees + LastNote.Reserve) < ReserveLimit ? 1 : 0;
+            if (Math.Sign(LastNote.Reserve) == Math.Sign(nextNote.Leap.Degrees))
+                return Math.Abs(nextNote.Leap.Degrees + LastNote.Reserve) < ReserveLimit ? 1 : 0;
 
-            if (nextNotes.Leap.Degrees < 5)
+            if (nextNote.Leap.Degrees < 5)
                 return 1;
 
-            return Math.Abs(nextNotes.Leap.Degrees) < Math.Abs(LastNote.Reserve * 4) ? 1 : 0;
+            return Math.Abs(nextNote.Leap.Degrees) < Math.Abs(LastNote.Reserve * 4) ? 1 : 0;
         }
     }
 
@@ -126,12 +126,12 @@ namespace Compositor.Rules.Melody
                 : (_lastSm ? _oppSmooth.IsApplicable() : _oppLeap.IsApplicable());
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
             if (_lastCo)
-                return _lastSm ? _coSmooth.Apply(nextNotes) : _coLeap.Apply(nextNotes);
+                return _lastSm ? _coSmooth.Apply(nextNote) : _coLeap.Apply(nextNote);
 
-            return _lastSm ? _oppSmooth.Apply(nextNotes) : _oppLeap.Apply(nextNotes);
+            return _lastSm ? _oppSmooth.Apply(nextNote) : _oppLeap.Apply(nextNote);
         }
     }
 
@@ -142,10 +142,10 @@ namespace Compositor.Rules.Melody
             return true;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
             //должно быть противонаправленно
-            return (nextNotes.Leap.Upwards ^ LastNote.Leap.Upwards) ? 1 : 0; 
+            return (nextNote.Leap.Upwards ^ LastNote.Leap.Upwards) ? 1 : 0; 
         }
     }
 
@@ -157,11 +157,11 @@ namespace Compositor.Rules.Melody
             return (LastNote.Leap.AbsDeg > 4);
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
             //то нельзя плавного хода в том же направлении
-            bool co = (nextNotes.Leap.Upwards == LastNote.Leap.Upwards);
-            return (co && (Math.Abs(nextNotes.Leap.Degrees) == -1)) ? 0 : 1;
+            bool co = (nextNote.Leap.Upwards == LastNote.Leap.Upwards);
+            return (co && (Math.Abs(nextNote.Leap.Degrees) == -1)) ? 0 : 1;
         }
     }
 
@@ -172,11 +172,11 @@ namespace Compositor.Rules.Melody
             return true;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
             //только плавный ход назад
-            bool backwards = (nextNotes.Leap.Upwards ^ LastNote.Leap.Upwards);
-            return (backwards && (nextNotes.Leap.AbsDeg == 1)) ? 1 : 0;
+            bool backwards = (nextNote.Leap.Upwards ^ LastNote.Leap.Upwards);
+            return (backwards && (nextNote.Leap.AbsDeg == 1)) ? 1 : 0;
         }
     }
 
@@ -192,13 +192,13 @@ namespace Compositor.Rules.Melody
             return true;
         }
 
-        public override double Apply(Note nextNotes)
+        public override double Apply(Note nextNote)
         {
             //только плавный ход назад
-            bool backwards = (nextNotes.Leap.Upwards ^ LastNote.Leap.Upwards);
+            bool backwards = (nextNote.Leap.Upwards ^ LastNote.Leap.Upwards);
             bool leapPossible = (_leapsInRow < 3);
 
-            return (backwards && ((nextNotes.Leap.AbsDeg == 1) || leapPossible) ) ? 1 : 0;
+            return (backwards && ((nextNote.Leap.AbsDeg == 1) || leapPossible) ) ? 1 : 0;
         }
     }
 
