@@ -91,21 +91,29 @@ namespace GeneratorGUI
         private void PrepareOutput()
         {
             outputArea.Text = LilyOutput.Lily(_generator);
+
+            //GenerateGraph();
+            engraveButton.Enabled = true;
+        }
+
+/*
+        private void GenerateGraph()
+        {
             var generator = _generator as MelodyGenerator;
             if (generator != null)
             {
                 gvOut.Text = generator.GenerationGraph();
                 drawGraphButton.Enabled = true;
             }
-
-            engraveButton.Enabled = true;
         }
+*/
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             modiList.SelectedIndex = 1;
             startNotes.SelectedIndex = 2;
             clefList.SelectedIndex = 0;
+            imitationInterval.SelectedIndex = 4;
         }
 
         private void SaveLily()
@@ -177,6 +185,7 @@ namespace GeneratorGUI
         }
 
 
+/*
         private void SaveGraph()
         {
             CheckOutDirectory();
@@ -186,12 +195,15 @@ namespace GeneratorGUI
             using (var outfile = new StreamWriter("out\\" + FName + ".gv"))
                 outfile.Write(gvOut.Text);
         }
+*/
 
+/*
         private void drawGraphButton_Click(object sender, EventArgs e)
         {
             SaveGraph();
             DrawGraph();
         }
+*/
 
         private void DrawGraph()
         {
@@ -215,6 +227,11 @@ namespace GeneratorGUI
         private void settingsButton_Click(object sender, EventArgs e)
         {
             _settingsForm.ShowDialog();
+        }
+
+        private void UpdateImitationSettingsEnabled(object sender, EventArgs e)
+        {
+            imitationSettingsBox.Enabled = (clefList.SelectedIndices.Count == 2) && (imitationEnabled.Checked);
         }
     }
 }

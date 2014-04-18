@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Compositor.Generators;
 using Compositor.Rules.Base;
 using Compositor.Rules.Melody;
 using PitchBase;
@@ -64,6 +65,10 @@ namespace Compositor.Levels
         internal Pitch Higher;
         internal Pitch Lower;
 
+        private ImitationSettings _imitationSettings;
+        private Voice _imitationSource;
+        private Note _startPause;
+
         public Voice(Clef clef, Modus modus, Time time, VoiceType type)
         {
             Clef = clef;
@@ -115,6 +120,24 @@ namespace Compositor.Levels
             Freqs = new FreqsDict(_firstNoteFreqs);
         }
 
+        public void SetMirroring(ImitationSettings settings, Voice sourceVoice)
+        {
+            if (settings == null)
+            {
+                InitFirstNote();
+                FirstNote();
+                return;
+            }
+
+            _imitationSettings = settings;
+            _imitationSource = sourceVoice;
+            _firstNoteFreqs = new FreqsDict();
+            _startPause = new Note(null, Time, settings.Delay);
+            _firstNoteFreqs[_startPause] = 1;
+
+            FirstNote();
+        }
+
         internal void RemoveLast(bool ban = true)
         {
             var n = NotesList.Last();
@@ -141,15 +164,35 @@ namespace Compositor.Levels
 
         public override void AddVariants()
         {
-            if (Notes.Count == 0)
+            if (NoteCount == 0)
                 FirstNote();
-
             else
             {
-                if (Notes.Last().Diapason == null)
-                    Notes.Last().Diapason = Diapason;
+                var lastNote = Notes.Last();
 
-                Freqs = Notes.Last().Filter();
+                if (lastNote.Diapason == null)
+                    lastNote.Diapason = Diapason;
+
+                Freqs = lastNote.Filter();
+
+                if (_imitationSettings == null || Time.Position >= _imitationSettings.Range)
+                    return;
+
+                var sourceNote = _imitationSource[NoteCount - 1];
+
+                foreach (var key in Freqs.Keys.ToList())
+                {
+                    var note = key as Note;
+                    if (note == null)
+                        continue;
+
+                    var interval = note.Pitch - sourceNote.Pitch;
+                    if (interval.AbsDeg == _imitationSettings.Interval.AbsDeg && note.Duration == sourceNote.Duration)
+                        continue;
+
+                    Freqs[key] = 0;
+                    key.IsBanned = true;
+                }
             }
         }
 

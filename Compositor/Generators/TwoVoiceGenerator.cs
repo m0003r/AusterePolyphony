@@ -8,12 +8,28 @@ using PitchBase;
 
 namespace Compositor.Generators
 {
+    public class ImitationSettings
+    {
+        public bool TopFirst;
+        public int Delay;
+        public Interval Interval;
+        public int Range;
+
+        public ImitationSettings(int delay, Interval interval, int range)
+        {
+            Delay = delay;
+            Interval = interval;
+            Range = range;
+        }
+    }
+
     public class TwoVoiceGenerator : IGenerator
     {
         public TwoVoices Melodies { get; private set; }
         public int Seed { get; private set; }
         public int StepLimit { get; private set; }
 
+        
         readonly IChooseNextStrategy _chooseStrategy;
 
         const double MinimumAccumulatedFrequency = 0.1;
@@ -58,10 +74,12 @@ namespace Compositor.Generators
 
         public int Generate(uint length, Func<int, bool> callback)
         {
-            uint lengthInBeats = length * (uint)Melodies.Time.Beats * 4;
-            int steps = 0;
+            var lengthInBeats = length * (uint)Melodies.Time.Beats * 4;
+            var steps = 0;
 
             Melodies.SetLength(lengthInBeats);
+            //-359072423 works
+            //Melodies.SetMirroring(Melodies.Voice2, Melodies.Voice1, new ImitationSettings(16, new Interval(IntervalType.Octava), 16*3));
 
             try
             {
@@ -72,11 +90,11 @@ namespace Compositor.Generators
                     else
                     {
                         Step();
-                        steps++;
-                        if (callback != null)
-                            callback(steps);
-
                     }
+                    steps++;
+                    if (callback != null)
+                        callback(steps);
+
                 }
             }
             catch (StopGeneration)

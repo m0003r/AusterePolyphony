@@ -81,7 +81,7 @@ namespace NoteRulesTest
         {
             var notes = CreateNotes(m, c, perfectTime, out diapason, infoList);
 
-            var mel = new Voice(c, m, Time.Create(perfectTime));
+            var mel = new Voice(c, m, Time.Create(perfectTime), VoiceType.Single);
             mel.SetLength(length);
 
             foreach (var n in notes)

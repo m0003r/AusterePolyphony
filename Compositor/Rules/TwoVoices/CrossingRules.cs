@@ -15,7 +15,10 @@ namespace Compositor.Rules.TwoVoices
 
         public override double Apply(TwoNotes nextNotes)
         {
-            int deg = nextNotes.Interval.AbsDeg;
+            if (nextNotes.Interval == null)
+                return 1;
+
+            var deg = nextNotes.Interval.AbsDeg;
             double c = 1;
             if (deg > 10)
                 c = (12.0 - deg)/3.0;
@@ -44,7 +47,8 @@ namespace Compositor.Rules.TwoVoices
 
         public override double Apply(TwoNotes nextNotes)
         {
-            return ((nextNotes.Note1.Pitch < _lowerBound) || (nextNotes.Note2.Pitch > _upperBound)) ? 0 : 1;
+            return (nextNotes.Note1.Pitch != null && nextNotes.Note1.Pitch < _lowerBound ||
+                    nextNotes.Note2.Pitch != null && nextNotes.Note2.Pitch > _upperBound) ? 0 : 1;
         }
     }
 }

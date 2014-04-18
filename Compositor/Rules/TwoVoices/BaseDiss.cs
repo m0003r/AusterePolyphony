@@ -16,12 +16,13 @@ namespace Compositor.Rules.TwoVoices
          */
         public override bool _IsApplicable()
         {
-            return LastNote.Interval.Consonance;
+            var interval = LastNote.Interval;
+            return interval != null && interval.Consonance;
         }
 
         public override double Apply(TwoNotes nextNotes)
         {
-            if (nextNotes.Interval.Consonance)
+            if (nextNotes.Interval == null || nextNotes.Interval.Consonance)
                 return 1;
 
             return nextNotes.Simult
@@ -34,12 +35,13 @@ namespace Compositor.Rules.TwoVoices
     {
         public override bool _IsApplicable()
         {
-            return LastNote.Interval.Dissonance;
+            var interval = LastNote.Interval;
+            return interval != null && interval.Dissonance;
         }
 
         public override double Apply(TwoNotes nextNotes)
         {
-            if (nextNotes.Interval.Dissonance)
+            if (nextNotes.Interval == null || nextNotes.Interval.Dissonance)
                 return 0;
 
             if ((nextNotes.TimeStart.Beat % 4 == 2) && (nextNotes.Changed.Leap.Degrees == -2))
@@ -55,12 +57,13 @@ namespace Compositor.Rules.TwoVoices
     {
         public override bool _IsApplicable()
         {
-            return (LastNote.Interval.Degrees == 1 || LastNote.Interval.Degrees == 6);
+            var interval = LastNote.Interval;
+            return interval != null && (interval.Degrees == 1 || interval.Degrees == 6);
         }
 
         public override double Apply(TwoNotes nextNotes)
         {
-            return (nextNotes.Interval.ModDeg == 0) ? 0 : 1;
+            return nextNotes.Interval != null && nextNotes.Interval.ModDeg == 0 ? 0 : 1;
         }
     }
  

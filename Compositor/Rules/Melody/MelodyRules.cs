@@ -537,7 +537,7 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
-            return Voice.Type == VoiceType.Single;
+            return true; //Voice.Type == VoiceType.Single;
         }
 
         public override double Apply(Note nextNote)

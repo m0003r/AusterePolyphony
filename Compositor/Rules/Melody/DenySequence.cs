@@ -19,26 +19,26 @@ namespace Compositor.Rules.Melody
             readonly int _startedAt;
             readonly int _previousStartedAt;
 
-            public SequencePattern(Voice m, int notes)
+            public SequencePattern(Voice voice, int lengthInNotes)
             {
-                if (notes > m.NoteCount - 3)
+                if (lengthInNotes > voice.NoteCount - 3)
                     throw new IndexOutOfRangeException();
 
                 _tones = new List<int>();
 
-                int melodyLength = m.Time.Position;
-                _startedAt = m[m.NoteCount - notes].TimeStart.Position;
-                _previousStartedAt = m[m.NoteCount - notes - 1].TimeStart.Position;
-                int baseShift = melodyLength - _previousStartedAt;
+                var melodyLength = voice.Time.Position;
+                _startedAt = voice[voice.NoteCount - lengthInNotes].TimeStart.Position;
+                _previousStartedAt = voice[voice.NoteCount - lengthInNotes - 1].TimeStart.Position;
+                var baseShift = melodyLength - _previousStartedAt;
 
                 if (_startedAt < baseShift)
                     throw new IndexOutOfRangeException();
 
                 Length = 0;
-                foreach (var subNote in (IEnumerable<KeyValuePair<int, Pitch>>)m)
+                foreach (var subNote in (IEnumerable<KeyValuePair<int, Pitch>>)voice)
                 {
                     var subPitch = subNote.Value;
-                    _tones.Add(subPitch != null ? subPitch.Value : _tones.Last());
+                    _tones.Add(subPitch != null ? subPitch.Value : _tones.Count > 0 ? _tones.Last() : 0);
 
                     if (subNote.Key > _startedAt)
                         Length++;

@@ -3,7 +3,7 @@ using Compositor.Rules.Base;
 
 namespace Compositor.Rules.TwoVoices
 {
-    class SusPassRule1 : TwoVoicesRule
+    class SusPassTakeRule : TwoVoicesRule
     {
 
         /* Необходимость задержания:
@@ -23,7 +23,7 @@ namespace Compositor.Rules.TwoVoices
 
         public override bool _IsApplicable()
         {
-            if (LastNote.Interval.Consonance)
+            if (LastNote.Interval == null || LastNote.Interval.Consonance)
             {
                 _lastStrongness = LastNote.TimeStart.Strongness;
                 return true;
@@ -37,10 +37,10 @@ namespace Compositor.Rules.TwoVoices
 
         public override double Apply(TwoNotes nextNotes)
         {
-            if (nextNotes.Simult || nextNotes.Interval.Consonance)
+            if (nextNotes.Simult || nextNotes.Interval == null || nextNotes.Interval.Consonance)
                 return 1;
 
-            if (nextNotes.TimeStart.Strongness > _lastStrongness) // suspension
+            if (nextNotes.TimeStart.Strongness > _lastStrongness) // задержание
             {
                 if (nextNotes.Changed.TimeEnd.Position < nextNotes.Stayed.TimeEnd.Position) // не может разрешаться, когда другой голос уже ушёл
                     return 0;
@@ -69,26 +69,26 @@ namespace Compositor.Rules.TwoVoices
     }
 
 
-    class SusPassRule2 : TwoVoicesRule
+    class SusPassResolutionRule : TwoVoicesRule
     {
         private bool _upperDissonates;
 
         public override bool _IsApplicable()
         {
-            if (LastNote.Suspension)
-            {
-                _upperDissonates = (LastNote.Note1.TimeStart.Position > LastNote.Note2.TimeStart.Position);
-                return true;
-            }
+            if (!LastNote.Suspension) return false;
 
-            return false;
+            _upperDissonates = (LastNote.Note1.TimeStart.Position > LastNote.Note2.TimeStart.Position);
+            return true;
         }
 
         public override double Apply(TwoNotes nextNotes)
         {
+            if (nextNotes.Interval == null) //нельзя повиснуть
+                return 0;
+
             var checking = _upperDissonates ? nextNotes.Note2 : nextNotes.Note1;
 
-            bool cambiata = ((checking.TimeStart.Position % 4 == 2) && (checking.Duration == 2) && (checking.Leap.Degrees == -2));
+            var cambiata = ((checking.TimeStart.Position % 4 == 2) && (checking.Duration == 2) && (checking.Leap.Degrees == -2));
             return (checking.Leap.Degrees == -1 || cambiata) ? 1 : 0;
         }
     }

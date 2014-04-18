@@ -15,7 +15,7 @@ namespace Compositor.Rules.TwoVoices
         public override double Apply(TwoNotes nextNotes)
         {
             var i = nextNotes.Interval;
-            return ((i.Degrees != 3) && i.Consonance) ? 1 : 0;
+            return i == null || i.Degrees != 3 && i.Consonance ? 1 : 0;
         }
     }
 
@@ -26,7 +26,7 @@ namespace Compositor.Rules.TwoVoices
         public override bool _IsApplicable()
         {
             var i = LastNote.Interval;
-            if (!i.PerfectConsonance && i.ModDeg != 4) return false;
+            if (i == null || !i.PerfectConsonance && i.ModDeg != 4) return false;
 
             _degrees = i.ModDeg;
             return true;
@@ -34,8 +34,8 @@ namespace Compositor.Rules.TwoVoices
 
         public override double Apply(TwoNotes nextNotes)
         {
-            var i = nextNotes.Interval.ModDeg;
-            return (_degrees == i) ? 0 : 1;
+            var i = nextNotes.Interval;
+            return i == null || _degrees != i.ModDeg ? 1 : 0;
         }
     }
 
@@ -51,7 +51,7 @@ namespace Compositor.Rules.TwoVoices
             try
             {
                 var i = takedAtEnumerator.Last().Interval;
-                if (i.PerfectConsonance || i.ModDeg == 4)
+                if (i != null && (i.PerfectConsonance || i.ModDeg == 4))
                 {
                     _degrees = i.ModDeg;
                     return true;
@@ -67,8 +67,11 @@ namespace Compositor.Rules.TwoVoices
 
         public override double Apply(TwoNotes nextNotes)
         {
-            var i = nextNotes.Interval.ModDeg;
-            return (_degrees == i) ? 0 : 1;
+            var i = nextNotes.Interval;
+            if (i == null)
+                return 1;
+
+            return (_degrees == i.ModDeg) ? 0 : 1;
         }
     }
 
@@ -82,9 +85,10 @@ namespace Compositor.Rules.TwoVoices
 
         public override double Apply(TwoNotes nextNotes)
         {
-            return ((nextNotes.Interval.PerfectConsonance) &&
-                (nextNotes.Note1.Leap.Upwards == nextNotes.Note2.Leap.Upwards) &&
-                (nextNotes.Note1.Leap.IsLeap)) ? 0 : 1;
+            return (nextNotes.Interval != null &&
+                    nextNotes.Interval.PerfectConsonance &&
+                    nextNotes.Note1.Leap.Upwards == nextNotes.Note2.Leap.Upwards &&
+                    nextNotes.Note1.Leap.IsLeap) ? 0 : 1;
         }
     }
 

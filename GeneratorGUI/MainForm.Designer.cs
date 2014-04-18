@@ -38,27 +38,34 @@
             this.clefList = new System.Windows.Forms.ListBox();
             this.barCountLabel = new System.Windows.Forms.Label();
             this.engraveButton = new System.Windows.Forms.Button();
-            this.drawGraphButton = new System.Windows.Forms.Button();
             this.randSeedDD = new System.Windows.Forms.NumericUpDown();
             this.maxSteps = new System.Windows.Forms.NumericUpDown();
             this.seedLabel = new System.Windows.Forms.Label();
             this.stepLimitLabel = new System.Windows.Forms.Label();
-            this.gvOut = new System.Windows.Forms.TextBox();
-            this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.playButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.settingsButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.generationProgressBar = new System.Windows.Forms.ProgressBar();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.imitationSettingsBox = new System.Windows.Forms.GroupBox();
+            this.imitationEnabled = new System.Windows.Forms.CheckBox();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.ImitationTopFirst = new System.Windows.Forms.RadioButton();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.imitationInterval = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxSteps)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
-            this.splitContainer.Panel1.SuspendLayout();
-            this.splitContainer.Panel2.SuspendLayout();
-            this.splitContainer.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.imitationSettingsBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // outputArea
@@ -68,11 +75,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.outputArea.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.outputArea.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.outputArea.Location = new System.Drawing.Point(3, 3);
+            this.outputArea.Location = new System.Drawing.Point(308, 12);
             this.outputArea.Multiline = true;
             this.outputArea.Name = "outputArea";
             this.outputArea.ReadOnly = true;
-            this.outputArea.Size = new System.Drawing.Size(310, 367);
+            this.outputArea.Size = new System.Drawing.Size(386, 521);
             this.outputArea.TabIndex = 1;
             // 
             // modiList
@@ -114,7 +121,7 @@
             // perfectTime
             // 
             this.perfectTime.AutoSize = true;
-            this.perfectTime.Location = new System.Drawing.Point(301, 19);
+            this.perfectTime.Location = new System.Drawing.Point(10, 19);
             this.perfectTime.Name = "perfectTime";
             this.perfectTime.Size = new System.Drawing.Size(42, 17);
             this.perfectTime.TabIndex = 4;
@@ -125,7 +132,7 @@
             // 
             this.imperfectTime.AutoSize = true;
             this.imperfectTime.Checked = true;
-            this.imperfectTime.Location = new System.Drawing.Point(367, 19);
+            this.imperfectTime.Location = new System.Drawing.Point(10, 42);
             this.imperfectTime.Name = "imperfectTime";
             this.imperfectTime.Size = new System.Drawing.Size(42, 17);
             this.imperfectTime.TabIndex = 5;
@@ -135,7 +142,7 @@
             // 
             // barsCount
             // 
-            this.barsCount.Location = new System.Drawing.Point(301, 60);
+            this.barsCount.Location = new System.Drawing.Point(89, 39);
             this.barsCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -152,9 +159,8 @@
             // 
             // makeButton
             // 
-            this.makeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.makeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.makeButton.Location = new System.Drawing.Point(88, 66);
+            this.makeButton.Location = new System.Drawing.Point(11, 515);
             this.makeButton.Name = "makeButton";
             this.makeButton.Size = new System.Drawing.Size(128, 48);
             this.makeButton.TabIndex = 7;
@@ -178,11 +184,12 @@
             this.clefList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.clefList.Size = new System.Drawing.Size(79, 95);
             this.clefList.TabIndex = 8;
+            this.clefList.SelectedIndexChanged += new System.EventHandler(this.UpdateImitationSettingsEnabled);
             // 
             // barCountLabel
             // 
             this.barCountLabel.AutoSize = true;
-            this.barCountLabel.Location = new System.Drawing.Point(298, 44);
+            this.barCountLabel.Location = new System.Drawing.Point(86, 23);
             this.barCountLabel.Name = "barCountLabel";
             this.barCountLabel.Size = new System.Drawing.Size(103, 13);
             this.barCountLabel.TabIndex = 10;
@@ -192,7 +199,7 @@
             // 
             this.engraveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.engraveButton.Enabled = false;
-            this.engraveButton.Location = new System.Drawing.Point(207, 374);
+            this.engraveButton.Location = new System.Drawing.Point(588, 539);
             this.engraveButton.Name = "engraveButton";
             this.engraveButton.Size = new System.Drawing.Size(106, 25);
             this.engraveButton.TabIndex = 12;
@@ -200,22 +207,9 @@
             this.engraveButton.UseVisualStyleBackColor = true;
             this.engraveButton.Click += new System.EventHandler(this.engraveButton_Click);
             // 
-            // drawGraphButton
-            // 
-            this.drawGraphButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.drawGraphButton.Enabled = false;
-            this.drawGraphButton.Location = new System.Drawing.Point(213, 375);
-            this.drawGraphButton.Name = "drawGraphButton";
-            this.drawGraphButton.Size = new System.Drawing.Size(106, 23);
-            this.drawGraphButton.TabIndex = 14;
-            this.drawGraphButton.Text = "Рисовать";
-            this.drawGraphButton.UseVisualStyleBackColor = true;
-            this.drawGraphButton.Click += new System.EventHandler(this.drawGraphButton_Click);
-            // 
             // randSeedDD
             // 
-            this.randSeedDD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.randSeedDD.Location = new System.Drawing.Point(87, 20);
+            this.randSeedDD.Location = new System.Drawing.Point(87, 19);
             this.randSeedDD.Maximum = new decimal(new int[] {
             -559939585,
             902409669,
@@ -227,20 +221,19 @@
             0,
             -2147483648});
             this.randSeedDD.Name = "randSeedDD";
-            this.randSeedDD.Size = new System.Drawing.Size(127, 20);
+            this.randSeedDD.Size = new System.Drawing.Size(108, 20);
             this.randSeedDD.TabIndex = 15;
             // 
             // maxSteps
             // 
-            this.maxSteps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.maxSteps.Location = new System.Drawing.Point(87, 42);
+            this.maxSteps.Location = new System.Drawing.Point(87, 41);
             this.maxSteps.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
             this.maxSteps.Name = "maxSteps";
-            this.maxSteps.Size = new System.Drawing.Size(127, 20);
+            this.maxSteps.Size = new System.Drawing.Size(108, 20);
             this.maxSteps.TabIndex = 16;
             this.maxSteps.Value = new decimal(new int[] {
             5000,
@@ -250,9 +243,8 @@
             // 
             // seedLabel
             // 
-            this.seedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.seedLabel.AutoSize = true;
-            this.seedLabel.Location = new System.Drawing.Point(46, 21);
+            this.seedLabel.Location = new System.Drawing.Point(46, 20);
             this.seedLabel.Name = "seedLabel";
             this.seedLabel.Size = new System.Drawing.Size(38, 13);
             this.seedLabel.TabIndex = 17;
@@ -260,57 +252,18 @@
             // 
             // stepLimitLabel
             // 
-            this.stepLimitLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.stepLimitLabel.AutoSize = true;
-            this.stepLimitLabel.Location = new System.Drawing.Point(10, 44);
+            this.stepLimitLabel.Location = new System.Drawing.Point(10, 43);
             this.stepLimitLabel.Name = "stepLimitLabel";
             this.stepLimitLabel.Size = new System.Drawing.Size(74, 13);
             this.stepLimitLabel.TabIndex = 17;
             this.stepLimitLabel.Text = "Лимит шагов";
             // 
-            // gvOut
-            // 
-            this.gvOut.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gvOut.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.gvOut.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.gvOut.Location = new System.Drawing.Point(3, 3);
-            this.gvOut.Multiline = true;
-            this.gvOut.Name = "gvOut";
-            this.gvOut.ReadOnly = true;
-            this.gvOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.gvOut.Size = new System.Drawing.Size(316, 367);
-            this.gvOut.TabIndex = 9;
-            // 
-            // splitContainer
-            // 
-            this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer.IsSplitterFixed = true;
-            this.splitContainer.Location = new System.Drawing.Point(12, 137);
-            this.splitContainer.Name = "splitContainer";
-            // 
-            // splitContainer.Panel1
-            // 
-            this.splitContainer.Panel1.Controls.Add(this.playButton);
-            this.splitContainer.Panel1.Controls.Add(this.outputArea);
-            this.splitContainer.Panel1.Controls.Add(this.engraveButton);
-            // 
-            // splitContainer.Panel2
-            // 
-            this.splitContainer.Panel2.Controls.Add(this.gvOut);
-            this.splitContainer.Panel2.Controls.Add(this.drawGraphButton);
-            this.splitContainer.Size = new System.Drawing.Size(647, 402);
-            this.splitContainer.SplitterDistance = 315;
-            this.splitContainer.TabIndex = 18;
-            // 
             // playButton
             // 
             this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.playButton.Enabled = false;
-            this.playButton.Location = new System.Drawing.Point(95, 373);
+            this.playButton.Location = new System.Drawing.Point(476, 539);
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(106, 25);
             this.playButton.TabIndex = 13;
@@ -320,24 +273,19 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.settingsButton);
-            this.groupBox1.Controls.Add(this.barCountLabel);
             this.groupBox1.Controls.Add(this.clefList);
-            this.groupBox1.Controls.Add(this.barsCount);
-            this.groupBox1.Controls.Add(this.imperfectTime);
-            this.groupBox1.Controls.Add(this.perfectTime);
             this.groupBox1.Controls.Add(this.startNotes);
             this.groupBox1.Controls.Add(this.modiList);
             this.groupBox1.Location = new System.Drawing.Point(12, 7);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(415, 124);
+            this.groupBox1.Size = new System.Drawing.Size(290, 127);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Параметры мелодии";
+            this.groupBox1.Text = "Лад и ключи";
             // 
             // settingsButton
             // 
-            this.settingsButton.Location = new System.Drawing.Point(301, 86);
+            this.settingsButton.Location = new System.Drawing.Point(88, 68);
             this.settingsButton.Name = "settingsButton";
             this.settingsButton.Size = new System.Drawing.Size(107, 27);
             this.settingsButton.TabIndex = 11;
@@ -348,13 +296,13 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.stepLimitLabel);
+            this.groupBox2.Controls.Add(this.settingsButton);
             this.groupBox2.Controls.Add(this.seedLabel);
             this.groupBox2.Controls.Add(this.maxSteps);
             this.groupBox2.Controls.Add(this.randSeedDD);
-            this.groupBox2.Controls.Add(this.makeButton);
-            this.groupBox2.Location = new System.Drawing.Point(433, 7);
+            this.groupBox2.Location = new System.Drawing.Point(11, 407);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(222, 123);
+            this.groupBox2.Size = new System.Drawing.Size(203, 102);
             this.groupBox2.TabIndex = 20;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Параметры генерации";
@@ -363,37 +311,168 @@
             // 
             this.generationProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.generationProgressBar.Location = new System.Drawing.Point(12, 546);
+            this.generationProgressBar.Location = new System.Drawing.Point(11, 570);
             this.generationProgressBar.Name = "generationProgressBar";
-            this.generationProgressBar.Size = new System.Drawing.Size(647, 22);
+            this.generationProgressBar.Size = new System.Drawing.Size(683, 22);
             this.generationProgressBar.TabIndex = 21;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.perfectTime);
+            this.groupBox3.Controls.Add(this.imperfectTime);
+            this.groupBox3.Controls.Add(this.barCountLabel);
+            this.groupBox3.Controls.Add(this.barsCount);
+            this.groupBox3.Location = new System.Drawing.Point(11, 144);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(203, 68);
+            this.groupBox3.TabIndex = 22;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Размер и продолжительность";
+            // 
+            // imitationSettingsBox
+            // 
+            this.imitationSettingsBox.Controls.Add(this.radioButton2);
+            this.imitationSettingsBox.Controls.Add(this.ImitationTopFirst);
+            this.imitationSettingsBox.Controls.Add(this.label4);
+            this.imitationSettingsBox.Controls.Add(this.label3);
+            this.imitationSettingsBox.Controls.Add(this.numericUpDown1);
+            this.imitationSettingsBox.Controls.Add(this.label2);
+            this.imitationSettingsBox.Controls.Add(this.label1);
+            this.imitationSettingsBox.Controls.Add(this.imitationInterval);
+            this.imitationSettingsBox.Enabled = false;
+            this.imitationSettingsBox.Location = new System.Drawing.Point(12, 246);
+            this.imitationSettingsBox.Name = "imitationSettingsBox";
+            this.imitationSettingsBox.Size = new System.Drawing.Size(255, 155);
+            this.imitationSettingsBox.TabIndex = 23;
+            this.imitationSettingsBox.TabStop = false;
+            this.imitationSettingsBox.Text = "Параметры имитации";
+            // 
+            // imitationEnabled
+            // 
+            this.imitationEnabled.AutoSize = true;
+            this.imitationEnabled.Location = new System.Drawing.Point(18, 223);
+            this.imitationEnabled.Name = "imitationEnabled";
+            this.imitationEnabled.Size = new System.Drawing.Size(77, 17);
+            this.imitationEnabled.TabIndex = 8;
+            this.imitationEnabled.Text = "Имитация";
+            this.imitationEnabled.UseVisualStyleBackColor = true;
+            this.imitationEnabled.CheckedChanged += new System.EventHandler(this.UpdateImitationSettingsEnabled);
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Checked = true;
+            this.radioButton2.Location = new System.Drawing.Point(9, 71);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(65, 17);
+            this.radioButton2.TabIndex = 7;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Нижний";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // ImitationTopFirst
+            // 
+            this.ImitationTopFirst.AutoSize = true;
+            this.ImitationTopFirst.Location = new System.Drawing.Point(9, 48);
+            this.ImitationTopFirst.Name = "ImitationTopFirst";
+            this.ImitationTopFirst.Size = new System.Drawing.Size(67, 17);
+            this.ImitationTopFirst.TabIndex = 6;
+            this.ImitationTopFirst.Text = "Верхний";
+            this.ImitationTopFirst.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(5, 32);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(56, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Пропоста";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(81, 124);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(62, 13);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "половиных";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(10, 122);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(65, 20);
+            this.numericUpDown1.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 106);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(67, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Расстояние";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(147, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(56, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Интервал";
+            // 
+            // imitationInterval
+            // 
+            this.imitationInterval.FormattingEnabled = true;
+            this.imitationInterval.Items.AddRange(new object[] {
+            "Прима",
+            "Секунда",
+            "Терция",
+            "Кварта",
+            "Квинта",
+            "Секста",
+            "Септима",
+            "Октава",
+            "Нона",
+            "Децима"});
+            this.imitationInterval.Location = new System.Drawing.Point(150, 32);
+            this.imitationInterval.Name = "imitationInterval";
+            this.imitationInterval.Size = new System.Drawing.Size(94, 108);
+            this.imitationInterval.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(667, 574);
+            this.ClientSize = new System.Drawing.Size(702, 598);
+            this.Controls.Add(this.imitationEnabled);
+            this.Controls.Add(this.imitationSettingsBox);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.engraveButton);
+            this.Controls.Add(this.playButton);
+            this.Controls.Add(this.makeButton);
             this.Controls.Add(this.generationProgressBar);
+            this.Controls.Add(this.outputArea);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.splitContainer);
             this.Name = "MainForm";
             this.Text = "Генератор мелодий";
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxSteps)).EndInit();
-            this.splitContainer.Panel1.ResumeLayout(false);
-            this.splitContainer.Panel1.PerformLayout();
-            this.splitContainer.Panel2.ResumeLayout(false);
-            this.splitContainer.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
-            this.splitContainer.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.imitationSettingsBox.ResumeLayout(false);
+            this.imitationSettingsBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -409,18 +488,26 @@
         private System.Windows.Forms.ListBox clefList;
         private System.Windows.Forms.Label barCountLabel;
         private System.Windows.Forms.Button engraveButton;
-        private System.Windows.Forms.Button drawGraphButton;
         private System.Windows.Forms.NumericUpDown randSeedDD;
         private System.Windows.Forms.NumericUpDown maxSteps;
         private System.Windows.Forms.Label seedLabel;
         private System.Windows.Forms.Label stepLimitLabel;
-        private System.Windows.Forms.TextBox gvOut;
-        private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button playButton;
         private System.Windows.Forms.Button settingsButton;
         private System.Windows.Forms.ProgressBar generationProgressBar;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox imitationSettingsBox;
+        private System.Windows.Forms.ListBox imitationInterval;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton ImitationTopFirst;
+        private System.Windows.Forms.CheckBox imitationEnabled;
 
     }
 }

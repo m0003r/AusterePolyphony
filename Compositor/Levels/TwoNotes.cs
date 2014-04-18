@@ -25,7 +25,15 @@ namespace Compositor.Levels
             Freqs = null;
         }
 
-        public Interval Interval { get { return Note1.Pitch - Note2.Pitch; } }
+        public Interval Interval
+        {
+            get
+            {
+                if (Note1.Pitch == null || Note2.Pitch == null) return null;
+
+                return Note1.Pitch - Note2.Pitch;
+            }
+        }
 
         public Time TimeStart { get { return UpperChanged ? Note1.TimeStart : Note2.TimeStart; } }
         public Time TimeEnd { get { return (Note1.TimeEnd.Position > Note2.TimeEnd.Position) ? Note1.TimeEnd : Note2.TimeEnd; } }

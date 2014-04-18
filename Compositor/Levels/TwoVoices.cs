@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compositor.Generators;
 using Compositor.Rules.Base;
 using Compositor.Rules.TwoVoices;
 using PitchBase;
@@ -21,8 +22,8 @@ namespace Compositor.Levels
     [Rule(typeof(ComplementRule))]
     [Rule(typeof(ComplementRule2))]
     [Rule(typeof(DenyCrossing))]
-    [Rule(typeof(SusPassRule1))]
-    [Rule(typeof(SusPassRule2))]
+    [Rule(typeof(SusPassTakeRule))]
+    [Rule(typeof(SusPassResolutionRule))]
 
 
     public class TwoVoices : RuledLevel
@@ -36,6 +37,7 @@ namespace Compositor.Levels
 
         public Time Time { get; private set; }
 
+
         public TwoVoices(Clef clef1, Clef clef2, Modus modus, Time time)
         {
             Time = time;
@@ -44,7 +46,7 @@ namespace Compositor.Levels
             Voice2 = new Voice(clef2, modus, time, VoiceType.Bass);
 
             Twonotes = new List<TwoNotes>();
-            FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
+            GenerateFirstFreqs();
 
             var keys = new List<IDeniable>(FirstFreqs.Keys);
             foreach (var key in keys.Where(key => ((TwoNotes)key).Interval.ModDeg == 3))
@@ -52,6 +54,20 @@ namespace Compositor.Levels
 
             FirstNote();
             Filtered = true;
+        }
+
+        private void GenerateFirstFreqs()
+        {
+/*            if (ImitationSettings != null)
+            {
+                var pause = new Note(null, Time, ImitationSettings.Delay);
+                if (ImitationSettings.TopFirst)
+                    Voice2.SetDelay(pause);
+                else
+                    Voice1.SetDelay(pause);
+            }*/
+
+            FirstFreqs = CombineFreqs(Voice1.Freqs, Voice2.Freqs);
         }
 
         public override void AddVariants()
@@ -103,7 +119,7 @@ namespace Compositor.Levels
             return Math.Sqrt(f1*f2);
         }
 
-        private FreqsDict CombineFreqs(FreqsDict f1, FreqsDict f2)
+        private static FreqsDict CombineFreqs(FreqsDict f1, FreqsDict f2)
         {
             var result = new FreqsDict();
             foreach (var n1 in f1)
@@ -156,7 +172,10 @@ namespace Compositor.Levels
                     Voice2.RemoveLast(false);
 
                 if (ban)
+                {
                     newLast.Freqs[removed] = 0;
+                    removed.IsBanned = true;
+                }
 
                 Freqs = newLast.Freqs;
 
@@ -173,6 +192,9 @@ namespace Compositor.Levels
                 Twonotes.RemoveAt(0);
                 FirstFreqs[removed] = 0;
 
+                if (ban)
+                    removed.IsBanned = true;
+
                 FirstNote();
 
                 Time.Position = 0;
@@ -188,6 +210,12 @@ namespace Compositor.Levels
         internal bool Finished()
         {
             return (Voice1.Finished() && Voice2.Finished());
+        }
+
+        public void SetMirroring(Voice source, Voice dest, ImitationSettings imitationSettings)
+        {
+            dest.SetMirroring(imitationSettings, source);
+            GenerateFirstFreqs();
         }
     }
 }
