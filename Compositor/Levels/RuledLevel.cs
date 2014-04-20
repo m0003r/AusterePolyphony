@@ -60,7 +60,7 @@ namespace Compositor.Levels
 
         public abstract void AddVariants();
 
-        public FreqsDict Filter()
+        public virtual FreqsDict Filter()
         {
             if (Filtered)
                 return Freqs;

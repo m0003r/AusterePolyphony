@@ -46,9 +46,12 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.settingsButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.generationProgressBar = new System.Windows.Forms.ProgressBar();
+            this.stepsProgressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.imitationSettingsBox = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.imitationRange = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.ImitationTopFirst = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
@@ -58,9 +61,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.imitationInterval = new System.Windows.Forms.ListBox();
             this.imitationEnabled = new System.Windows.Forms.CheckBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.imitationRange = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
+            this.melodyProgressBar = new System.Windows.Forms.ProgressBar();
+            this.rollbacksProgressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.barsCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.randSeedDD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxSteps)).BeginInit();
@@ -68,8 +70,8 @@
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.imitationSettingsBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imitationDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imitationRange)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imitationDelay)).BeginInit();
             this.SuspendLayout();
             // 
             // outputArea
@@ -83,7 +85,7 @@
             this.outputArea.Multiline = true;
             this.outputArea.Name = "outputArea";
             this.outputArea.ReadOnly = true;
-            this.outputArea.Size = new System.Drawing.Size(386, 521);
+            this.outputArea.Size = new System.Drawing.Size(381, 520);
             this.outputArea.TabIndex = 1;
             // 
             // modiList
@@ -203,7 +205,7 @@
             // 
             this.engraveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.engraveButton.Enabled = false;
-            this.engraveButton.Location = new System.Drawing.Point(588, 539);
+            this.engraveButton.Location = new System.Drawing.Point(583, 538);
             this.engraveButton.Name = "engraveButton";
             this.engraveButton.Size = new System.Drawing.Size(106, 25);
             this.engraveButton.TabIndex = 12;
@@ -232,7 +234,7 @@
             // 
             this.maxSteps.Location = new System.Drawing.Point(87, 41);
             this.maxSteps.Maximum = new decimal(new int[] {
-            100000,
+            1000000,
             0,
             0,
             0});
@@ -267,7 +269,7 @@
             // 
             this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.playButton.Enabled = false;
-            this.playButton.Location = new System.Drawing.Point(476, 539);
+            this.playButton.Location = new System.Drawing.Point(471, 538);
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(106, 25);
             this.playButton.TabIndex = 13;
@@ -311,14 +313,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Параметры генерации";
             // 
-            // generationProgressBar
+            // stepsProgressBar
             // 
-            this.generationProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.stepsProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.generationProgressBar.Location = new System.Drawing.Point(11, 570);
-            this.generationProgressBar.Name = "generationProgressBar";
-            this.generationProgressBar.Size = new System.Drawing.Size(683, 22);
-            this.generationProgressBar.TabIndex = 21;
+            this.stepsProgressBar.Location = new System.Drawing.Point(11, 569);
+            this.stepsProgressBar.Name = "stepsProgressBar";
+            this.stepsProgressBar.Size = new System.Drawing.Size(678, 10);
+            this.stepsProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.stepsProgressBar.TabIndex = 21;
+            this.stepsProgressBar.Click += new System.EventHandler(this.generationProgressBar_Click);
             // 
             // groupBox3
             // 
@@ -353,6 +357,36 @@
             this.imitationSettingsBox.TabIndex = 23;
             this.imitationSettingsBox.TabStop = false;
             this.imitationSettingsBox.Text = "Параметры имитации";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(83, 131);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(41, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "тактов";
+            // 
+            // imitationRange
+            // 
+            this.imitationRange.Location = new System.Drawing.Point(12, 129);
+            this.imitationRange.Name = "imitationRange";
+            this.imitationRange.Size = new System.Drawing.Size(65, 20);
+            this.imitationRange.TabIndex = 9;
+            this.imitationRange.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 113);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(111, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "Продолжительность";
             // 
             // radioButton2
             // 
@@ -454,51 +488,44 @@
             this.imitationEnabled.UseVisualStyleBackColor = true;
             this.imitationEnabled.CheckedChanged += new System.EventHandler(this.UpdateImitationSettingsEnabled);
             // 
-            // label5
+            // melodyProgressBar
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(83, 131);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "тактов";
+            this.melodyProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.melodyProgressBar.Location = new System.Drawing.Point(353, 585);
+            this.melodyProgressBar.Name = "melodyProgressBar";
+            this.melodyProgressBar.Size = new System.Drawing.Size(336, 10);
+            this.melodyProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.melodyProgressBar.TabIndex = 24;
             // 
-            // imitationRange
+            // rollbacksProgressBar
             // 
-            this.imitationRange.Location = new System.Drawing.Point(12, 129);
-            this.imitationRange.Name = "imitationRange";
-            this.imitationRange.Size = new System.Drawing.Size(65, 20);
-            this.imitationRange.TabIndex = 9;
-            this.imitationRange.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 113);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(111, 13);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "Продолжительность";
+            this.rollbacksProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rollbacksProgressBar.Location = new System.Drawing.Point(12, 585);
+            this.rollbacksProgressBar.Name = "rollbacksProgressBar";
+            this.rollbacksProgressBar.Size = new System.Drawing.Size(335, 10);
+            this.rollbacksProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.rollbacksProgressBar.TabIndex = 25;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(702, 598);
+            this.ClientSize = new System.Drawing.Size(697, 597);
+            this.Controls.Add(this.rollbacksProgressBar);
+            this.Controls.Add(this.melodyProgressBar);
             this.Controls.Add(this.imitationEnabled);
             this.Controls.Add(this.imitationSettingsBox);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.engraveButton);
             this.Controls.Add(this.playButton);
             this.Controls.Add(this.makeButton);
-            this.Controls.Add(this.generationProgressBar);
+            this.Controls.Add(this.stepsProgressBar);
             this.Controls.Add(this.outputArea);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Генератор мелодий";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -512,8 +539,8 @@
             this.groupBox3.PerformLayout();
             this.imitationSettingsBox.ResumeLayout(false);
             this.imitationSettingsBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imitationDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imitationRange)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imitationDelay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -539,7 +566,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button playButton;
         private System.Windows.Forms.Button settingsButton;
-        private System.Windows.Forms.ProgressBar generationProgressBar;
+        private System.Windows.Forms.ProgressBar stepsProgressBar;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox imitationSettingsBox;
         private System.Windows.Forms.ListBox imitationInterval;
@@ -554,6 +581,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown imitationRange;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ProgressBar melodyProgressBar;
+        private System.Windows.Forms.ProgressBar rollbacksProgressBar;
 
     }
 }

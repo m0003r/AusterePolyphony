@@ -144,13 +144,13 @@ namespace Compositor.Levels
             Time -= n.Duration;
             NotesList.RemoveAt(NotesList.Count - 1);
 
-            if (_imitationSettings != null)
+            /*if (_imitationSettings != null)
                 //if (Time.Position <= _imitationSettings.Range)
                 {
                     Filtered = false;
                     if (NoteCount > 0)
                         NotesList.Last().Filtered = false;
-                }
+                }*/
 
             if (NotesList.Count > 0)
             {
@@ -183,26 +183,36 @@ namespace Compositor.Levels
 
                 Freqs = lastNote.Filter();
 
-                if (_imitationSettings == null || Time.Position >= _imitationSettings.Range)
-                    return;
 
-                //TODO: it must be RULE!
-                var sourceNote = _imitationSource[NoteCount - 1];
-
-                foreach (var key in Freqs.Keys.ToList())
-                {
-                    var note = key as Note;
-                    if (note == null)
-                        continue;
-
-                    var interval = note.Pitch - sourceNote.Pitch;
-                    if (interval.AbsDeg == _imitationSettings.Interval.AbsDeg && note.Duration == sourceNote.Duration)
-                        continue;
-
-                    Freqs[key] = 0;
-                    key.IsBanned = true;
-                }
             }
+        }
+
+        public override FreqsDict Filter()
+        {
+            if (!Filtered)
+                base.Filter();
+
+            if (_imitationSettings == null || Time.Position >= _imitationSettings.Range)
+                return Freqs;
+
+            var restrictedFreqs = new FreqsDict(Freqs);
+
+            var sourceNote = _imitationSource[NoteCount - 1];
+
+            foreach (var key in Freqs.Keys.ToList())
+            {
+                var note = key as Note;
+                if (note == null)
+                    continue;
+
+                var interval = note.Pitch - sourceNote.Pitch;
+                if (interval.AbsDeg == _imitationSettings.Interval && note.Duration == sourceNote.Duration)
+                    continue;
+
+                restrictedFreqs[key] = 0;
+            }
+
+            return restrictedFreqs;
         }
 
         private void UpdateFreqs()

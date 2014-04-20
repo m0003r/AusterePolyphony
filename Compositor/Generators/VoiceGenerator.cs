@@ -21,6 +21,7 @@ namespace Compositor.Generators
         public int StepLimit { get; private set; }
 
         readonly IChooseNextStrategy _chooseStrategy;
+        private int _rollback;
 
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
@@ -62,9 +63,10 @@ namespace Compositor.Generators
             return Generate(length, null);
         }
 
-        public int Generate(uint length, Func<int, bool> callback)
+        public int Generate(uint length, Func<GenerationInfo, bool> callback)
         {
             var lengthInBeats = length * (uint)Voice.Time.Beats * 4;
+            _rollback = 0;
             var steps = 0;
 
             Voice.SetLength(lengthInBeats);
@@ -76,7 +78,7 @@ namespace Compositor.Generators
                     Step();
                     steps++;
                     if (callback != null)
-                        callback(steps);
+                        callback(new GenerationInfo(steps, Voice.Time.Position, _rollback));
                 }
             }
             catch (StopGeneration)
@@ -97,6 +99,7 @@ namespace Compositor.Generators
                 ChooseNextNote();
             else
             {
+                _rollback++;
                 if (Voice.NoteCount > 0)
                     Voice.RemoveLast();
                 else

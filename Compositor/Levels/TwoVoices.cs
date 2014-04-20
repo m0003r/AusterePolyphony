@@ -63,12 +63,9 @@ namespace Compositor.Levels
 
         public override void AddVariants()
         {
-            var filtered1 = Voice1.Filter();
-            var filtered2 = Voice2.Filter();
-
             if (Voice1.NoteCount == 0)
             {
-                AddTwoNotesVariants(filtered1, filtered2);
+                AddTwoNotesVariants(Voice1.Filter(), Voice2.Filter());
             }
             else
             {
@@ -77,11 +74,11 @@ namespace Compositor.Levels
 
                 int diff = l1.TimeEnd.Position - l2.TimeEnd.Position;
                 if (diff == 0)
-                    AddTwoNotesVariants(filtered1, filtered2);
+                    AddTwoNotesVariants(Voice1.Filter(), Voice2.Filter());
                 else if (diff < 0)
-                    AddToVoice1Variants(filtered1, l2);
+                    AddToVoice1Variants(Voice1.Filter(), l2);
                 else
-                    AddToVoice2Variants(l1, filtered2);
+                    AddToVoice2Variants(l1, Voice2.Filter());
             }
 
         }

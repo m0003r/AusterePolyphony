@@ -39,9 +39,10 @@ namespace GeneratorGUI
 
 
             InitGenerator(clefs, startNotes.SelectedIndex, perfectTime.Checked, (int) randSeedDD.Value, (int) maxSteps.Value);
-            generationProgressBar.Maximum = (int) maxSteps.Value;
-            generationProgressBar.Minimum = 0;
-            generationProgressBar.Value = 0;
+            stepsProgressBar.Maximum = rollbacksProgressBar.Maximum = (int) maxSteps.Value;
+            melodyProgressBar.Maximum = (int)barsCount.Value * (perfectTime.Checked ? 12 : 16);
+            stepsProgressBar.Minimum = rollbacksProgressBar.Minimum = melodyProgressBar.Minimum = 0;
+            stepsProgressBar.Value = rollbacksProgressBar.Minimum = melodyProgressBar.Minimum = 0;
 
 
             _generatorThread = new Thread(Generate);
@@ -56,8 +57,16 @@ namespace GeneratorGUI
             Invoke(new Action<bool>(b => makeButton.Enabled = b), false);
             _steps = _generator.Generate((uint) barsCount.Value, s =>
             {
-                if (s%50 == 0)
-                    Invoke(new Action<int>(i => generationProgressBar.Value = i), s);
+                if (s.Steps%50 == 0)
+                {
+                    Invoke(new Action<int>(i => stepsProgressBar.Value = i), s.Steps);                    
+                    Invoke(new Action<int>(i => { if (i <= melodyProgressBar.Maximum) melodyProgressBar.Value = i; }), s.Duration);
+                }
+                if (s.Rollback%50 == 0)
+                {
+                    Invoke(new Action<int>(i => rollbacksProgressBar.Value = i), s.Rollback);
+                    Invoke(new Action<int>(i => melodyProgressBar.Value = i), s.Duration);
+                }
                 return true;
             });
             Console.WriteLine(Resources.FilteringGenerationTime, Timer.Total("filter"), Timer.Stop("generator"));
@@ -73,7 +82,7 @@ namespace GeneratorGUI
             }
             else
             {
-                Invoke(new Action<int>(i => generationProgressBar.Value = i), (int)maxSteps.Value);
+                Invoke(new Action<int>(i => stepsProgressBar.Value = i), (int)maxSteps.Value);
                 Invoke(new Action(PrepareOutput));
             }
             Invoke(new Action<bool>(b => makeButton.Enabled = b), true);
@@ -117,7 +126,7 @@ namespace GeneratorGUI
                     ImitationTopFirst.Checked,
                     new ImitationSettings(
                         (int) imitationDelay.Value * 4,
-                        new Interval((IntervalType)imitationInterval.SelectedIndex),
+                        (IntervalType)imitationInterval.SelectedIndex,
                         (int) imitationRange.Value*time.BarLength));
             }
 
@@ -264,6 +273,11 @@ namespace GeneratorGUI
         private void UpdateImitationSettingsEnabled(object sender, EventArgs e)
         {
             imitationSettingsBox.Enabled = (clefList.SelectedIndices.Count == 2) && (imitationEnabled.Checked);
+        }
+
+        private void generationProgressBar_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

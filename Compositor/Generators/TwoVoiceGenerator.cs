@@ -12,13 +12,13 @@ namespace Compositor.Generators
     {
         public bool TopFirst;
         public int Delay;
-        public Interval Interval;
+        public int Interval;
         public int Range;
 
-        public ImitationSettings(int delay, Interval interval, int range)
+        public ImitationSettings(int delay, IntervalType interval, int range)
         {
             Delay = delay;
-            Interval = interval;
+            Interval = (int)interval;
             Range = range;
         }
     }
@@ -31,6 +31,7 @@ namespace Compositor.Generators
 
         
         readonly IChooseNextStrategy _chooseStrategy;
+        private int _rollback;
 
         const double MinimumAccumulatedFrequency = 0.1;
         const double MinimumNoteFrequencyAllowed = 0.02;
@@ -80,9 +81,10 @@ namespace Compositor.Generators
                 Melodies.SetMirroring(Melodies.Voice2, Melodies.Voice1, settings);
         }
 
-        public int Generate(uint length, Func<int, bool> callback)
+        public int Generate(uint length, Func<GenerationInfo, bool> callback)
         {
             var lengthInBeats = length * (uint)Melodies.Time.Beats * 4;
+            _rollback = 0;
             var steps = 0;
 
             Melodies.SetLength(lengthInBeats);
@@ -98,11 +100,12 @@ namespace Compositor.Generators
 
                     steps++;
                     if (callback != null)
-                        callback(steps);
+                        callback(new GenerationInfo(steps, _rollback, Melodies.Time.Position));
 
                 }
             }
-            catch (StopGeneration) { }
+            catch (StopGeneration) { } //-202107752
+            catch (ArgumentOutOfRangeException) { }
 
             return steps;
         }
@@ -117,6 +120,7 @@ namespace Compositor.Generators
                 ChooseNextNote();
             else
             {
+                _rollback++;
                 if (Melodies.NoteCount > 0)
                     Melodies.RemoveLast();
                 else

@@ -28,8 +28,8 @@ namespace Compositor.Rules.TwoVoices
 
     class ComplementRule2 : TwoVoicesRule
     {
-        private const double MinSimultProportion = 0.4;
-        private const double MaxSimultProportion = 0.8;
+        private const double MinSimultProportion = 0.1;
+        private const double MaxSimultProportion = 0.5;
 
         double _simultProportion;
 
