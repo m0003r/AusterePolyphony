@@ -145,8 +145,13 @@ namespace Compositor.Levels
             NotesList.RemoveAt(NotesList.Count - 1);
 
             if (_imitationSettings != null)
-                Filtered = false;
-            
+                //if (Time.Position <= _imitationSettings.Range)
+                {
+                    Filtered = false;
+                    if (NoteCount > 0)
+                        NotesList.Last().Filtered = false;
+                }
+
             if (NotesList.Count > 0)
             {
                 if (ban)

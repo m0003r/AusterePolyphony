@@ -16,7 +16,7 @@ namespace Compositor.Levels
         internal static List<IRule> Rules;
         internal static HashSet<Type> RulesAdded;
 
-        protected bool Filtered;
+        protected internal bool Filtered;
         public FreqsDict Freqs { get; protected set; }
 
         private const double MinimumFrequency = 0.01;
