@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Threading;
 using Compositor.Generators;
+using Compositor.Levels;
+using Compositor.Rules.Base;
 using GeneratorGUI.Properties;
 using PitchBase;
 using System;
@@ -25,6 +27,9 @@ namespace GeneratorGUI
         {
             InitializeComponent();
             _settingsForm = new SettingsForm();
+            var settings = new SimpleSettingsProvider("generator.ini");
+
+            ParamRule.SettingsProvider = settings;
         }
 
         private void makeButton_Click(object sender, EventArgs e)
@@ -39,7 +44,8 @@ namespace GeneratorGUI
 
 
             InitGenerator(clefs, startNotes.SelectedIndex, perfectTime.Checked, (int) randSeedDD.Value, (int) maxSteps.Value);
-            stepsProgressBar.Maximum = rollbacksProgressBar.Maximum = (int) maxSteps.Value;
+            stepsProgressBar.Maximum = (int) maxSteps.Value;
+            rollbacksProgressBar.Maximum = (int)maxSteps.Value / 2 + 100;
             melodyProgressBar.Maximum = (int)barsCount.Value * (perfectTime.Checked ? 12 : 16);
             stepsProgressBar.Minimum = rollbacksProgressBar.Minimum = melodyProgressBar.Minimum = 0;
             stepsProgressBar.Value = rollbacksProgressBar.Minimum = melodyProgressBar.Minimum = 0;
@@ -65,7 +71,7 @@ namespace GeneratorGUI
                 if (s.Rollback%50 == 0)
                 {
                     Invoke(new Action<int>(i => rollbacksProgressBar.Value = i), s.Rollback);
-                    Invoke(new Action<int>(i => melodyProgressBar.Value = i), s.Duration);
+                    Invoke(new Action<int>(i => { if (i <= melodyProgressBar.Maximum) melodyProgressBar.Value = i; }), s.Duration);
                 }
                 return true;
             });
@@ -86,6 +92,13 @@ namespace GeneratorGUI
                 Invoke(new Action(PrepareOutput));
             }
             Invoke(new Action<bool>(b => makeButton.Enabled = b), true);
+
+            var sortedRules = new List<IRule>(RuledLevel.Rules);
+            sortedRules.Sort((a, b) => b.DeniedTimes.CompareTo(a.DeniedTimes));
+            foreach (var r in sortedRules)
+            {
+                Console.WriteLine(@"{0}	{1}", r.GetType().Name, r.ResetDenied());
+            }
         }
 
 
@@ -278,6 +291,11 @@ namespace GeneratorGUI
         private void generationProgressBar_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            (ParamRule.SettingsProvider as SimpleSettingsProvider).Save();
         }
     }
 }

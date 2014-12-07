@@ -1,4 +1,6 @@
-﻿using Compositor.Rules.Base;
+﻿using System;
+using System.Collections.Generic;
+using Compositor.Rules.Base;
 
 namespace Compositor.Levels
 {

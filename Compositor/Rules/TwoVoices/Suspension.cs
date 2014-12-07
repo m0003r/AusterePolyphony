@@ -1,4 +1,5 @@
-﻿using Compositor.Levels;
+﻿using System.Data;
+using Compositor.Levels;
 using Compositor.Rules.Base;
 
 namespace Compositor.Rules.TwoVoices
@@ -23,13 +24,10 @@ namespace Compositor.Rules.TwoVoices
 
         public override bool _IsApplicable()
         {
-            if (LastNote.Interval == null || LastNote.Interval.Consonance)
-            {
-                _lastStrongness = LastNote.TimeStart.Strongness;
-                return true;
-            }
+            if (LastNote.Interval != null && !LastNote.Interval.Consonance) return false;
 
-            return false;
+            _lastStrongness = LastNote.TimeStart.Strongness;
+            return true;
         }
 
         //--1578535889

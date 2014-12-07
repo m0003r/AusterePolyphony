@@ -3,14 +3,14 @@
 namespace Compositor.Rules.Base
 {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-    public class ParamAttribute : Attribute
+    public class RuleParamAttribute : Attribute
     {
         public string ParamName;
         public Type Type;
         public object Default;
         public string Desc;
 
-        public ParamAttribute(string name, Type type, object def, string desc)
+        public RuleParamAttribute(string name, Type type, object def, string desc)
         {
             if ( !type.IsInstanceOfType(def))
                 throw new ArgumentException();
@@ -23,12 +23,13 @@ namespace Compositor.Rules.Base
     }
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
-    class RuleNameAttribute : Attribute
+    class RuleDescriptionAttribute : Attribute
     {
-        public string ParamName { get; set; }
-        public RuleNameAttribute(string name)
+        public string Description { get; private set; }
+
+        public RuleDescriptionAttribute(string desc)
         {
-            ParamName = name;
+            Description = desc;
         }
     }
 

@@ -33,6 +33,7 @@ namespace GeneratorGUI
                 foreach (var n in m.Notes)
                 {
                     notes.Append(n);
+                    notes.AppendFormat("^\"{0}\"_\"{1}\"", n.Uncomp, n.Reserve);
                         
                     notes.Append(" ");
                 }

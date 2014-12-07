@@ -1,55 +1,81 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Compositor.Levels;
 
 namespace Compositor.Rules.Base
 {
-    abstract class ParamRule : IRule, IParamRule
+    abstract public class ParamRule : IRule, IParamRule
     {
-        public abstract void Init(IDeniable me);
+        public static ISettingsProvider SettingsProvider;
+
         public abstract double Apply(IDeniable nextNotes);
         public abstract bool IsApplicable();
+        public abstract void Init(IDeniable me);
         public abstract bool Initiable(IDeniable level);
 
         public bool Enabled = true;
 
-        protected Dictionary<string, object> Settings;
-        private readonly Dictionary<string, Type> _types;
-
-        protected ParamRule()
+        public int DeniedTimes { get; private set; }
+        public int ResetDenied()
         {
-            /*Settings = new Dictionary<string, object>();
-            _types = new Dictionary<string, Type>();
-            var defaults = new Dictionary<string, object>();
-
-            var attrs = GetParams();
-
-            foreach (var t in attrs)
-            {
-                defaults[t.ParamName] = t.Default;
-                _types[t.ParamName] = t.Type;
-                Settings[t.ParamName] = t.Default;
-            }*/
+            var deniedTimes = DeniedTimes;
+            DeniedTimes = 0;
+            return deniedTimes;
         }
 
-        public ParamAttribute[] GetParams()
+
+        public void Denied()
         {
-            return (ParamAttribute[])Attribute.GetCustomAttributes(GetType(), typeof(ParamAttribute));
+            DeniedTimes++;
+        }
+
+        protected Dictionary<String, RuleParameter> Settings;
+        
+        protected ParamRule()
+        {
+            DeniedTimes = 0;
+            Settings = new Dictionary<string, RuleParameter>();
+
+            foreach (var param in GetParams().Select(p => new RuleParameter(p)))
+                Settings[param.Name] = param;
+
+            if (SettingsProvider == null) return;
+
+            if (SettingsProvider.HasSetting(GetName(), "enabled"))
+                Enabled = (bool) SettingsProvider.GetSetting(GetName(), "enabled");
+            else
+                SettingsProvider.SetSetting(GetName(), "enabled", true);
+
+            foreach (var key in Settings.Keys)
+            {
+                if (SettingsProvider.HasSetting(GetName(), key))
+                    Settings[key].Value = SettingsProvider.GetSetting(GetName(), key);
+                else
+                    SettingsProvider.SetSetting(GetName(), key, Settings[key].Value);
+            }
+        }
+
+        public RuleParamAttribute[] GetParams()
+        {
+            return (RuleParamAttribute[])Attribute.GetCustomAttributes(GetType(), typeof(RuleParamAttribute));
         }    
     
         public void SetParam(string name, object value)
         {
-            if (!value.GetType().IsSubclassOf(_types[name]))
-                throw new ArgumentException();
-
-            Settings[name] = value;
+            Settings[name].Value = value;
         }
 
         public string GetName()
         {
-            var rn = (RuleNameAttribute)Attribute.GetCustomAttribute(GetType(), typeof(RuleNameAttribute));
+            return GetType().Name;
+        }
 
-            return rn == null ? null : rn.ParamName;
+        public string GetDescription()
+        {
+            var rn = (RuleDescriptionAttribute)Attribute.GetCustomAttribute(GetType(), typeof(RuleDescriptionAttribute));
+
+            return rn == null ? null : rn.Description;
         }
     }
 }

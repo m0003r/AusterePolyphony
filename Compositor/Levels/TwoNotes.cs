@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Compositor.Rules.Base;
 using PitchBase;
 
@@ -13,6 +14,8 @@ namespace Compositor.Levels
         public IRule DeniedRule { get; set; }
         public bool IsBanned { get; set; }
 
+        public List<Tuple<IRule, double>> AppliedRules { get; set; }
+
         public bool Suspension;
 
         public TwoNotes(Note note1, Note note2)
@@ -23,6 +26,7 @@ namespace Compositor.Levels
             Note1 = note1;
             Note2 = note2;
             Freqs = null;
+            AppliedRules = new List<Tuple<IRule, double>>();
         }
 
         public Interval Interval
@@ -35,8 +39,24 @@ namespace Compositor.Levels
             }
         }
 
+        /// <summary>
+        /// Возвращает момент начала совместного звучания
+        /// </summary>
         public Time TimeStart { get { return UpperChanged ? Note1.TimeStart : Note2.TimeStart; } }
+
+        /// <summary>
+        /// Возвращает момент начала звучания первой из нот
+        /// </summary>
+        public Time HalfStart { get { return UpperChanged ? Note2.TimeStart : Note1.TimeStart;  } }
+        /// <summary>
+        /// Возвращает момент снятия последней из двух нот
+        /// </summary>
         public Time TimeEnd { get { return (Note1.TimeEnd.Position > Note2.TimeEnd.Position) ? Note1.TimeEnd : Note2.TimeEnd; } }
+
+        /// <summary>
+        /// Возвращает момент конца совместного звучания
+        /// </summary>
+        public Time HalfEnd { get { return (Note1.TimeEnd.Position > Note2.TimeEnd.Position) ? Note2.TimeEnd : Note1.TimeEnd; } }
 
         public bool UpperChanged { get { return (Note1.TimeStart.Position > Note2.TimeStart.Position); } }
 

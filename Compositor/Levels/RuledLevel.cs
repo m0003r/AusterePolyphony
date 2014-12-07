@@ -9,15 +9,21 @@ namespace Compositor.Levels
     {
         IRule DeniedRule { get; set; }
         bool IsBanned { get; set; }
+        List<Tuple<IRule, double>> AppliedRules { get; set; }
     }
 
     public abstract class RuledLevel : IFilterable
     {
-        internal static List<IRule> Rules;
+        public static List<IRule> Rules;
         internal static HashSet<Type> RulesAdded;
 
         protected internal bool Filtered;
         public FreqsDict Freqs { get; protected set; }
+
+        public IRule DeniedRule { get; set; }
+        public List<Tuple<IRule, double>> AppliedRules { get; set; }
+        public bool IsBanned { get; set; }
+
 
         private const double MinimumFrequency = 0.01;
 
@@ -37,6 +43,7 @@ namespace Compositor.Levels
             }
 
 
+            AppliedRules = new List<Tuple<IRule, double>>();
             Freqs = new FreqsDict();
         }
 
@@ -74,7 +81,7 @@ namespace Compositor.Levels
 
             Timer.Start("filter");
 
-
+            //Rules.Sort((a, b) => b.DeniedTimes.CompareTo(a.DeniedTimes));
             Rules
                 //cause strage problems
                 //.AsParallel().ForAll(r =>
@@ -89,19 +96,22 @@ namespace Compositor.Levels
                         //.AsParallel().ForAll(n =>
                         .ToList().ForEach(n =>
                         {
-                            if (!(Freqs[n] >= MinimumFrequency)) return;
+                            if (Freqs[n] < MinimumFrequency) return;
 
                             var freq = r.Apply(n);
+
+
+                            n.AppliedRules.Add(new Tuple<IRule, double>(r, freq));
 #if TRACE_RULES
                         Console.WriteLine("Rule {0} to note {1} = {2:F}",
                             r.GetType().Name, n.ToString(), freq);
 #endif
                             Freqs[n] *= freq;
 
-                            if (Math.Abs(freq) < MinimumFrequency)
-                            {
-                                n.DeniedRule = r;
-                            }
+                            if (Math.Abs(freq) >= MinimumFrequency) return;
+
+                            n.DeniedRule = r;
+                            r.Denied();
                         });
             });
 
@@ -119,8 +129,5 @@ namespace Compositor.Levels
             Freqs[what] = 0;
             what.IsBanned = true;
         }
-
-        public IRule DeniedRule { get; set; }
-        public bool IsBanned { get; set; }
     }
 }

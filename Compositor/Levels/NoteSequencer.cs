@@ -8,11 +8,11 @@ namespace Compositor.Levels
     public static class LeapsData
     {
         public static readonly double Tertia = 0.8;
-        public static readonly double Quarta = 0.7;
-        public static readonly double Quinta = 0.6;
-        public static readonly double OctavaUp = 0.5;
-        public static readonly double OctavaDown = 0.2;
-        public static readonly double SextaUp = 0.1;
+        public static readonly double Quarta = 0.8;
+        public static readonly double Quinta = 0.8;
+        public static readonly double OctavaUp = 0.8;
+        public static readonly double OctavaDown = 0.5;
+        public static readonly double SextaUp = 0.4;
     }
 
     static class NoteSequencerExtension

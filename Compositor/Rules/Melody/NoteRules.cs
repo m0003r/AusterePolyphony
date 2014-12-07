@@ -62,13 +62,16 @@ namespace Compositor.Rules.Melody
 
         public override double Apply(Note nextNotes)
         {
-            if (nextNotes.Duration == 1)
+            if (nextNotes.Duration != 1) return 1;
+
+            switch (Duration)
             {
-                if (Duration == 2) return 0.05;
-                if (Duration == 6) return 0.5;
-                return 0;
+                case 2:
+                    return 0.05;
+                case 6:
+                    return 0.5;
             }
-            return 1;
+            return 0;
         }
     }
 }

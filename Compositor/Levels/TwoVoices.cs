@@ -21,6 +21,7 @@ namespace Compositor.Levels
 
     [Rule(typeof(ComplementRule))]
     [Rule(typeof(ComplementRule2))]
+    [Rule(typeof(ManySyncopasRule))]
     [Rule(typeof(DenyCrossing))]
     [Rule(typeof(SusPassTakeRule))]
     [Rule(typeof(SusPassResolutionRule))]

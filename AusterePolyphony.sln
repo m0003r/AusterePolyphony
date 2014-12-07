@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesUnitTest", "Tests\Note
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RulesTest", "Tests\NoteRulesTest\RulesTest.csproj", "{1B6781BC-1229-4523-ADFB-A9916CF6A70D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MelodyRulesTest", "Tests\NoteRulesTest\MelodyRulesTest.csproj", "{1B6781BC-1229-4523-ADFB-A9916CF6A70D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C0F9BC78-8703-4773-9631-643441EB9643}"
 	ProjectSection(SolutionItems) = preProject

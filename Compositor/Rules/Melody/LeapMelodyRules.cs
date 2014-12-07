@@ -191,9 +191,7 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
-            var lastLeaps = Notes.Reverse<Note>().TakeWhile(n => n.Leap.AbsDeg > 1);
-            _leapsInRow = lastLeaps.Count();
-
+            _leapsInRow = CountLast(n => n.Leap.AbsDeg > 1);
             return true;
         }
 

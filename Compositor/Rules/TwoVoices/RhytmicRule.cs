@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Compositor.Levels;
 using Compositor.Rules.Base;
 
@@ -46,6 +47,21 @@ namespace Compositor.Rules.TwoVoices
                 return (MaxSimultProportion - _simultProportion) / (MaxSimultProportion - MinSimultProportion);
 
             return 1;
+        }
+    }
+
+
+    public class ManySyncopasRule : TwoVoicesRule
+    {
+        public override bool _IsApplicable()
+        {
+            var firstInBar = Notes.Reverse<TwoNotes>().TakeWhile(t => t.TimeEnd.Bar == Melody.Time.Bar).Last();
+            return (firstInBar.TimeStart.Bar != firstInBar.HalfEnd.Bar);
+        }
+
+        public override double Apply(TwoNotes nextNotes)
+        {
+            return (nextNotes.TimeStart.Bar != nextNotes.HalfEnd.Bar) ? 0 : 1;
         }
     }
 }

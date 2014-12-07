@@ -8,11 +8,14 @@ namespace Compositor.Rules.Base
         void Init(IDeniable me);
         double Apply(IDeniable nextNotes);
         bool Initiable(IDeniable level);
+        void Denied();
+        int DeniedTimes { get; }
+        int ResetDenied();
     }
 
     public interface IParamRule
     {
-        ParamAttribute[] GetParams();
+        RuleParamAttribute[] GetParams();
         string GetName();
 
         void SetParam(string n, object v);

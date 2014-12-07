@@ -7,8 +7,9 @@ using PitchBase;
 
 namespace Compositor.Rules.Melody
 {
-    [Param("SoftLimit", typeof(int), 6, "Беспроблемное значение")]
-    [Param("HardLimit", typeof(int), 8, "Нельзя никогда так")]
+    [RuleDescription("Запрещает длительное движение по гамме. От мягкого до жёсткого лимита вероятность падает от 1 до 0")]
+    [RuleParam("SoftLimit", typeof(int), 6, "Беспроблемное значение")]
+    [RuleParam("HardLimit", typeof(int), 8, "Нельзя никогда так")]
     class DenyGamming : MelodyRule
     {
         private int _gammingCount;
@@ -17,13 +18,13 @@ namespace Compositor.Rules.Melody
 
         public DenyGamming()
         {
-            _gammingSoftLimit = 6;//(int)Settings["SoftLimit"];
-            _gammingHardLimit = 8;//(int)Settings["HardLimit"];
+            _gammingSoftLimit = (int)Settings["SoftLimit"].Value;
+            _gammingHardLimit = (int)Settings["HardLimit"].Value;
         }
 
         public override bool _IsApplicable()
         {
-            _gammingCount = Notes.Reverse<Note>().TakeWhile(n => n.Leap.IsSmooth).Count();
+            _gammingCount = CountLast(n => n.Leap.IsSmooth);
 
             return (_gammingCount > _gammingSoftLimit);
         }
@@ -41,29 +42,30 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
-            return (Time.Position >= _lastBarStart - Time.Beats * 4); //если мы не в предпоследнем такте
+            return (Time.Position >= LastBarStart - Time.Beats * 4); //если мы не в предпоследнем такте
         }
 
         public override double Apply(Note nextNote)
         {
-            if (nextNote.TimeEnd.Position < _lastBarStart)
+            if (nextNote.TimeEnd.Position < LastBarStart)
                 return 1;
 
             if (nextNote.Pitch == null)
                 return 0;
 
-            if (nextNote.TimeEnd.Position == _lastBarStart)
-                return (nextNote.Pitch.Degree == 1 || nextNote.Pitch.Degree == 6) ? 1 : 0;
+            if (nextNote.TimeEnd.Position == LastBarStart)
+                return (nextNote.Pitch.Degree == 1 && Voice.Type != VoiceType.Top || nextNote.Pitch.Degree == 6 && Voice.Type != VoiceType.Bass) ? 1 : 0;
 
-            if (nextNote.TimeStart.Position == _lastBarStart)
+            if (nextNote.TimeStart.Position == LastBarStart)
                 //нельзя ничего в последнем такте кроме долгой тоники
                 return (nextNote.Duration == Time.Beats * 4 &&
                         nextNote.Pitch.Degree == 0 &&
-                        nextNote.Leap.AbsDeg == 1)
+                        nextNote.Leap.AbsDeg == 1 &&
+                        LastNote.Uncomp <= 4) // не слишком несбалансированно
                         ? 1 : 0;  //достигаемой плавным ходом 
                     
 
-            return nextNote.TimeEnd.Position > _lastBarStart ? 0 : 1;
+            return nextNote.TimeEnd.Position > LastBarStart ? 0 : 1;
         }
     }
 
@@ -227,12 +229,20 @@ namespace Compositor.Rules.Melody
 
             _last = LeapSmooth.Last();
 
+            if (Voice.Type != VoiceType.Single)
+            {
+                if (_last.Upwards && Voice.Type != VoiceType.Top)
+                    return false;
+                if (!_last.Upwards && Voice.Type != VoiceType.Bass)
+                    return false;
+            }
+
             return (LeapSmooth[LeapSmooth.Count - 2].Interval.AbsDeg == _last.Interval.AbsDeg);
         }
 
         public override double Apply(Note nextNote)
         {
-            return _last.CanAdd(nextNote) ? 1 : 0;
+            return _last.CanAdd(nextNote) ? 1 : 0.3;
         }
 
     }
@@ -240,18 +250,10 @@ namespace Compositor.Rules.Melody
     class ManyQuartersRule : MelodyRule
     {
         int _quarterCount;
-        int _lastTime = -1;
 
         public override bool _IsApplicable()
         {
-            if (_lastTime != LastNote.TimeStart.Position)
-            {
-                _lastTime = LastNote.TimeStart.Position;
-                if (LastNote.Duration > 2)
-                    _quarterCount = 0;
-                else
-                    _quarterCount++;
-            }
+            _quarterCount = CountLast(n => n.Duration <= 2);
 
             return (_quarterCount >= 6);
         }
@@ -270,6 +272,31 @@ namespace Compositor.Rules.Melody
         }
     }
 
+    class FewQuartersRule : MelodyRule
+    {
+        int _nonQuarterCount;
+
+        public override bool _IsApplicable()
+        {
+            _nonQuarterCount = CountLast(n => n.Duration > 2);
+
+            return (_nonQuarterCount >= 6);
+        }
+
+        public override double Apply(Note nextNote)
+        {
+            if (nextNote.Duration == 2)
+                return 1;
+
+            switch (_nonQuarterCount)
+            {
+                case 6: return 0.4;
+                case 7: return 0.1;
+                default: return 0;
+            }
+        }
+    }
+
     //хорошо бы после половинки с точкой и четверти продолжать движение четвертями
     class DottedHalveRestrictionRule : MelodyRule
     {
@@ -278,7 +305,7 @@ namespace Compositor.Rules.Melody
             if (Notes.Count < 2)
                 return false;
 
-            List<Note> last = GetLast(2);
+            var last = GetLast(2);
             return ((last[0].Duration == 6) && (last[1].Duration == 2));
         }
 
@@ -428,73 +455,6 @@ namespace Compositor.Rules.Melody
         }
     }
 
-    class TritoneRule : MelodyRule
-    {
-        const double MinimumStrengthForApply = 1.1;
-
-        IEnumerable<Note> _lastTritones;
-
-        public override bool _IsApplicable()
-        {
-            if (Notes.Count <= 1) return false;
-
-            _lastTritones = FindLastTritone();
-            return true;
-        }
-
-        private IEnumerable<Note> FindLastTritone()
-        {
-            /*if (NotesList.Count == 6)
-            {
-                double f = 1;
-            }*/
-
-            return Notes.Where(found => (
-                found.Pitch != null &&
-                found.Pitch.IsTritone &&
-                //(f.Pitch.isTritoneLow ^ n.Pitch.isTritoneLow) &&
-                ((LastNote.TimeEnd - found.TimeStart).Bar <= 3) &&
-                ((LastNote.TimeEnd - found.TimeStart).Position > 6)
-                // (f.Strength >= minimumRequiredForApply)
-              ));
-        }
-
-        public override double Apply(Note nextNote)
-        {
-            /*if (!LastNote.Pitch.IsTritone)
-                return 1;*/
-
-            var lastStrength = Voice.GetStrengthIf(nextNote);
-            if (lastStrength < MinimumStrengthForApply)
-                return 1;
-
-            double freq = 1;
-            foreach (var f in _lastTritones)
-            {
-                var distance = (nextNote.TimeStart - f.TimeStart).Position;
-                if (f.TimeStart.Beat == nextNote.TimeStart.Beat)
-                    freq *= 0.7;
-                if (f.Strength + lastStrength > MinimumStrengthForApply + distance / 16.0)
-                    freq *= 0.2;
-            }
-            
-            return freq;
-        }
-    }
-
-    class TritoneRule2 : MelodyRule
-    {
-        public override bool _IsApplicable()
-        {
-            return LeapSmooth.Count >= 1 && LeapSmooth.Last().Interval.IsTritone;
-        }
-
-        public override double Apply(Note nextNote)
-        {
-            return LeapSmooth.Last().CanAdd(nextNote) ? 1 : 0;
-        }
-    }
-
     class AfterQuarterNewRule : MelodyRule
     {
         bool _allowLeap;
@@ -535,7 +495,7 @@ namespace Compositor.Rules.Melody
 
         public override double Apply(Note nextNote)
         {
-            return nextNote.Pitch == null ? 0 : 1;
+            return nextNote.Pitch == null && nextNote.TimeStart.Position != 0 ? 0 : 1;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using Compositor.Generators;
 using Compositor.Rules.Base;
 using Compositor.Rules.Melody;
@@ -29,9 +30,10 @@ namespace Compositor.Levels
     [Rule(typeof(BreveRule))]
     [Rule(typeof(TritoneRule))]
     [Rule(typeof(TritoneRule2))]
-    [Rule(typeof(PeakRule))]
+    //[Rule(typeof(PeakRule))]
     [Rule(typeof(PeakRule2))]
     [Rule(typeof(ManyQuartersRule))]
+    [Rule(typeof(FewQuartersRule))]
     [Rule(typeof(DottedHalveRestrictionRule))]
     [Rule(typeof(AfterLeapRules))]
     [Rule(typeof(DenyTwoNoteSequence))]
@@ -98,6 +100,19 @@ namespace Compositor.Levels
             Higher = Diapason.First();
         }
 
+        protected void RestrictDiapason(IEnumerable<Pitch> allowed)
+        {
+            Diapason = Diapason.FindAll(allowed.Contains);
+
+            var keys = _firstNoteFreqs.Keys.ToList();
+            foreach (var k in keys)
+            {
+                var note = k as Note;
+                if (note != null && !allowed.Contains(note.Pitch))
+                    _firstNoteFreqs.Remove(k);
+            }
+        }
+
         private void InitFirstNoteFreqs()
         {
             _firstNoteFreqs = new FreqsDict();
@@ -136,6 +151,7 @@ namespace Compositor.Levels
             _firstNoteFreqs[_startPause] = 1;
 
             SetFreqsToFirst();
+            sourceVoice.RestrictDiapason(Diapason.Select(p => p - settings.Interval));
         }
 
         internal void RemoveLast(bool ban = true)

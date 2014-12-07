@@ -105,14 +105,13 @@ namespace Compositor.Rules.Melody
                 return false;
 
             int currGrabbedNotes = 2;
-            bool tooLong = false;
 
             _undesiredPitches = new Dictionary<int,double>();
 
             do
             {
                 var pattern = new SequencePattern();
-                tooLong = !pattern.Init(Voice, currGrabbedNotes);
+                bool tooLong = !pattern.Init(Voice, currGrabbedNotes);
 
                 if (pattern.Length > MaxSequenceLength || tooLong)
                     break;

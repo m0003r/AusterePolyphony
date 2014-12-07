@@ -12,7 +12,7 @@ namespace Compositor.Levels
     [Rule(typeof(DenyDoubleBrevesRule))]
     [Rule(typeof(EightRestrictionsAfterRule))]
     [Rule(typeof(EightRestrictionsBeforeRule))]
-    [Rule(typeof(AfterSmoothLeapRule))]
+    //[Rule(typeof(AfterSmoothLeapRule))]
     [Rule(typeof(AfterLeapLeapRule))]
 
     public class Note : RuledLevel, IComparable<Note>, IComparable

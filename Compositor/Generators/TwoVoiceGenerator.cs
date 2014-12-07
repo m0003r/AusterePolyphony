@@ -120,12 +120,17 @@ namespace Compositor.Generators
                 ChooseNextNote();
             else
             {
+                Rollback();
                 _rollback++;
-                if (Melodies.NoteCount > 0)
-                    Melodies.RemoveLast();
-                else
-                    Melodies.SetFirstNoteFreqs();
             }
+        }
+
+        private void Rollback()
+        {
+            if (Melodies.NoteCount > 0)
+                Melodies.RemoveLast();
+            else
+                Melodies.SetFirstNoteFreqs();
         }
 
         private void ChooseNextNote()

@@ -9,7 +9,7 @@ namespace Compositor.Rules.Base
     abstract class MelodyRule : ParamRule
     {
         protected Voice Voice;
-        protected int _lastBarStart;
+        protected int LastBarStart;
 
         protected List<Note> Notes { get { return Voice.NotesList; } }
         protected Note LastNote { get { return Notes.Last(); } }
@@ -38,7 +38,7 @@ namespace Compositor.Rules.Base
         public virtual void Init(Voice parent)
         {
             Voice = parent;
-            _lastBarStart = (int)Voice.DesiredLength - Time.Beats * 4;
+            LastBarStart = (int)Voice.DesiredLength - Time.Beats * 4;
         }
 
         protected List<Note> GetLast(int count)
@@ -47,6 +47,16 @@ namespace Compositor.Rules.Base
                 throw new ArgumentOutOfRangeException("count", "Requested last-notes count is greater than notes count");
 
             return Notes.GetRange(Notes.Count - count, count);
+        }
+
+        protected int CountLast(Predicate<Note> predicate)
+        {
+            return GetLastWhile(predicate).Count();
+        }
+
+        protected IEnumerable<Note> GetLastWhile(Predicate<Note> predicate)
+        {
+            return Notes.Reverse<Note>().TakeWhile(n => predicate(n));
         }
 
         public override bool IsApplicable()
@@ -62,17 +72,15 @@ namespace Compositor.Rules.Base
         public override double Apply(IDeniable nextNotes)
         {
             var note = nextNotes as Note;
-            if (note != null)
-            {
-                if (note.Pitch == null && !ApplyToRests)
-                    return 1;
-                if (note.TimeStart.Position == _lastBarStart && !ApplyToCadenza)
-                    return 1;
-                
-                return Apply(note);
-            }
+            if (note == null) throw new ArgumentException();
 
-            throw new ArgumentException();
+            if (note.Pitch == null && !ApplyToRests)
+                return 1;
+
+            if (note.TimeStart.Position == LastBarStart && !ApplyToCadenza)
+                return 1;
+                
+            return Apply(note);
         }
 
     }

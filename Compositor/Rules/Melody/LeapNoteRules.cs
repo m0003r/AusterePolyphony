@@ -12,7 +12,7 @@ namespace Compositor.Rules.Melody
 
         public override double Apply(Note nextNotes)
         {
-            bool coDir = (nextNotes.Leap.Upwards == Me.Leap.Upwards);
+            var coDir = (nextNotes.Leap.Upwards == Me.Leap.Upwards);
 
             return nextNotes.Leap.AbsDeg == 1
                 ? ((coDir) ? 1 : 0.8)
@@ -47,13 +47,13 @@ namespace Compositor.Rules.Melody
         }
         public override double Apply(Note nextNotes)
         {
-            bool coDir = (nextNotes.Leap.Upwards == Me.Leap.Upwards);
+            var coDir = (nextNotes.Leap.Upwards == Me.Leap.Upwards);
 
             //а в другую сторону очень даже хорошо
             if (nextNotes.Leap.AbsDeg != 1) return coDir ? CoDirRule(nextNotes) : OppDirRule(nextNotes);
 
             if (coDir) //в том же направлении после не-больше-чем-квинты можно
-                return (Leap.AbsDeg <= 4) ? 0.6 : 0;
+                return (Leap.AbsDeg <= 4) ? 0.7 : 0;
 
             return 1;
         }
@@ -64,7 +64,7 @@ namespace Compositor.Rules.Melody
             int nextLeap = nextNote.Leap.AbsDeg;
 
             //в другую сторону можно сразу же скакать, если на меньшее расстояние
-            return (prevLeap > nextLeap) ? 0.6 : 0; 
+            return (prevLeap > nextLeap) ? 0.7 : 0; 
         }
 
         private double CoDirRule(Note nextNote)
@@ -75,7 +75,7 @@ namespace Compositor.Rules.Melody
                     (Leap.AbsDeg <= 4) &&
                     (nextNote.Leap.AbsDeg <= 4) &&
                     ((nextNote.Leap + Leap).Consonance)
-                ) ? 0.3 : 0;
+                ) ? 0.4 : 0;
         }
     }
 }

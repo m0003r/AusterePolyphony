@@ -6,7 +6,7 @@ using PitchBase;
 
 namespace Compositor.Rules.Base
 {
-    abstract class TwoVoicesRule : ParamRule
+    public abstract class TwoVoicesRule : ParamRule
     {
         protected Levels.TwoVoices Melody;
 
