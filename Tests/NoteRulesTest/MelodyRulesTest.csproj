@@ -54,6 +54,7 @@
     <Compile Include="MelodyTestBase.cs" />
     <Compile Include="OldMelodyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBase.cs" />
     <Compile Include="TritoneSmoothTest.cs" />
     <Compile Include="BasicLeapTests.cs" />
   </ItemGroup>

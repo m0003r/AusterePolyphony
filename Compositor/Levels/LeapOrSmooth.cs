@@ -23,7 +23,7 @@ namespace Compositor.Levels
         public LeapOrSmooth(Note a, Note b)
         {
             TimeStart = a.TimeStart;
-            Duration = (b.TimeEnd - TimeStart).Beats;
+            Duration = (b.TimeEnd - TimeStart).Position;
             IsLeap = b.Leap.IsLeap;
             Interval = b.Pitch - a.Pitch;
 

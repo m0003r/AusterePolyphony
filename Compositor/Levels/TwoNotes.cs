@@ -6,7 +6,7 @@ using PitchBase;
 
 namespace Compositor.Levels
 {
-    public class TwoNotes : IDeniable, IComparable<TwoNotes>, IComparable
+    public class TwoNotes : IDeniable, IComparable<TwoNotes>, IComparable, ITemporal
     {
         public Note Note1;
         public Note Note2;
@@ -89,6 +89,16 @@ namespace Compositor.Levels
                 return CompareTo(notes);
 
             throw new NotImplementedException();
+        }
+
+        public bool Equals(ITemporal obj)
+        {
+            return (obj is TwoNotes) && Equals((TwoNotes) obj);
+        }
+
+        public bool Equals(TwoNotes obj)
+        {
+            return obj.Note1.Equals(Note1) && obj.Note2.Equals(Note2);
         }
     }
 }

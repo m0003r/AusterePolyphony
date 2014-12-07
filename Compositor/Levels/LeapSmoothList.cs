@@ -40,6 +40,7 @@ namespace Compositor.Levels
             if (Count == 0)
             {
                 Add(new LeapOrSmooth(lastButOneNote, lastNote));
+                Update();
                 return;
             }
 

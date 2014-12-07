@@ -23,13 +23,13 @@ namespace NoteRulesTest
 
             var freqs = m.Filter();
 
-            AreDenied(n => n.Pitch == diapason[5], freqs);
-            AreAllowed(n => n.Pitch == diapason[7], freqs);
+            IsDenied(n => n.Pitch == diapason[5], freqs);
+            IsAllowed(n => n.Pitch == diapason[7], freqs);
 
             AppendNote(m, diapason[7], 4);
 
             freqs = m.Filter();
-            AreAllowed(n => n.Pitch == diapason[4] && n.Duration == 8, freqs);
+            IsAllowed(n => n.Pitch == diapason[4] && n.Duration == 8, freqs);
         }
     }
 }

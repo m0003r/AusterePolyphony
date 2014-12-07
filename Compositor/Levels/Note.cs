@@ -15,7 +15,7 @@ namespace Compositor.Levels
     //[Rule(typeof(AfterSmoothLeapRule))]
     [Rule(typeof(AfterLeapLeapRule))]
 
-    public class Note : RuledLevel, IComparable<Note>, IComparable
+    public class Note : RuledLevel, IComparable<Note>, IComparable, ITemporal
     {
         public Pitch Pitch;
 
@@ -24,7 +24,8 @@ namespace Compositor.Levels
 
         public double Strength = 0;
         
-        public Time TimeStart { get; private set; }        
+        public Time TimeStart { get; private set; }
+
         public Time TimeEnd { get { return TimeStart + Duration; } }
 
         public int Duration { get; private set; }
@@ -145,9 +146,19 @@ namespace Compositor.Levels
             return Duration.CompareTo(obj.Duration);
         }
 
+        public bool Equals(ITemporal obj)
+        {
+            return (obj is Note) && Equals((Note) obj);
+        }
+
         public bool Equals(Note obj)
         {
             return (TimeStart == obj.TimeStart) && (Pitch == obj.Pitch) && (Duration == obj.Duration);
+        }
+
+        public bool PitchEquals(string s)
+        {
+            return (Pitch != null) && (Pitch.Equals(s));
         }
     }
 }

@@ -78,6 +78,9 @@ namespace Compositor.Rules.Melody
             if (nextNote.Leap.Degrees < 5)
                 return 1;
 
+            if (nextNote.Leap.Degrees == 5)
+                return 0.4;
+
             return Math.Abs(nextNote.Leap.Degrees) < Math.Abs(LastNote.Reserve * 4) ? 1 : 0;
         }
     }

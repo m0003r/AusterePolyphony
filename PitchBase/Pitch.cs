@@ -168,6 +168,11 @@ namespace PitchBase
             return (a - b).Degrees > 0;
         }
 
+        public bool Equals(String str)
+        {
+            return ToString().Equals(str);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;

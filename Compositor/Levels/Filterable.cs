@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Compositor.Rules.Base;
+﻿using Compositor.Rules.Base;
+using PitchBase;
 
 namespace Compositor.Levels
 {
@@ -10,5 +9,11 @@ namespace Compositor.Levels
         void AddVariants();
         FreqsDict Filter();
         void Ban(IDeniable what);
+    }
+
+    public interface ITemporal
+    {
+        Time TimeStart { get; }
+        bool Equals(ITemporal obj);
     }
 }
