@@ -37,6 +37,7 @@ namespace Compositor.Levels
         internal List<TwoNotes> Twonotes;
 
         public Time Time { get; private set; }
+        public List<TwoNotes> TwoNotes { get {  return Twonotes; } }
 
 
         public TwoVoices(Clef clef1, Clef clef2, Modus modus, Time time)
@@ -120,7 +121,7 @@ namespace Compositor.Levels
         }
 
 
-        internal void AddTwoNotes(TwoNotes next)
+        public void AddTwoNotes(TwoNotes next)
         {
             if (Twonotes.Count > 0)
                 Twonotes.Last().Freqs = Freqs;
@@ -139,7 +140,7 @@ namespace Compositor.Levels
                 Time = next.Note2.TimeEnd;
         }
 
-        internal void SetLength(uint lengthInBeats)
+        public void SetLength(uint lengthInBeats)
         {
             Voice1.SetLength(lengthInBeats);
             Voice2.SetLength(lengthInBeats);

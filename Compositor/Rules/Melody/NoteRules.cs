@@ -67,9 +67,9 @@ namespace Compositor.Rules.Melody
             switch (Duration)
             {
                 case 2:
-                    return 0.05;
+                    return 0.45;
                 case 6:
-                    return 0.5;
+                    return 0.9;
             }
             return 0;
         }

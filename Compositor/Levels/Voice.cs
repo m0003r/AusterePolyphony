@@ -35,7 +35,7 @@ namespace Compositor.Levels
     [Rule(typeof(ManyQuartersRule))]
     [Rule(typeof(FewQuartersRule))]
     [Rule(typeof(DottedHalveRestrictionRule))]
-    [Rule(typeof(AfterLeapRules))]
+    //[Rule(typeof(AfterLeapRules))] // они вообще кому-нибудь нужны?
     [Rule(typeof(DenyTwoNoteSequence))]
     [Rule(typeof(DenyTwoNoteRhytmicSequence))]
     [Rule(typeof(DenySequence))]

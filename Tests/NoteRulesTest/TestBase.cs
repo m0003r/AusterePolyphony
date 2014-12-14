@@ -8,7 +8,7 @@ namespace NoteRulesTest
 {
     public class TestBase<T> where T: IDeniable, ITemporal
     {
-        internal void Satisfy(Predicate<T> expected,
+        protected static void Satisfy(Predicate<T> expected,
             Predicate<double> expectedFreq,
             FreqsDict freqs)
         {
@@ -27,14 +27,14 @@ namespace NoteRulesTest
             }
         }
 
-        internal void IsAllowed(T expectedNote,
+        protected static void IsAllowed(T expectedNote,
             FreqsDict freqs)
         {
             Console.WriteLine("Is allowed {0} at {1}?", expectedNote, expectedNote.TimeStart);
             IsAllowed(n => n.Equals(expectedNote), freqs);
         }
 
-        internal void IsAllowed(Predicate<T> expected,
+        protected static void IsAllowed(Predicate<T> expected,
             FreqsDict freqs)
         {
             var count = freqs.Count(kv => expected((T)kv.Key));
@@ -43,18 +43,18 @@ namespace NoteRulesTest
             Satisfy(expected, x => x >= 0.03, freqs);
         }
 
-        internal void IsOneAllowed(Predicate<T> expected, FreqsDict freqs)
+        protected static void IsOneAllowed(Predicate<T> expected, FreqsDict freqs)
         {
             IsAllowed(expected, freqs);
             IsDenied(n => !expected(n), freqs);
         }
 
-        internal void IsOneAllowed(T expected, FreqsDict freqs)
+        protected static void IsOneAllowed(T expected, FreqsDict freqs)
         {
             IsOneAllowed(n => n.Equals(expected), freqs);
         }
 
-        internal void IsDenied(Predicate<T> expected,
+        protected static void IsDenied(Predicate<T> expected,
             FreqsDict freqs)
         {
             Satisfy(expected, x => x < 0.03, freqs);

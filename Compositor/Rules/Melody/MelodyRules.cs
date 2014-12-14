@@ -24,7 +24,8 @@ namespace Compositor.Rules.Melody
 
         public override bool _IsApplicable()
         {
-            _gammingCount = CountLast(n => n.Leap.IsSmooth);
+            var upw = LastNote.Leap.Upwards;
+            _gammingCount = CountLast(n => n.Leap.IsSmooth && n.Leap.Upwards == upw);
 
             return (_gammingCount > _gammingSoftLimit);
         }
@@ -54,7 +55,7 @@ namespace Compositor.Rules.Melody
                 return 0;
 
             if (nextNote.TimeEnd.Position == LastBarStart)
-                return (nextNote.Pitch.Degree == 1 && Voice.Type != VoiceType.Top || nextNote.Pitch.Degree == 6 && Voice.Type != VoiceType.Bass) ? 1 : 0;
+                return (nextNote.Pitch.Degree == 1 /* && Voice.Type != VoiceType.Top*/ || nextNote.Pitch.Degree == 6 /* && Voice.Type != VoiceType.Bass */) ? 1 : 0;
 
             if (nextNote.TimeStart.Position == LastBarStart)
                 //нельзя ничего в последнем такте кроме долгой тоники
@@ -420,9 +421,9 @@ namespace Compositor.Rules.Melody
             {
                 var distance = (nextNote.TimeStart - f.TimeStart).Position;
                 if (f.TimeStart.Beat == nextNote.TimeStart.Beat)
-                    freq *= 0.7;
+                    freq *= 0.9;
                 if (f.Strength + lastStrength > MinimumStrengthForApply + distance / 8.0)
-                    freq *= 0.2;
+                    freq *= 0.6;
             }
             
             return freq;
@@ -437,6 +438,7 @@ namespace Compositor.Rules.Melody
         {
             var lastEight = Notes.FindLast(n => n.Duration == 1);
             if (lastEight == null) return false;
+            if (lastEight.TimeEnd == Time) return false;
 
             _lastEightPosition = lastEight.TimeStart;
             return true;

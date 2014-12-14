@@ -22,7 +22,7 @@ namespace Compositor.Rules.Base
         }
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.All)]
     class RuleDescriptionAttribute : Attribute
     {
         public string Description { get; private set; }
