@@ -76,7 +76,7 @@ namespace Compositor.Levels
 
         public override string ToString()
         {
-            return Note1 + "@" + Note1.TimeStart + "; " + Note2 + "@" + Note2.TimeStart;
+            return String.Format("{0} <{1}@{2} {3}@{4}>", Note1.TimeStart.MeasureString(), Note1, Note1.TimeStart.PositionString(), Note2, Note2.TimeStart.PositionString());
         }
 
         public FreqsDict Freqs;

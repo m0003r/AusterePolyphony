@@ -32,13 +32,18 @@ namespace Compositor.Rules.TwoVoices
         private const double MinSimultProportion = 0.1;
         private const double MaxSimultProportion = 0.5;
 
+        private const int MinNotesCount = 5;
+
         double _simultProportion;
 
         public override bool _IsApplicable()
         {
+            if (Notes.Count() < MinNotesCount)
+                return false;
+
             int simultCount = Notes.Count(n => n.Simult);
             _simultProportion = (double)simultCount / Notes.Count;
-            return (simultCount > MinSimultProportion);
+            return (_simultProportion > MinSimultProportion);
         }
 
         public override double Apply(TwoNotes nextNotes)

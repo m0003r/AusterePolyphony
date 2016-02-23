@@ -39,7 +39,7 @@ namespace Compositor.Levels
 
             var diff = p2 - me.Pitch;
 
-            if ((t.Beat % 4 != 0) || (me.Duration == 1)) // нельзя неплавные ходы внутри метрической доли или после восьмых
+            if (me.Duration == 1) // нельзя неплавные ходы после восьмых
                 return (diff.Type == IntervalType.Secunda) ? 1 : 0;
 
             switch (diff.Type)
@@ -114,7 +114,7 @@ namespace Compositor.Levels
         {
             durVar.Add(4); // половины
             durVar.Add(6); // половины с точкой
-            if (me.Duration > 1) //если не восьмая
+            //if (me.Duration > 1) //если не восьмая
                 durVar.Add(8); // и целые
         }
     }

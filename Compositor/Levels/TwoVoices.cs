@@ -32,6 +32,10 @@ namespace Compositor.Levels
         public Voice Voice1 { get; private set; }
         public Voice Voice2 { get; private set; }
 
+
+        public bool IsFragment { get; private set; }
+        public Time FragmentStart { get; private set; }
+
         private FreqsDict _firstFreqs;
 
         internal List<TwoNotes> Twonotes;
@@ -50,12 +54,32 @@ namespace Compositor.Levels
             Twonotes = new List<TwoNotes>();
             GenerateFirstFreqs();
 
-            var keys = new List<IDeniable>(_firstFreqs.Keys);
-            foreach (var key in keys.Where(key => ((TwoNotes)key).Interval.ModDeg == 3))
-                _firstFreqs[key] = 0;
-
+            FilterFirst();
             SetFirstNoteFreqs();
             Filtered = true;
+        }
+
+        private void FilterFirst()
+        {
+            var keys = new List<IDeniable>(_firstFreqs.Keys);
+            foreach (var key in keys.Where(key => ((TwoNotes) key).Interval.ModDeg == 3))
+                _firstFreqs[key] = 0;
+
+        }
+
+        public void SetFragment(Time fragmentStart)
+        {
+            IsFragment = true;
+            FragmentStart = fragmentStart;
+
+            _firstFreqs = new FreqsDict();
+
+            Voice1.SetFragment(fragmentStart);
+            Voice2.SetFragment(fragmentStart);
+
+            GenerateFirstFreqs();
+
+            SetFirstNoteFreqs();
         }
 
         private void GenerateFirstFreqs()

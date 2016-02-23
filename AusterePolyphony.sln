@@ -104,9 +104,6 @@ Global
 		{1B6781BC-1229-4523-ADFB-A9916CF6A70D} = {C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}
 		{8546E17B-B511-4919-9E84-DC588417D6FF} = {C8389998-7028-4ACF-A9C9-A4C6C9F28DB6}
 	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = AusterePolyphony.vsmdi
 	EndGlobalSection

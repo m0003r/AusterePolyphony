@@ -53,6 +53,7 @@
     <Compile Include="TwoVoicesTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleTwoVoiceTest.cs" />
+    <Compile Include="DenyStraightTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Compositor\Compositor.csproj">

@@ -12,12 +12,10 @@ namespace NoteRulesTest
             Predicate<double> expectedFreq,
             FreqsDict freqs)
         {
-            foreach (var kv in freqs)
+            foreach (var kv in freqs.Where(p => expected((T)p.Key)))
             {
-                var actual = (T)kv.Key;
-                if (!expected(actual)) continue;
-
-                var freq = kv.Value;
+                var actual = (T) kv.Key;
+                var freq = freqs[actual];
                 Console.WriteLine("{0} at {1} => {2}", actual, actual.TimeStart, freq);
                 if (actual.AppliedRules != null)
                     foreach (var p in actual.AppliedRules)
@@ -27,15 +25,13 @@ namespace NoteRulesTest
             }
         }
 
-        protected static void IsAllowed(T expectedNote,
-            FreqsDict freqs)
+        protected static void IsAllowed(T expectedNote, FreqsDict freqs)
         {
             Console.WriteLine("Is allowed {0} at {1}?", expectedNote, expectedNote.TimeStart);
             IsAllowed(n => n.Equals(expectedNote), freqs);
         }
 
-        protected static void IsAllowed(Predicate<T> expected,
-            FreqsDict freqs)
+        protected static void IsAllowed(Predicate<T> expected, FreqsDict freqs)
         {
             var count = freqs.Count(kv => expected((T)kv.Key));
             Assert.IsTrue(count > 0);
@@ -43,6 +39,21 @@ namespace NoteRulesTest
             Satisfy(expected, x => x >= 0.03, freqs);
         }
 
+        protected static void IsMiddle(Predicate<T> expected, FreqsDict freqs)
+        {
+            var count = freqs.Count(kv => expected((T)kv.Key));
+            Assert.IsTrue(count > 0);
+
+            Satisfy(expected, x => x >= 0.03 && x < 0.5, freqs);
+        }
+
+        protected static void IsGood(Predicate<T> expected, FreqsDict freqs)
+        {
+            var count = freqs.Count(kv => expected((T)kv.Key));
+            Assert.IsTrue(count > 0);
+
+            Satisfy(expected, x => x >= 0.5, freqs);
+        }
         protected static void IsOneAllowed(Predicate<T> expected, FreqsDict freqs)
         {
             IsAllowed(expected, freqs);

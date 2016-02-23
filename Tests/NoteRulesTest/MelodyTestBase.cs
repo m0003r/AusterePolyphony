@@ -186,8 +186,7 @@ namespace NoteRulesTest
 
             var mel = new Voice(c, m, Time.Create(perfectTime), type);
             mel.SetLength(length);
-
-            var first = true;
+            mel.SetFragment(mel.Time);
 
             Console.WriteLine("\n\nChecking melody");
             foreach (var n in notes)
@@ -195,13 +194,11 @@ namespace NoteRulesTest
                 var freqs = mel.Filter();
                 Console.WriteLine("Checking {0} on {1} in melody...", n, n.TimeStart);
 
-                if (!first)
-                    IsAllowed(n, freqs);
+                IsAllowed(n, freqs);
 
                 mel.AddNote(n);
                 Console.WriteLine(" Reserve: {0}, Uncomp: {1}\n", n.Reserve, n.Uncomp);
 
-                first = false;
             }
 
             return mel;

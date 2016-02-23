@@ -8,13 +8,6 @@ namespace TwoVoiceTest
     [TestClass]
     public class SimpleTwoVoiceTest : TwoVoicesTestBase
     {
-        internal static TwoVoices CreateVoices(uint length, Modus m, Clef c1, Clef c2, bool perfectTime, string v1,
-            string v2)
-        {
-            List<Pitch> diapason1, diapason2;
-            return CreateVoices(length, m, c1, c2, perfectTime, out diapason1, out diapason2, v1, v2);
-        }
-
         [TestMethod]
         public void SimpleTwoVoices()
         {
@@ -39,6 +32,5 @@ namespace TwoVoiceTest
         {
             CreateVoices(256, Modus.Aeolian(4), Clef.Treble, Clef.Tenor, true, "e2 fis g a1. g1 c2 h4", "e1. fis4 g a h c d e2 d4 c8 h a2 g4");
         }
-
     }
 }

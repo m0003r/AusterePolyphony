@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
 using Compositor.Generators;
 using Compositor.Rules.Base;
 using Compositor.Rules.Melody;
@@ -53,6 +51,9 @@ namespace Compositor.Levels
         public Time Time { get; private set; }
         public VoiceType Type { get; private set; }
 
+        public bool IsFragment { get; private set; }
+        public Time FragmentStart { get; private set; }
+
         internal NotesList NotesList;
         internal LeapSmoothList LeapSmooths;
         internal List<Pitch> Diapason { get; private set; }
@@ -90,6 +91,19 @@ namespace Compositor.Levels
         public void SetLength(uint desiredLength)
         {
             DesiredLength = desiredLength;
+        }
+
+        public void SetFragment(Time fragmentStart)
+        {
+            IsFragment = true;
+            FragmentStart = fragmentStart;
+
+            _firstNoteFreqs = new FreqsDict();
+
+            foreach (var n in Diapason.SelectMany(p => NoteSequencerExtension.GenerateNotes(null, p, fragmentStart)))
+                _firstNoteFreqs[n] = 1;
+
+            SetFreqsToFirst();
         }
 
         private void SetupDiapason(Clef clef, Modus modus)

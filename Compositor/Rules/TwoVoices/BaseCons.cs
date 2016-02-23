@@ -51,7 +51,7 @@ namespace Compositor.Rules.TwoVoices
             try
             {
                 var i = takedAtEnumerator.Last().Interval;
-                if (i != null && (i.PerfectConsonance || i.ModDeg == 4))
+                if (i != null && i.PerfectConsonance)
                 {
                     _degrees = i.ModDeg;
                     return true;

@@ -166,5 +166,15 @@ namespace PitchBase
         {
             return String.Format("({0}/2) {1}:{2}", Beats, Bar, Beat);
         }
+
+        public string PositionString()
+        {
+            return String.Format("{0}:{1}", Bar, Beat);
+        }
+
+        public string MeasureString()
+        {
+            return String.Format("({0}/2)", Beats);
+        }
     }
 }
